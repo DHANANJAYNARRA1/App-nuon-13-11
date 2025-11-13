@@ -71,7 +71,7 @@ export async function probeAndFixBase() {
   // Try localhost first (for development)
   const candidates = [
     `http://${IP_ADDRESS}:3000/api`, // Updated to port 3000
-    'http://192.168.0.3:3000/api', // Updated IP address
+    'http://192.168.0.116:3000/api', // Updated IP address
     'http://10.0.2.2:3000/api', // Android emulator
   ];
 
