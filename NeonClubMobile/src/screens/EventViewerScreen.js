@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Linking, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { eventAPI } from '../services/api';
+import { IP_ADDRESS } from '../../config/ipConfig';
 
 // Always use full URL for local uploads
-const BASE_URL = 'http://192.168.0.116:5000'; // Updated to correct IP
+const BASE_URL = `http://${IP_ADDRESS}:5000`;
 const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 
 const EventViewerScreen = ({ route, navigation }) => {

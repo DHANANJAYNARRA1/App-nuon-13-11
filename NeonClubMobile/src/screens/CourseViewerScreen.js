@@ -10,9 +10,10 @@ import {
   Linking,
 } from 'react-native';
 import { courseAPI, progressAPI } from '../services/api';
+import { IP_ADDRESS } from '../../config/ipConfig';
 
 // Helper to get full URL for uploads
-const BASE_URL = 'http://192.168.0.116:5000'; // Updated to correct IP
+const BASE_URL = `http://${IP_ADDRESS}:5000`;
 const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 
 const CourseViewerScreen = ({ route, navigation }) => {

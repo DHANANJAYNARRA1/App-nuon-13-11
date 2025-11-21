@@ -5,6 +5,7 @@ import { eventAPI, workshopAPI, courseAPI } from '../services/api';
 import { connectSocket, on as onSocket, disconnectSocket } from '../utils/socket';
 import { COLOR_SCHEME } from '../utils/colors';
 import { useSafePress } from '../hooks/useSafePress';
+import { IP_ADDRESS } from '../../config/ipConfig';
 
 const Tab = ({ label, active, onPress }) => {
   const safeOnPress = useSafePress(onPress);
@@ -132,7 +133,7 @@ const ActivitiesScreen = ({ navigation, route }) => {
   }, [tab, events, workshops, courses, query]);
 
   // Always use full URL for local uploads
-  const BASE_URL = 'http://192.168.0.116:5000'; // Updated to correct IP
+  const BASE_URL = `http://${IP_ADDRESS}:5000`;
   const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 
   const renderItem = ({ item }) => {

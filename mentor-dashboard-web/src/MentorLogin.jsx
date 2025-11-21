@@ -21,7 +21,7 @@ const MentorLogin = () => {
       setError('');
       console.log('Attempting login with:', { username, password });
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/mentor/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

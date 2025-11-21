@@ -8,6 +8,8 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
  */
 const config = {
   watchMode: 'polling',
+  resetCache: true,
+  maxWorkers: 1,
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);

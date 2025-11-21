@@ -67,9 +67,37 @@ export const AuthProvider = ({ children }) => {
   const updateUser = async (userData) => {
     console.log('[AuthContext] Updating user:', userData);
     console.log('[AuthContext] isProfileComplete:', userData?.isProfileComplete);
-    setUser(userData);
-    await AsyncStorage.setItem('user', JSON.stringify(userData));
-    console.log('[AuthContext] User updated in context and storage');
+    
+    // Check if profile is incomplete
+    const profileIncomplete = checkProfileIncomplete(userData);
+    const updatedUserData = {
+      ...userData,
+      profileIncomplete
+    };
+    
+    setUser(updatedUserData);
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUserData));
+    console.log('[AuthContext] User updated in context and storage, profileIncomplete:', profileIncomplete);
+  };
+
+  // Helper function to check if profile is incomplete
+  const checkProfileIncomplete = (userData) => {
+    if (!userData) return true;
+    
+    // Check required fields for professional profile
+    const requiredFields = [
+      'organization',
+      'registrationNumber',
+      'highestQualification'
+    ];
+    
+    const missingFields = requiredFields.filter(field => {
+      const value = userData[field];
+      return !value || value === '' || value === 'Not specified';
+    });
+    
+    console.log('[AuthContext] Profile check - missing fields:', missingFields);
+    return missingFields.length > 0;
   };
 
   const signUp = async (userData) => {

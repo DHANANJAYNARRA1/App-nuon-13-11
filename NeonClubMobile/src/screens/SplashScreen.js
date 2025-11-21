@@ -46,7 +46,10 @@ const SplashScreen = ({ navigation }) => {
 
     const timer = setTimeout(() => {
       if (user) {
-        if (!user.isProfileComplete) {
+        // Check if profile is truly incomplete (missing essential fields)
+        const needsProfileSetup = !user.isProfileComplete && (!user.name || !user.email);
+        
+        if (needsProfileSetup) {
           navigation.replace('ProfileSetup');
         } else {
           navigation.replace('Main');

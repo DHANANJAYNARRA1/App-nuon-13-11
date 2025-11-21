@@ -46,6 +46,8 @@ const allowedOrigins = [
   `http://localhost:3001`,
   `http://localhost:3002`,
   `http://localhost:5000`,
+  `http://192.168.0.116:3000`,
+  `http://192.168.0.116:3001`,
 ];
 
 app.use((req, res, next) => {

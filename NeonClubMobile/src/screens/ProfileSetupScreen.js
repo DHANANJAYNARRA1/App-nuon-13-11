@@ -83,8 +83,8 @@ const ProfileSetupScreen = () => {
     });
   }, []);
 
-  // Multi-step state
-  const [step, setStep] = useState(0); // 0: Personal, 1: Professional, 2: Location
+  // Multi-step state - Now 3 steps: Personal, Professional (skippable), Location
+  const [step, setStep] = useState(1); // 1: Personal, 2: Professional (skippable), 3: Location
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -93,6 +93,8 @@ const ProfileSetupScreen = () => {
     specialization: '',
     experience: '',
     organization: '',
+    registrationNumber: '',
+    highestQualification: '',
     location: '',
     city: '',
     state: '',
@@ -100,6 +102,7 @@ const ProfileSetupScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const totalSteps = 3;
 
   // For new user registration, we don't need a token initially
   // The token will be generated after successful registration
@@ -110,27 +113,26 @@ const ProfileSetupScreen = () => {
 
   // Step validation
   const validateStep = () => {
-    if (step === 0) {
-      if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-        Alert.alert('Error', 'Please fill all personal details.');
+    if (step === 1) {
+      // Step 1: Personal Information - Required
+      if (!formData.name || !formData.email || !formData.specialization || !formData.experience) {
+        Alert.alert('Error', 'Please fill in all required fields (Name, Email, Specialization, Experience).');
         return false;
       }
-      if (formData.password !== formData.confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match.');
-        return false;
-      }
-      if (formData.password.length < 6) {
-        Alert.alert('Error', 'Password must be at least 6 characters long.');
-        return false;
-      }
-    } else if (step === 1) {
-      if (!formData.specialization || !formData.experience || !formData.organization) {
-        Alert.alert('Error', 'Please fill all professional details.');
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        Alert.alert('Error', 'Please enter a valid email address.');
         return false;
       }
     } else if (step === 2) {
-      if (!formData.location || !formData.city || !formData.state) {
-        Alert.alert('Error', 'Please fill all location details.');
+      // Step 2: Professional Information - OPTIONAL (can be skipped)
+      // No validation required, user can skip this step
+      return true;
+    } else if (step === 3) {
+      // Step 3: Location - Required
+      if (!formData.city || !formData.state) {
+        Alert.alert('Error', 'Please fill in City and State.');
         return false;
       }
     }
@@ -140,7 +142,21 @@ const ProfileSetupScreen = () => {
   const handleNext = () => {
     if (validateStep()) setStep((s) => s + 1);
   };
-  const handleBack = () => setStep((s) => Math.max(0, s - 1));
+  const handleBack = () => setStep((s) => Math.max(1, s - 1));
+
+  // Add skip functionality for Step 2 (Professional Details)
+  const handleSkip = () => {
+    if (step === 2) {
+      Alert.alert(
+        'Skip Professional Details?',
+        'You can complete these details later from your profile.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Skip', onPress: () => setStep(3) }
+        ]
+      );
+    }
+  };
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -151,23 +167,32 @@ const ProfileSetupScreen = () => {
       console.log('[PROFILE SETUP] Initial user data:', initialUser);
       console.log('[PROFILE SETUP] Form data:', formData);
 
+      // Check if professional details are filled
+      const hasCompletedProfessionalDetails = Boolean(
+        formData.organization?.trim() && 
+        formData.registrationNumber?.trim() && 
+        formData.highestQualification?.trim()
+      );
+
       const payload = {
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
-        password: formData.password,
+        password: formData.password || 'temp123', // Fallback if password not set
         phoneNumber: initialUser?.phoneNumber || '', // Store phone number from OTP auth
         specialization: formData.specialization.trim(),
         experience: parseInt(formData.experience) || 0,
-        organization: formData.organization.trim(),
+        organization: formData.organization?.trim() || '',
+        registrationNumber: formData.registrationNumber?.trim() || '',
+        highestQualification: formData.highestQualification?.trim() || '',
         city: formData.city.trim(),
         state: formData.state.trim(),
         location: [formData.city.trim(), formData.state.trim()].filter(Boolean).join(', '),
-        isProfileComplete: true,
+        isProfileComplete: hasCompletedProfessionalDetails, // Mark as complete only if all details filled
+        profileIncomplete: !hasCompletedProfessionalDetails, // Flag for incomplete profile
       };
 
       console.log('[PROFILE SETUP] Final payload:', payload);
-      console.log('[PROFILE SETUP] Current token:', token ? 'Present' : 'Missing');
-      console.log('[PROFILE SETUP] Token length:', token?.length);
+      console.log('[PROFILE SETUP] Profile incomplete flag:', !hasCompletedProfessionalDetails);
 
       // Use /register endpoint for profile completion
       console.log('[PROFILE SETUP] Making API call to /register...');
@@ -176,11 +201,14 @@ const ProfileSetupScreen = () => {
       });
 
       console.log('[PROFILE SETUP] API call successful, response status:', response.status);
-      console.log('[PROFILE SETUP] Full response data:', response.data);
 
       if (response.data?.success) {
         const newUser = response.data.user;
         const newToken = response.data.token;
+        
+        // Add profile incomplete flag to user object
+        newUser.profileIncomplete = !hasCompletedProfessionalDetails;
+        
         console.log('New user registered:', newUser);
         console.log('Registration token:', newToken);
 
@@ -193,21 +221,19 @@ const ProfileSetupScreen = () => {
         updateUser(newUser);
 
         setLoading(false);
-        Alert.alert('Success', 'Registration complete! Welcome to Neon Club!');
+        
+        if (!hasCompletedProfessionalDetails) {
+          Alert.alert(
+            'Profile Partially Complete', 
+            'You can complete your professional details anytime from your profile.',
+            [{ text: 'OK' }]
+          );
+        } else {
+          Alert.alert('Success', 'Registration complete! Welcome to Neon Club!');
+        }
 
-        // Fetch latest user profile to ensure isProfileComplete is true in context
-        setTimeout(async () => {
-          try {
-            const profileResp = await api.get(`/profile/${newUser.id || newUser._id}`);
-            if (profileResp.data && profileResp.data.user) {
-              await AsyncStorage.setItem('user', JSON.stringify(profileResp.data.user));
-              updateUser(profileResp.data.user);
-              console.log('User context updated with latest profile:', profileResp.data.user);
-            }
-          } catch (e) {
-            console.warn('Failed to fetch latest profile after registration:', e);
-          }
-          // Navigate to Splash (navigator will redirect to Main/dashboard)
+        // Navigate to dashboard
+        setTimeout(() => {
           navigation.reset({ index: 0, routes: [{ name: 'Splash' }] });
         }, 500);
       } else {
@@ -215,15 +241,10 @@ const ProfileSetupScreen = () => {
       }
     } catch (apiError) {
       console.error('API Error:', apiError);
-      console.error('API Error response:', apiError.response?.data);
-      console.error('API Error status:', apiError.response?.status);
-      console.error('API Error headers:', apiError.response?.headers);
       setLoading(false);
 
-      // Check if it's a token/auth issue
       if (apiError.response?.status === 401) {
         Alert.alert('Authentication Error', 'Your session has expired. Please login again.');
-        // Clear token and navigate to login
         setToken(null);
         AsyncStorage.removeItem('token').catch(() => {});
         AsyncStorage.removeItem('user').catch(() => {});
@@ -232,7 +253,7 @@ const ProfileSetupScreen = () => {
       }
 
       const errorMessage = apiError.response?.data?.message || apiError.message || 'Failed to setup profile';
-      Alert.alert('Error', `Profile setup failed: ${errorMessage}\nStatus: ${apiError.response?.status || 'Unknown'}`);
+      Alert.alert('Error', `Profile setup failed: ${errorMessage}`);
     }
   };
 
@@ -246,99 +267,93 @@ const ProfileSetupScreen = () => {
             <View style={styles.header}>
               <View style={styles.logoContainer}><Text style={styles.logoIcon}>⚡</Text></View>
               <Text style={styles.title}>Complete Your Profile</Text>
-              <Text style={styles.subtitle}>Step {step + 1} of 3</Text>
-              <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.loginLinkText}>Sign In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('OTPAuth')}>
-                <Text style={styles.loginLinkText}>Complete Your Profile</Text>
-              </TouchableOpacity>
+              <Text style={styles.subtitle}>Step {step} of {totalSteps}</Text>
+              {/* Progress Bar */}
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { width: `${(step / totalSteps) * 100}%` }]} />
+              </View>
             </View>
             <View style={styles.form}>
               <View style={styles.card}>
-                {step === 0 && (
-                  <>
-                    <Text style={styles.sectionTitle}>Personal Details</Text>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Name *</Text>
-                      <TextInput style={styles.input} placeholder="Enter your name" value={formData.name} onChangeText={(v) => handleInputChange('name', v)} placeholderTextColor="#666" />
-                    </View>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Email *</Text>
-                      <TextInput style={styles.input} placeholder="Enter your email" value={formData.email} onChangeText={(v) => handleInputChange('email', v)} placeholderTextColor="#666" keyboardType="email-address" autoCapitalize="none" />
-                    </View>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Password *</Text>
-                      <View style={styles.passwordContainer}>
-                        <TextInput style={styles.passwordInput} placeholder="Enter your password" value={formData.password} onChangeText={(v) => handleInputChange('password', v)} placeholderTextColor="#666" secureTextEntry />
-                        <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
-                          <Text style={styles.eyeText}>{showPassword ? '🙈' : '👁️'}</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Confirm Password *</Text>
-                      <View style={styles.passwordContainer}>
-                        <TextInput style={styles.passwordInput} placeholder="Confirm your password" value={formData.confirmPassword} onChangeText={(v) => handleInputChange('confirmPassword', v)} placeholderTextColor="#666" secureTextEntry />
-                        <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                          <Text style={styles.eyeText}>{showConfirmPassword ? '🙈' : '👁️'}</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </>
-                )}
                 {step === 1 && (
                   <>
-                    <Text style={styles.sectionTitle}>Professional Details</Text>
+                    <Text style={styles.sectionTitle}>📋 Personal Information</Text>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Full Name *</Text>
+                      <TextInput style={styles.input} placeholder="Enter your full name" value={formData.name} onChangeText={(v) => handleInputChange('name', v)} placeholderTextColor="#999" />
+                    </View>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Email Address *</Text>
+                      <TextInput style={styles.input} placeholder="your.email@example.com" value={formData.email} onChangeText={(v) => handleInputChange('email', v)} placeholderTextColor="#999" keyboardType="email-address" autoCapitalize="none" />
+                    </View>
                     <View style={styles.inputGroup}>
                       <Text style={styles.label}>Specialization *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., Pediatric Nursing, ICU" value={formData.specialization} onChangeText={(v) => handleInputChange('specialization', v)} placeholderTextColor="#666" />
+                      <TextInput style={styles.input} placeholder="e.g., General Nursing, Critical Care, Pediatric" value={formData.specialization} onChangeText={(v) => handleInputChange('specialization', v)} placeholderTextColor="#999" />
                     </View>
                     <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Experience (years) *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., 3" value={formData.experience} onChangeText={(v) => handleInputChange('experience', v)} placeholderTextColor="#666" keyboardType="numeric" />
-                    </View>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Organization *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., Apollo Hospitals" value={formData.organization} onChangeText={(v) => handleInputChange('organization', v)} placeholderTextColor="#666" />
+                      <Text style={styles.label}>Years of Experience *</Text>
+                      <TextInput style={styles.input} placeholder="e.g., 0-1, 1-3, 3-5, 5-10, 10+" value={formData.experience} onChangeText={(v) => handleInputChange('experience', v)} placeholderTextColor="#999" keyboardType="numeric" />
                     </View>
                   </>
                 )}
                 {step === 2 && (
                   <>
-                    <Text style={styles.sectionTitle}>Location Details</Text>
+                    <Text style={styles.sectionTitle}>💼 Professional Information (Optional)</Text>
+                    <Text style={styles.helperText}>You can skip this and complete later</Text>
                     <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Location *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., Mumbai" value={formData.location} onChangeText={(v) => handleInputChange('location', v)} placeholderTextColor="#666" />
+                      <Text style={styles.label}>Current Workplace</Text>
+                      <TextInput style={styles.input} placeholder="Hospital/Clinic name" value={formData.organization} onChangeText={(v) => handleInputChange('organization', v)} placeholderTextColor="#999" />
                     </View>
                     <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Nursing Registration Number</Text>
+                      <TextInput style={styles.input} placeholder="Enter registration number" value={formData.registrationNumber} onChangeText={(v) => handleInputChange('registrationNumber', v)} placeholderTextColor="#999" />
+                    </View>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Highest Qualification</Text>
+                      <TextInput style={styles.input} placeholder="e.g., GNM, B.Sc Nursing, M.Sc Nursing" value={formData.highestQualification} onChangeText={(v) => handleInputChange('highestQualification', v)} placeholderTextColor="#999" />
+                    </View>
+                  </>
+                )}
+                {step === 3 && (
+                  <>
+                    <Text style={styles.sectionTitle}>📍 Location</Text>
+                    <View style={styles.inputGroup}>
                       <Text style={styles.label}>City *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., Mumbai" value={formData.city} onChangeText={(v) => handleInputChange('city', v)} placeholderTextColor="#666" />
+                      <TextInput style={styles.input} placeholder="Enter your city" value={formData.city} onChangeText={(v) => handleInputChange('city', v)} placeholderTextColor="#999" />
                     </View>
                     <View style={styles.inputGroup}>
                       <Text style={styles.label}>State *</Text>
-                      <TextInput style={styles.input} placeholder="e.g., Maharashtra" value={formData.state} onChangeText={(v) => handleInputChange('state', v)} placeholderTextColor="#666" />
+                      <TextInput style={styles.input} placeholder="e.g., Maharashtra, Delhi, Karnataka" value={formData.state} onChangeText={(v) => handleInputChange('state', v)} placeholderTextColor="#999" />
+                    </View>
+                    <View style={styles.successBox}>
+                      <Text style={styles.successText}>🎉 You're almost there! Complete your profile to unlock exclusive courses, events, and rewards.</Text>
                     </View>
                   </>
                 )}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 24 }}>
-                  {step > 0 && (
-                    <TouchableOpacity style={[styles.button, { backgroundColor: '#ddd', flex: 1, marginRight: 8 }]} onPress={handleBack} disabled={loading}>
-                      <Text style={[styles.primaryButtonText, { color: '#333' }]}>Back</Text>
+                  {step > 1 && (
+                    <TouchableOpacity style={[styles.button, styles.backButton, { flex: 1, marginRight: 8 }]} onPress={handleBack} disabled={loading}>
+                      <Text style={[styles.primaryButtonText, { color: '#666' }]}>← Back</Text>
                     </TouchableOpacity>
                   )}
-                  {step < 2 && (
+                  {step < 3 && (
                     <TouchableOpacity style={[styles.button, styles.primaryButton, { flex: 1 }]} onPress={handleNext} disabled={loading}>
-                      <Text style={styles.primaryButtonText}>Next</Text>
+                      <Text style={styles.primaryButtonText}>Continue →</Text>
                     </TouchableOpacity>
                   )}
-                  {step === 2 && (
+                  {step === 3 && (
                     <TouchableOpacity style={[styles.button, styles.primaryButton, { flex: 1 }]} onPress={handleSubmit} disabled={loading}>
-                      {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryButtonText}>Submit</Text>}
+                      {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryButtonText}>Complete Profile</Text>}
                     </TouchableOpacity>
                   )}
                 </View>
-
+                
+                {/* Skip button for Step 2 */}
+                {step === 2 && (
+                  <TouchableOpacity style={[styles.button, styles.skipButton]} onPress={handleSkip} disabled={loading}>
+                    <Text style={styles.skipButtonText}>Skip for Now</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </ScrollView>
@@ -404,7 +419,39 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: NEON_COLORS.textSecondary,
-    marginBottom: 8,
+    marginBottom: 12,
+  },
+  progressBarContainer: {
+    width: '80%',
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 3,
+    marginTop: 12,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: NEON_COLORS.neonCyan,
+    borderRadius: 3,
+  },
+  helperText: {
+    fontSize: 12,
+    color: NEON_COLORS.textSecondary,
+    marginBottom: 12,
+    fontStyle: 'italic',
+  },
+  successBox: {
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+  },
+  successText: {
+    fontSize: 13,
+    color: '#10B981',
+    lineHeight: 20,
   },
   loginLink: {
     marginTop: 8,
@@ -458,6 +505,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  backButton: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
   primaryButton: {
     backgroundColor: NEON_COLORS.neonPurple,
     shadowColor: NEON_COLORS.neonPurple,
@@ -465,6 +517,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 10,
     elevation: 5,
+  },
+  skipButton: {
+    backgroundColor: 'transparent',
+    marginTop: -8,
+  },
+  skipButtonText: {
+    color: NEON_COLORS.textSecondary,
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
   primaryButtonText: {
     color: NEON_COLORS.textPrimary,

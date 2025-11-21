@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,16 @@ const OTPAuthScreen = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const [fbConfirmation, setFbConfirmation] = useState(null);
   const [otpSession, setOtpSession] = useState(null); // idempotent session header for backend
+  
+  // OTP input refs for auto-focus
+  const otpInputRefs = useRef([]);
+
+  useEffect(() => {
+    // Auto-focus first OTP input when step changes to verify
+    if (step === 'verify' && otpInputRefs.current[0]) {
+      setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
+    }
+  }, [step]);
 
   // Dev helper: base is locked; show current base instead of cycling
   const devCycleBase = async () => {
@@ -159,23 +169,36 @@ const OTPAuthScreen = () => {
         updateUser(user);
         try { await registerPushTokenIfAvailable(); } catch {}
       }
-      Alert.alert('Success', 'OTP verified successfully');
-
-      // Always navigate to ProfileSetup for new users to complete their profile
-      // Pass phone number for storage in profile
-      const phoneNumber = authMethod === 'phone' ? `+91${identifier.replace(/\D/g, '')}` : null;
-
-      navigation.reset({
-        index: 0,
-        routes: [{
-          name: 'ProfileSetup',
-          params: {
-            user: { ...user, phoneNumber: user?.phoneNumber || phoneNumber },
-            token: token,
-            isNewUser: true // Always treat as new user for profile completion
-          }
-        }]
-      });
+      
+      // Check if user profile is complete
+      const isProfileComplete = user?.isProfileComplete !== false && 
+                               user?.name && 
+                               user?.email;
+      
+      if (isNewUser || !isProfileComplete) {
+        // New user or incomplete profile - go to ProfileSetup
+        Alert.alert('Success', 'OTP verified successfully');
+        const phoneNumber = authMethod === 'phone' ? `+91${identifier.replace(/\D/g, '')}` : null;
+        
+        navigation.reset({
+          index: 0,
+          routes: [{
+            name: 'ProfileSetup',
+            params: {
+              user: { ...user, phoneNumber: user?.phoneNumber || phoneNumber },
+              token: token,
+              isNewUser: isNewUser
+            }
+          }]
+        });
+      } else {
+        // Existing user with complete profile - go to Main (Dashboard)
+        Alert.alert('Welcome Back!', `Welcome back, ${user?.name || 'User'}!`);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }]
+        });
+      }
     } catch (error) {
       console.error('Verify OTP error:', error?.response?.data || error?.message || error);
       const baseNow = getCurrentBaseURL && getCurrentBaseURL();
@@ -212,7 +235,7 @@ const OTPAuthScreen = () => {
 
   return (
     <LinearGradient
-      colors={NEON_COLORS.gradientPurpleToBlue}
+      colors={['#9333EA', '#4F46E5', '#2563EB']} // purple-600 via indigo-600 to blue-600
       style={styles.container}
     >
       <FullScreenLoader visible={loading} label={step==='input' ? 'Sending OTP…' : 'Verifying…'} />
@@ -225,130 +248,161 @@ const OTPAuthScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          <View style={styles.logoContainer} onLongPress={devCycleBase}>
+          {/* Logo with NUON branding */}
+          <View style={styles.logoContainer}>
             <Text style={styles.logoIcon}>⚡</Text>
           </View>
-          <Text style={styles.title}>Welcome to Neon Club</Text>
-          <Text style={styles.subtitle}>
-            {step === 'input'
-              ? `Enter your ${authMethod === 'phone' ? 'phone number' : 'email'} to get started`
-              : `Enter the 6-digit code sent to your ${authMethod}`
-            }
-          </Text>
+          <Text style={styles.title}>Welcome to NUON</Text>
+          <Text style={styles.tagline}>Nurse United, Opportunities Nourished</Text>
         </View>
 
         <View style={styles.form}>
         {step === 'input' ? (
           <>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>
-                {authMethod === 'phone' ? 'Phone Number' : 'Email Address'}
-              </Text>
-              <TextInput
-                style={styles.input}
-                placeholder={authMethod === 'phone' ? '10-digit mobile number' : 'your@email.com'}
-                value={identifier}
-                onChangeText={(txt) => {
-                  if (authMethod === 'phone') {
-                    const digits = txt.replace(/\D/g, '').slice(0, 10);
-                    setIdentifier(digits);
-                  } else {
-                    setIdentifier(txt.trim());
-                  }
-                }}
-                keyboardType={authMethod === 'phone' ? 'number-pad' : 'email-address'}
-                autoCapitalize="none"
-                autoCorrect={false}
-                maxLength={authMethod === 'phone' ? 10 : 100}
-              />
+            {/* White card container */}
+            <View style={styles.authCard}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Login / Sign Up</Text>
+                <Text style={styles.cardSubtitle}>Enter your phone number to continue</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Phone Number</Text>
+                <View style={styles.phoneInputWrapper}>
+                  <Text style={styles.phoneIcon}>📞</Text>
+                  <TextInput
+                    style={styles.phoneInput}
+                    placeholder="+91 XXXXX XXXXX"
+                    value={identifier}
+                    onChangeText={(txt) => {
+                      const digits = txt.replace(/\D/g, '').slice(0, 10);
+                      setIdentifier(digits);
+                    }}
+                    keyboardType="number-pad"
+                    placeholderTextColor="#9CA3AF"
+                  />
+                </View>
+                <Text style={styles.helperText}>
+                  We'll send you a 6-digit OTP to verify your number
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.primaryButton, identifier.replace(/\D/g, '').length !== 10 && styles.buttonDisabled]}
+                onPress={handleSendOTP}
+                disabled={loading || identifier.replace(/\D/g, '').length !== 10}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <>
+                    <Text style={styles.primaryButtonText}>Send OTP</Text>
+                    <Text style={styles.arrowIcon}>→</Text>
+                  </>
+                )}
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={[styles.button, styles.primaryButton, ((authMethod === 'phone' && identifier.replace(/\D/g, '').length !== 10) || (authMethod === 'email' && !/^([^\s@]+)@([^\s@]+)\.[^\s@]+$/.test(identifier))) && { opacity: 0.6 }]}
-              onPress={handleSendOTP}
-              disabled={loading || (authMethod === 'phone' ? identifier.replace(/\D/g, '').length !== 10 : !/^([^\s@]+)@([^\s@]+)\.[^\s@]+$/.test(identifier))}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.primaryButtonText}>Send OTP</Text>
-              )}
-            </TouchableOpacity>
-
-            {/* Sign In link for existing users - in phone number input step */}
-            <TouchableOpacity
-              style={styles.signInContainer}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={styles.signInText}>
-                Already have an account? Sign In
-              </Text>
-            </TouchableOpacity>
+            {/* Footer text */}
+            <Text style={styles.footerText}>
+              By continuing, you agree to our Terms of Service and Privacy Policy
+            </Text>
           </>
         ) : (
           <>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Enter OTP</Text>
-              <TextInput
-                style={styles.otpInput}
-                placeholder="000000"
-                value={otp}
-                onChangeText={(t) => setOtp((t || '').replace(/\D/g, '').slice(0, 6))}
-                keyboardType="numeric"
-                maxLength={6}
-                autoFocus
-              />
-            </View>
-
-            <TouchableOpacity
-              style={[styles.button, styles.primaryButton]}
-              onPress={handleVerifyOTP}
-              disabled={loading || otp.length !== 6}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.primaryButtonText}>Verify OTP</Text>
-              )}
-            </TouchableOpacity>
-
-            <View style={styles.resendContainer}>
-              {resendTimer > 0 ? (
-                <Text style={styles.timerText}>
-                  Resend OTP in {resendTimer}s
+            {/* White card container for OTP */}
+            <View style={styles.authCard}>
+              <View style={styles.cardHeader}>
+                <View style={styles.otpIconContainer}>
+                  <Text style={styles.otpIcon}>📞</Text>
+                </View>
+                <Text style={styles.cardTitle}>Verify OTP</Text>
+                <Text style={styles.cardSubtitle}>
+                  We've sent a 6-digit code to{'\n'}
+                  <Text style={styles.phoneNumberDisplay}>{identifier}</Text>
                 </Text>
-              ) : (
-                <TouchableOpacity onPress={handleResendOTP} disabled={loading}>
-                  <Text style={styles.resendText}>Resend OTP</Text>
-                </TouchableOpacity>
-              )}
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.labelCenter}>Enter OTP</Text>
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <TextInput
+                      key={index}
+                      ref={(ref) => (otpInputRefs.current[index] = ref)}
+                      style={[
+                        styles.otpInput,
+                        otp[index] && styles.otpInputFilled
+                      ]}
+                      maxLength={1}
+                      keyboardType="number-pad"
+                      value={otp[index] || ''}
+                      onChangeText={(text) => {
+                        const newOtp = otp.split('');
+                        newOtp[index] = text;
+                        const updatedOtp = newOtp.join('');
+                        setOtp(updatedOtp);
+                        
+                        // Auto-focus next input if text entered
+                        if (text && index < 5) {
+                          otpInputRefs.current[index + 1]?.focus();
+                        }
+                      }}
+                      onKeyPress={({ nativeEvent }) => {
+                        // Auto-focus previous input on backspace
+                        if (nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
+                          otpInputRefs.current[index - 1]?.focus();
+                        }
+                      }}
+                      placeholderTextColor="#D1D5DB"
+                    />
+                  ))}
+                </View>
+              </View>
+
+              <View style={styles.resendContainer}>
+                {resendTimer > 0 ? (
+                  <Text style={styles.timerText}>
+                    Resend OTP in {resendTimer}s
+                  </Text>
+                ) : (
+                  <TouchableOpacity onPress={handleResendOTP} disabled={loading}>
+                    <Text style={styles.resendText}>
+                      Didn't receive? <Text style={styles.resendLink}>Resend OTP</Text>
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <TouchableOpacity
+                style={[styles.primaryButton, otp.length !== 6 && styles.buttonDisabled]}
+                onPress={handleVerifyOTP}
+                disabled={loading || otp.length !== 6}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.primaryButtonText}>Verify & Continue</Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.changeNumberButton}
+                onPress={() => {
+                  setStep('input');
+                  setOtp('');
+                  setResendTimer(0);
+                }}
+              >
+                <Text style={styles.changeNumberText}>Change Phone Number</Text>
+              </TouchableOpacity>
             </View>
 
-          </>
-        )}
-
-        {step === 'input' && (
-          <TouchableOpacity
-            style={styles.switchContainer}
-            onPress={switchAuthMethod}
-          >
-            <Text style={styles.switchText}>
-              Use {authMethod === 'phone' ? 'email' : 'phone number'} instead
+            {/* Footer text */}
+            <Text style={styles.footerText}>
+              By continuing, you agree to our Terms of Service and Privacy Policy
             </Text>
-          </TouchableOpacity>
-        )}
-
-        {step === 'verify' && (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => {
-              setStep('input');
-              setOtp('');
-              setResendTimer(0);
-            }}
-          >
-            <Text style={styles.backButtonText}>Change {authMethod}</Text>
-          </TouchableOpacity>
+          </>
         )}
       </View>
       </KeyboardAvoidingView>
@@ -362,165 +416,231 @@ const styles = StyleSheet.create({
   },
   floatingCircle1: {
     position: 'absolute',
-    top: 100,
-    left: -50,
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: NEON_COLORS.neonPurpleGlow,
+    top: '25%',
+    left: '25%',
+    width: 384,
+    height: 384,
+    borderRadius: 192,
+    backgroundColor: 'rgba(192, 132, 252, 0.2)', // purple-400/20
     opacity: 0.6,
   },
   floatingCircle2: {
     position: 'absolute',
-    bottom: 200,
-    right: -30,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: NEON_COLORS.neonBlueGlow,
+    bottom: '25%',
+    right: '25%',
+    width: 384,
+    height: 384,
+    borderRadius: 192,
+    backgroundColor: 'rgba(96, 165, 250, 0.2)', // blue-400/20
     opacity: 0.5,
   },
   keyboardContainer: {
     flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
   header: {
-    padding: 40,
-    paddingTop: 80,
     alignItems: 'center',
+    marginBottom: 32,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
+    width: 96,
+    height: 96,
     borderRadius: 20,
-    backgroundColor: NEON_COLORS.glassBg,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: NEON_COLORS.glassBorder,
-    shadowColor: NEON_COLORS.neonPurple,
+    marginBottom: 24,
+    shadowColor: '#9333EA',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 15,
     elevation: 8,
   },
   logoIcon: {
-    fontSize: 36,
-    color: NEON_COLORS.neonPurple,
+    fontSize: 48,
+    color: '#FFFFFF',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: NEON_COLORS.textPrimary,
+    color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 12,
-    textShadowColor: NEON_COLORS.neonPurple,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    marginBottom: 8,
   },
-  subtitle: {
+  tagline: {
     fontSize: 16,
-    color: NEON_COLORS.neonBlue,
+    color: '#E9D5FF', // purple-100
     textAlign: 'center',
-    lineHeight: 24,
   },
   form: {
-    flex: 1,
-    padding: 20,
+    width: '100%',
+    maxWidth: 448, // max-w-md
+    alignSelf: 'center',
+  },
+  authCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    padding: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 30,
+    elevation: 10,
+  },
+  cardHeader: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#111827', // gray-900
+    marginBottom: 8,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#6B7280', // gray-600
+    textAlign: 'center',
+  },
+  phoneNumberDisplay: {
+    fontWeight: '600',
+    color: '#111827', // gray-900
+  },
+  otpIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#EDE9FE', // purple-100 to blue-100 gradient approximation
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  otpIcon: {
+    fontSize: 32,
+    color: '#9333EA', // purple-600
   },
   inputContainer: {
     marginBottom: 24,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: NEON_COLORS.textPrimary,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151', // gray-700
     marginBottom: 8,
   },
-  input: {
-    backgroundColor: NEON_COLORS.glassBg,
+  labelCenter: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  phoneInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: NEON_COLORS.textPrimary,
-    borderWidth: 1,
-    borderColor: NEON_COLORS.glassBorder,
-    backdropFilter: 'blur(10px)',
+    borderWidth: 2,
+    borderColor: '#E5E7EB', // gray-200
+    height: 56,
+    paddingHorizontal: 12,
+  },
+  phoneIcon: {
+    fontSize: 20,
+    marginRight: 8,
+    color: '#9CA3AF', // gray-400
+  },
+  phoneInput: {
+    flex: 1,
+    fontSize: 18,
+    color: '#111827',
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#6B7280', // gray-500
+    marginTop: 8,
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
   otpInput: {
-    backgroundColor: NEON_COLORS.glassBg,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 24,
-    color: NEON_COLORS.neonCyan,
+    width: 40,
+    height: 52,
+    borderRadius: 8,
     borderWidth: 2,
-    borderColor: NEON_COLORS.neonCyan,
+    borderColor: '#E5E7EB', // gray-200
+    backgroundColor: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '600',
     textAlign: 'center',
-    letterSpacing: 8,
-    backdropFilter: 'blur(10px)',
+    color: '#111827',
+    marginHorizontal: 3,
   },
-  button: {
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 16,
+  otpInputFilled: {
+    borderColor: '#9333EA', // purple-600 when filled
+    backgroundColor: '#F5F3FF', // purple-50
   },
   primaryButton: {
-    backgroundColor: NEON_COLORS.neonPurple,
-    shadowColor: NEON_COLORS.neonPurple,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#9333EA', // purple-600
+    borderRadius: 9999, // rounded-full
+    height: 56,
+    marginTop: 8,
+    shadowColor: '#9333EA',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
     elevation: 5,
   },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
   primaryButtonText: {
-    color: NEON_COLORS.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  arrowIcon: {
+    fontSize: 20,
+    color: '#FFFFFF',
+    marginLeft: 8,
   },
   resendContainer: {
     alignItems: 'center',
-    marginTop: 16,
+    marginVertical: 16,
   },
   timerText: {
-    color: NEON_COLORS.textSecondary,
     fontSize: 14,
+    color: '#6B7280',
   },
   resendText: {
-    color: NEON_COLORS.neonCyan,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  switchContainer: {
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  switchText: {
-    color: NEON_COLORS.textSecondary,
     fontSize: 14,
-    textDecorationLine: 'underline',
+    color: '#6B7280',
   },
-  backButton: {
+  resendLink: {
+    color: '#9333EA', // purple-600
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+  },
+  changeNumberButton: {
     alignItems: 'center',
     marginTop: 16,
   },
-  backButtonText: {
-    color: NEON_COLORS.neonCyan,
-    fontSize: 16,
-    fontWeight: 'bold',
+  changeNumberText: {
+    fontSize: 14,
+    color: '#6B7280', // gray-600
   },
-  signInContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  signInText: {
-    color: '#00FFFF', // Bright cyan color for better visibility
-    fontSize: 16,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-    textShadowColor: '#00FFFF',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 5,
+  footerText: {
+    fontSize: 12,
+    color: '#E9D5FF', // purple-100
+    textAlign: 'center',
+    marginTop: 24,
   },
 });
 

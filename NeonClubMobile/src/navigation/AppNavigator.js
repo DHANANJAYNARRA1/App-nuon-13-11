@@ -33,6 +33,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import HelpScreen from '../screens/HelpScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import Mentorship from '../screens/Mentorship';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -98,7 +99,7 @@ const AppNavigator = () => {
               options={{ headerShown: false }}
             />
           </React.Fragment>
-        ) : !user.isProfileComplete ? (
+        ) : (!user.isProfileComplete && (!user.name || !user.email)) ? (
           <React.Fragment>
             <Stack.Screen
               name="ProfileSetup"
@@ -111,6 +112,11 @@ const AppNavigator = () => {
             <Stack.Screen
               name="Main"
               component={BottomTabNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

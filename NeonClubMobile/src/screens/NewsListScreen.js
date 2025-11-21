@@ -1,15 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Platform } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Platform, Modal } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import api, { activitiesAPI, newsAPI } from '../services/api';
 import { connectSocket, on as onSocket, disconnectSocket } from '../utils/socket';
 import { COLOR_SCHEME } from '../utils/colors';
-
-const Chip = ({ label, active, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.chip, active && styles.chipActive]}>
-    <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
-  </TouchableOpacity>
-);
 
 const Badge = ({ label, color }) => (
   <View style={[styles.badge, { backgroundColor: color || '#EEF2FF' }]}>
@@ -81,6 +75,7 @@ const NewsListScreen = ({ navigation }) => {
     { title: 'Breakthrough in Nursing Education', category: 'Education', type: 'article', readMinutes: 8, createdAt: new Date().toISOString(), thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop' },
   ]);
   const [range, setRange] = useState('All Time');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const fetchNews = async () => {
     try {
@@ -125,16 +120,53 @@ const NewsListScreen = ({ navigation }) => {
         <Text style={styles.headerSub}>Stay updated with latest healthcare insights</Text>
       </LinearGradient>
 
-      {/* Filters */}
+      {/* Filters - Figma Style with Filter Icon and Dropdown */}
       <View style={styles.filtersRow}>
-        <View style={styles.filterLeft}> 
-          <Text style={styles.filterIcon}>🔎</Text>
-          <Chip label="All Time" active={range==='All Time'} onPress={() => setRange('All Time')} />
-          <Chip label="This Month" active={range==='This Month'} onPress={() => setRange('This Month')} />
-          <Chip label="This Week" active={range==='This Week'} onPress={() => setRange('This Week')} />
-        </View>
+        <TouchableOpacity 
+          style={styles.filterDropdown} 
+          onPress={() => setShowDropdown(!showDropdown)}
+        >
+          <Text style={styles.filterIcon}>⚙️</Text>
+          <Text style={styles.filterDropdownText}>{range}</Text>
+          <Text style={styles.dropdownArrow}>▼</Text>
+        </TouchableOpacity>
         <Text style={styles.countText}>{filtered.length} articles</Text>
       </View>
+
+      {/* Dropdown Menu - Overlay */}
+      {showDropdown && (
+        <>
+          <TouchableOpacity 
+            style={styles.dropdownOverlay} 
+            activeOpacity={1}
+            onPress={() => setShowDropdown(false)}
+          >
+            <View style={styles.dropdownMenu}>
+              <TouchableOpacity 
+                style={[styles.dropdownItem, range === 'All Time' && styles.dropdownItemSelected]}
+                onPress={() => { setRange('All Time'); setShowDropdown(false); }}
+              >
+                <Text style={[styles.dropdownItemText, range === 'All Time' && styles.dropdownItemActiveText]}>All Time</Text>
+                {range === 'All Time' && <Text style={styles.checkmark}>✓</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.dropdownItem, range === 'This Week' && styles.dropdownItemSelected]}
+                onPress={() => { setRange('This Week'); setShowDropdown(false); }}
+              >
+                <Text style={[styles.dropdownItemText, range === 'This Week' && styles.dropdownItemActiveText]}>This Week</Text>
+                {range === 'This Week' && <Text style={styles.checkmark}>✓</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.dropdownItem, range === 'This Month' && styles.dropdownItemSelected]}
+                onPress={() => { setRange('This Month'); setShowDropdown(false); }}
+              >
+                <Text style={[styles.dropdownItemText, range === 'This Month' && styles.dropdownItemActiveText]}>This Month</Text>
+                {range === 'This Month' && <Text style={styles.checkmark}>✓</Text>}
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </>
+      )}
 
       <FlatList
         data={filtered}
@@ -161,14 +193,83 @@ const styles = StyleSheet.create({
   backBtn: { padding: 6 },
   headerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   headerSub: { color: '#F1F5F9', marginTop: 8 },
-  filtersRow: { flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', padding: 12 },
-  filterLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  filterIcon: { fontSize: 16, color: COLOR_SCHEME.textSecondary },
-  countText: { color: COLOR_SCHEME.textSecondary },
-  chip: { backgroundColor: '#F3F4F6', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
-  chipActive: { backgroundColor: '#EEF2FF' },
-  chipText: { color: COLOR_SCHEME.textSecondary, fontWeight: '600' },
-  chipTextActive: { color: COLOR_SCHEME.primaryPurple },
+  filtersRow: { flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', paddingHorizontal: 16, paddingVertical: 12 },
+  filterDropdown: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 8,
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterIcon: { fontSize: 18 },
+  filterDropdownText: { 
+    fontSize: 14, 
+    fontWeight: '600',
+    color: '#111827',
+  },
+  dropdownArrow: { 
+    fontSize: 10, 
+    color: '#6B7280',
+  },
+  countText: { 
+    color: '#6B7280',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  dropdownOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 115,
+    left: 16,
+    width: 180,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    paddingVertical: 6,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    marginHorizontal: 6,
+    marginVertical: 1,
+    borderRadius: 6,
+  },
+  dropdownItemSelected: {
+    backgroundColor: '#EDE9FE',
+  },
+  dropdownItemText: {
+    fontSize: 14,
+    color: '#374151',
+  },
+  dropdownItemActiveText: {
+    color: '#7C3AED',
+    fontWeight: '600',
+  },
+  checkmark: {
+    fontSize: 14,
+    color: '#7C3AED',
+    fontWeight: 'bold',
+  },
   card: { flexDirection: 'row', gap: 12, backgroundColor: '#fff', borderRadius: 16, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: '#E5E7EB', ...Platform.select({ android: { elevation: 3 }, ios: { shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } } }) },
   thumb: { width: 96, height: 96, borderRadius: 12, overflow: 'hidden', backgroundColor: '#E5E7EB' },
   featuredBadge: { position: 'absolute', top: 4, left: 4, backgroundColor: '#F59E0B', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8 },

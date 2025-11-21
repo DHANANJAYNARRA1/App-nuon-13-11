@@ -12,8 +12,9 @@ import {
 import Video from 'react-native-video';
 import { courseAPI, paymentAPI } from '../services/api';
 import SuccessModal from '../components/SuccessModal';
+import { IP_ADDRESS } from '../../config/ipConfig';
 
-const BASE_URL = 'http://192.168.0.116:5000'; // Updated to correct IP
+const BASE_URL = `http://${IP_ADDRESS}:5000`;
 const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 
 const CourseDetailScreen = ({ route, navigation }) => {

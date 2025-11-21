@@ -365,6 +365,32 @@ export const nccAPI = {
 };
 
 // News APIs
+// ============================================
+// BACKEND INTEGRATION READY
+// Admin Panel should manage news through these endpoints:
+// 
+// GET /dashboard/news - Returns latest news for dashboard (used in HomeScreen)
+// GET /dashboard/news/featured - Returns featured news
+// GET /news - Returns all news with optional filtering
+//
+// Expected News Object Structure:
+// {
+//   _id: string,
+//   title: string,
+//   category: string (e.g., 'Guidelines', 'Education', 'Stories'),
+//   type: string (e.g., 'video', 'article'),
+//   imageUrl: string (main image URL),
+//   thumbnail: string (fallback thumbnail URL),
+//   videos: [{ url: string, thumbnail: string }] (optional),
+//   publishedAt: string (ISO date),
+//   createdAt: string (ISO date),
+//   content: string (article content),
+//   excerpt: string (short description),
+//   featured: boolean,
+//   viewCount: number,
+//   readingTime: number (minutes)
+// }
+// ============================================
 export const newsAPI = {
   getLatest: async () => {
     try {

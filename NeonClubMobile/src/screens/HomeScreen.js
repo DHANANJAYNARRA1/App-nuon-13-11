@@ -39,7 +39,31 @@ const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [courses, setCourses] = useState([]); // State for courses
   // Preseed with demo so UI is never blank; replaced when API returns
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState([
+    { 
+      _id: 'demo1',
+      title: 'New Healthcare Guidelines 2024', 
+      category: 'Guidelines', 
+      type: 'video',
+      thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop',
+      publishedAt: '2024-10-15',
+      videos: [{ url: '', thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop' }]
+    },
+    { 
+      _id: 'demo2',
+      title: 'Breakthrough in Nursing Education', 
+      category: 'Education',
+      thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop',
+      publishedAt: '2024-10-12'
+    },
+    { 
+      _id: 'demo3',
+      title: 'Champion Mentors Success Stories', 
+      category: 'Stories',
+      thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1080&auto=format&fit=crop',
+      publishedAt: '2024-10-08'
+    }
+  ]);
   const [activities, setActivities] = useState([]); // merged events/workshops
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [eventsCount, setEventsCount] = useState(0);
@@ -63,9 +87,19 @@ const HomeScreen = ({ navigation }) => {
 
         const my = coursesResponse?.data?.courses || coursesResponse?.data || [];
         setCourses(Array.isArray(my) ? my : []);
+        
+        // NEWS API INTEGRATION - Ready for backend
+        // API Endpoint: GET /news/latest
+        // Expected Response: { data: [{ _id, title, category, type, imageUrl, thumbnail, videos, publishedAt, createdAt }] }
         let latest = latestRes?.data || [];
         if (!Array.isArray(latest)) latest = [];
-        setNews(latest);
+        // Replace demo data with real API data when available
+        if (latest.length > 0) {
+          setNews(latest);
+        }
+        // If API returns empty, demo data is preserved for UI testing
+        
+        // FEATURED NEWS API - Ready for backend
         setFeaturedNews(Array.isArray(featuredRes?.data) ? featuredRes.data : []);
         // Fetch public events & workshops and merge as "New Activities"
         try {
@@ -167,44 +201,127 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Welcome banner */}
-      <LinearGradient colors={[NEON_COLORS.neonPurple, NEON_COLORS.neonBlue]} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.welcomeBanner}>
-        <View style={{ flexDirection:'row', alignItems:'center' }}>
-          <Text style={[styles.welcomeHeading, { flex: 1 }]} numberOfLines={1} ellipsizeMode="tail">Welcome{user?.name ? `, ${user.name}` : ''}</Text>
-        </View>
-        <Text style={styles.welcomeSub}>Continue your journey with Neon Club</Text>
-      </LinearGradient>
-
-
-      {/* Top 'My Learning' gradient pill */}
-      <View style={{ paddingHorizontal: 20, marginTop: 16 }}>
-        <GradientCard
-          title="My Learning"
-          subtitle="Continue your courses, events & workshops"
-          colors={[NEON_COLORS.neonBlue, NEON_COLORS.neonPurple]}
-          start={{x:0,y:0}}
-          end={{x:1,y:1}}
-          chevron
-          onPress={() => navigation.navigate('MyLearning')}
-          height={100}
-        />
-      </View>
-
-      {/* Latest News (immediately after My Learning) */}
-      <View style={styles.section}>
-        <View style={styles.rowBetween}>
-          <Text style={styles.sectionTitle}>Latest News</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('NewsList')}>
-            <Text style={styles.linkText}>See All</Text>
+      {/* Header with Blue to Purple Gradient - Matching Figma */}
+      <LinearGradient 
+        colors={['#2563EB', '#7C3AED', '#9333EA']} 
+        start={{x:0,y:0}} 
+        end={{x:1,y:1}} 
+        style={styles.headerGradient}
+      >
+        <View style={styles.headerTop}>
+          <TouchableOpacity 
+            style={styles.profileSection}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <View style={styles.profilePhotoContainer}>
+              {user?.profilePhoto ? (
+                <Image source={{ uri: user.profilePhoto }} style={styles.profilePhoto} />
+              ) : (
+                <View style={styles.profilePhotoPlaceholder}>
+                  <Text style={styles.profilePhotoText}>
+                    {user?.name ? user.name.charAt(0).toUpperCase() : '👤'}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View>
+              <Text style={styles.greetingTextWhite}>Hello Nurse {user?.name?.split(' ')[0] || ''} 👋</Text>
+              {user?.profileIncomplete && (
+                <Text style={styles.tapToComplete}>Tap to complete profile</Text>
+              )}
+            </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.notificationButtonWhite}
+            onPress={() => navigation.navigate('Notifications')}
+          >
+            <Text style={styles.bellIconWhite}>🔔</Text>
+            <View style={styles.notificationDot} />
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 12, paddingLeft: 6 }}>
+
+        {/* Quick Stats with Glass Morphism - Matching Figma */}
+        <View style={styles.statsContainerGlass}>
+          <View style={styles.statCardGlass}>
+            <Text style={styles.statIconWhite}>📚</Text>
+            <Text style={styles.statLabelWhite}>Courses</Text>
+            <Text style={styles.statNumberWhite}>{courses.length || 8}</Text>
+          </View>
+          <View style={styles.statCardGlass}>
+            <Text style={styles.statIconWhite}>📅</Text>
+            <Text style={styles.statLabelWhite}>Events</Text>
+            <Text style={styles.statNumberWhite}>{eventsCount || 3}</Text>
+          </View>
+          <View style={styles.statCardGlass}>
+            <Text style={styles.statIconWhite}>👥</Text>
+            <Text style={styles.statLabelWhite}>Workshops</Text>
+            <Text style={styles.statNumberWhite}>{workshopsCount || 5}</Text>
+          </View>
+        </View>
+      </LinearGradient>
+
+      <View style={styles.contentContainer}>
+        {/* Profile Incomplete Banner - Matching Figma */}
+        {user?.profileIncomplete && (
+          <View style={styles.profileIncompleteBannerNew}>
+            <View style={styles.bannerIconContainer}>
+              <Text style={styles.bannerIconNew}>👤</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.bannerTitleNew}>Complete Your Profile</Text>
+              <Text style={styles.bannerSubtitleNew}>
+                Add professional details to unlock personalized features
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.bannerButtonNew}
+              onPress={() => navigation.navigate('ProfileSetup')}
+            >
+              <Text style={styles.bannerButtonTextNew}>Complete</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* My Learning Card - Matching Figma */}
+        <TouchableOpacity 
+          style={styles.myLearningCard}
+          onPress={() => navigation.navigate('MyLearning')}
+        >
+          <LinearGradient
+            colors={['#3B82F6', '#8B5CF6', '#EC4899']}
+            start={{x:0,y:0}}
+            end={{x:1,y:1}}
+            style={styles.myLearningGradient}
+          >
+            <View style={styles.myLearningIconContainer}>
+              <Text style={styles.myLearningIcon}>📖</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.myLearningTitle}>My Learning</Text>
+              <Text style={styles.myLearningSubtitle}>
+                Continue your courses, events & workshops
+              </Text>
+            </View>
+            <Text style={styles.chevronWhite}>›</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+      {/* Latest News (immediately after My Learning) */}
+      {news.length > 0 && (
+      <View style={styles.newsSection}>
+        <View style={styles.rowBetween}>
+          <Text style={styles.newsSectionTitle}>Latest News</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('NewsList')}>
+            <Text style={styles.newsLinkText}>See All</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 24, paddingLeft: 0 }}>
           {news.map((item, index) => (
-            <TouchableOpacity key={index} style={styles.newsCardH} activeOpacity={0.9} onPress={() => {
+            <TouchableOpacity key={index} style={styles.newsCardFigma} activeOpacity={0.9} onPress={() => {
               if (item.externalUrl) {
                 try { Linking.openURL(item.externalUrl); } catch {}
               } else if (item.videos && item.videos.length > 0) {
-                // Navigate to video player for news with videos
                 navigation.navigate('VideoPlayer', {
                   videoUrl: item.videos[0].url,
                   title: item.title,
@@ -214,26 +331,37 @@ const HomeScreen = ({ navigation }) => {
                 navigation.navigate('NewsViewer', { item });
               }
             }}>
-              <View style={styles.newsImagePlaceholder}>
+              <View style={styles.newsImageContainer}>
                 {(item.imageUrl || item.thumbnail || (item.videos && item.videos[0]?.thumbnail)) ? (
-                  <Image source={{ uri: item.imageUrl || item.thumbnail || item.videos[0]?.thumbnail }} style={styles.newsImage} />
+                  <Image source={{ uri: item.imageUrl || item.thumbnail || item.videos[0]?.thumbnail }} style={styles.newsImageFigma} />
                 ) : null}
-                {/* gradient overlay */}
-                <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.7)']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.newsGradient} />
-                {/* category badge */}
-                <View style={styles.newsBadgeWrap}><View style={styles.newsBadge}><Text style={styles.newsBadgeText}>{item.category || (item.type || 'Guidelines')}</Text></View></View>
-                {/* video indicator */}
-                {(item.type||'').toLowerCase()==='video' || item.externalUrl || (item.videos && item.videos.length > 0) ? <View style={styles.videoBadge}><Text style={{ color:'#9333EA' }}>▶</Text></View> : null}
-                {/* bottom overlay content */}
-                <View style={styles.newsOverlayBottom}>
-                  <Text style={styles.newsTitle} numberOfLines={2}>{item.title}</Text>
-                  <Text style={styles.newsDate}><CalendarIcon /> {new Date(item.publishedAt || item.createdAt || Date.now()).toLocaleString('en-US',{ month:'short', day:'2-digit' })}</Text>
+                <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.7)']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.newsGradientOverlay} />
+                
+                {/* Video indicator - top right */}
+                {((item.type||'').toLowerCase()==='video' || item.externalUrl || (item.videos && item.videos.length > 0)) && (
+                  <View style={styles.videoIndicator}>
+                    <Text style={styles.videoPlayIconText}>▶</Text>
+                  </View>
+                )}
+                
+                {/* Category badge and title - bottom overlay */}
+                <View style={styles.newsContentOverlay}>
+                  <View style={styles.newsCategoryBadge}>
+                    <Text style={styles.newsCategoryText}>{item.category || item.type || 'Guidelines'}</Text>
+                  </View>
+                  <Text style={styles.newsTitleFigma} numberOfLines={2}>{item.title}</Text>
                 </View>
+              </View>
+              
+              {/* Date below image */}
+              <View style={styles.newsDateContainer}>
+                <Text style={styles.newsDateText}>📅 {new Date(item.publishedAt || item.createdAt || Date.now()).toLocaleString('en-US',{ month:'short', day:'numeric' })}</Text>
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
+      )}
 
       {/* Nightingale Programme card */}
       {/* Featured Courses */}
@@ -269,8 +397,7 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       {/* Nightingale Programme card */}
-      <View style={{ paddingHorizontal: 20 }}>
-        <GradientCard
+      <GradientCard
           title="Nightingale Programme"
           subtitle="Become a Champion Mentor and light the way"
           colors={[NEON_COLORS.neonPink, NEON_COLORS.neonOrange || '#F59E0B']}
@@ -281,10 +408,9 @@ const HomeScreen = ({ navigation }) => {
           height={140}
           stacked
         />
-      </View>
 
       {/* Mentor card */}
-      <View style={{ paddingHorizontal: 20, marginTop: 16 }}>
+      <View style={{ marginTop: 24 }}>
         <GradientCard
           title="Want to Become a Mentor?"
           subtitle="Share your expertise with fellow nurses"
@@ -298,7 +424,10 @@ const HomeScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* New Activities list - small cards that route to Activities page */}
+      </View>
+      {/* End contentContainer */}
+
+      {/* New Activities list */}
       <View style={styles.section}>
         <View style={styles.rowBetween}>
           <Text style={styles.sectionTitle}>New Activities</Text>
@@ -362,8 +491,221 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: palette.background,
+    backgroundColor: '#F9FAFB',
   },
+  // NEW: Header Gradient (Blue to Purple - Matching Figma)
+  headerGradient: {
+    paddingTop: 48,
+    paddingBottom: 24,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  profilePhotoContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  profilePhoto: {
+    width: '100%',
+    height: '100%',
+  },
+  profilePhotoPlaceholder: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profilePhotoText: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: '700',
+  },
+  greetingTextWhite: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  tapToComplete: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 2,
+  },
+  notificationButtonWhite: {
+    position: 'relative',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    backdropFilter: 'blur(10px)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bellIconWhite: {
+    fontSize: 20,
+  },
+  notificationDot: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#EF4444',
+  },
+  // NEW: Glass Morphism Stats Cards - Simplified (Figma Match)
+  statsContainerGlass: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statCardGlass: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.20)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.30)',
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+  },
+  statIconWhite: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  statLabelWhite: {
+    fontSize: 10,
+    color: 'rgba(191,219,254,1)',
+    marginBottom: 2,
+  },
+  statNumberWhite: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  // NEW: Content Container
+  contentContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+  },
+  // NEW: Profile Incomplete Banner (Figma Style)
+  profileIncompleteBannerNew: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#FDE047',
+    ...shadow.soft,
+  },
+  bannerIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FEF08A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  bannerIconNew: {
+    fontSize: 20,
+    color: '#F59E0B',
+  },
+  bannerTitleNew: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#92400E',
+    marginBottom: 2,
+  },
+  bannerSubtitleNew: {
+    fontSize: 12,
+    color: '#78350F',
+  },
+  bannerButtonNew: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginLeft: 8,
+  },
+  bannerButtonTextNew: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  // NEW: My Learning Card (Figma Style)
+  myLearningCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 16,
+    ...shadow.soft,
+  },
+  myLearningGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  myLearningIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    backdropFilter: 'blur(10px)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  myLearningIcon: {
+    fontSize: 24,
+  },
+  myLearningTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  myLearningSubtitle: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+  },
+  chevronWhite: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: '300',
+  },
+  // EXISTING: All original styles preserved below
   header: {
     paddingTop: 48,
     paddingBottom: 24,
@@ -438,8 +780,106 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   section: {
-    padding: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
   },
+  // NEW: Figma-style Latest News
+  newsSection: {
+    marginBottom: 24,
+    marginTop: 24,
+  },
+  newsSectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 12,
+  },
+  newsLinkText: {
+    color: '#9333EA',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  newsCardFigma: {
+    width: 192,
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  newsImageContainer: {
+    height: 112,
+    backgroundColor: '#E5E7EB',
+    position: 'relative',
+  },
+  newsImageFigma: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  newsGradientOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  videoIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  videoPlayIconText: {
+    color: '#9333EA',
+    fontSize: 10,
+    marginLeft: 2,
+  },
+  newsContentOverlay: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    right: 8,
+  },
+  newsCategoryBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    backdropFilter: 'blur(10px)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  newsCategoryText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  newsTitleFigma: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 16,
+  },
+  newsDateContainer: {
+    padding: 8,
+  },
+  newsDateText: {
+    fontSize: 11,
+    color: '#6B7280',
+  },
+  
   rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   linkText: { color: NEON_COLORS.neonPurple, fontWeight: '600' },
   activityCard: {
