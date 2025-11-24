@@ -1,6 +1,6 @@
 // Centralized configuration for IP address
 
-const IP_ADDRESS = 'localhost'; // Updated to localhost for admin and mentor dashboards
+const IP_ADDRESS = '10.84.58.182'; // Updated to your local network IP for mobile device access
 
 module.exports = {
   IP_ADDRESS,

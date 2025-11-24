@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import HomeScreen from '../screens/HomeScreen';
 import MyLearningScreen from '../screens/MyLearningScreen';
@@ -17,33 +18,49 @@ const TabIcon = ({ name, focused }) => {
       case 'Learning':
         return '📚';
       case 'Engage':
-        return '🎯';
+        return '❤️';
       case 'Sessions':
-        return '👨‍⚕️';
+        return '👥';
       default:
         return '•';
     }
   };
 
+  const getLabel = () => {
+    switch (name) {
+      case 'Home':
+        return 'Home';
+      case 'Learning':
+        return 'Learning';
+      case 'Engage':
+        return 'Engage';
+      case 'Sessions':
+        return 'Mentors';
+      default:
+        return name;
+    }
+  };
+
   return (
-    <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: 84 }}>
-      <Text style={{
-        fontSize: 20,
-        color: focused ? '#00FFFF' : '#666666',
-        textShadowColor: focused ? '#00FFFF' : 'transparent',
-        textShadowOffset: { width: 0, height: 0 },
-        textShadowRadius: focused ? 10 : 0,
-      }}>
+    <View style={styles.tabButton}>
+      {focused && (
+        <LinearGradient
+          colors={['#7C3AED', '#EC4899']}
+          start={{x:0, y:0}}
+          end={{x:1, y:0}}
+          style={styles.activeIndicator}
+        />
+      )}
+      <Text style={[styles.icon, { color: focused ? '#7C3AED' : '#6B7280' }]}>
         {getIcon()}
       </Text>
-      <Text style={{
-        marginTop: 2,
-        fontSize: 12,
-        color: focused ? '#00FFFF' : '#666666',
-        fontWeight: focused ? '700' : '600',
-        textAlign: 'center'
-      }}>
-        {name}
+      <Text
+        style={[styles.label, {
+          color: focused ? '#7C3AED' : '#6B7280',
+          fontWeight: focused ? '600' : '400'
+        }]}
+      >
+        {getLabel()}
       </Text>
     </View>
   );
@@ -59,15 +76,20 @@ const BottomTabNavigator = () => {
         ),
         tabBarLabel: () => null,
         tabBarStyle: {
-          backgroundColor: '#1A1A1A',
-          borderTopWidth: 2,
-          borderTopColor: '#00FFFF',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderTopWidth: 1,
+          borderTopColor: '#E5E7EB',
           height: 64,
-          paddingBottom: 6,
-          paddingTop: 6,
+          paddingBottom: 0,
+          paddingTop: 0,
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: -4 },
+          elevation: 10,
         },
-        tabBarActiveTintColor: '#00FFFF',
-        tabBarInactiveTintColor: '#666666',
+        tabBarActiveTintColor: '#7C3AED',
+        tabBarInactiveTintColor: '#6B7280',
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -79,29 +101,32 @@ const BottomTabNavigator = () => {
 };
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  tabButton: {
+    flex: 1,
+    flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: '#00FFFF',
-    height: 60,
-  },
-  profileButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#2A2A2A',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#00FFFF',
+    position: 'relative',
+    height: 64,
+    paddingTop: 8,
   },
-  profileIcon: {
+  activeIndicator: {
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    marginLeft: -24,
+    width: 48,
+    height: 4,
+    borderRadius: 999,
+  },
+  icon: {
     fontSize: 20,
+    lineHeight: 20,
+    marginBottom: 2,
+  },
+  label: {
+    fontSize: 10,
+    textAlign: 'center',
   },
 });
 

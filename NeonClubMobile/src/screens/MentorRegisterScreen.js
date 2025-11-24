@@ -119,9 +119,9 @@ const MentorRegisterScreen = ({ navigation }) => {
         onClose={() => { setSuccessVisible(false); navigation.replace('Mentors'); }}
       />
       {/* Header */}
-      <LinearGradient colors={['#6366F1', '#A855F7']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.header}>
+      <LinearGradient colors={['#06B6D4', '#14B8A6', '#10B981']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.header}>
         <TouchableOpacity onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Main'))} style={{ padding: 6 }}>
-          <Text style={{ color:'#fff', fontSize: 18 }}>‹</Text>
+          <Text style={{ color:'#fff', fontSize: 24 }}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Apply as a Mentor</Text>
         <Text style={styles.headerSub}>Share your expertise with fellow nurses</Text>

@@ -364,49 +364,16 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       {/* Nightingale Programme card */}
-      {/* Featured Courses */}
-      {featuredCourses.length > 0 && (
-        <View style={styles.section}>
-          <View style={styles.rowBetween}>
-            <Text style={styles.sectionTitle}>Featured Courses</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('MyLearning')}>
-              <Text style={styles.linkText}>Browse All</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 12, paddingLeft: 6 }}>
-            {featuredCourses.map((c, idx) => (
-              <TouchableOpacity key={c._id || idx} style={styles.courseCardH} onPress={() => {
-                try {
-                  navigation.navigate('CourseDetail', { course: c });
-                } catch (error) {
-                  console.error('Navigation error:', error);
-                  Alert.alert('Error', 'Unable to open course details');
-                }
-              }}>
-                <View style={styles.courseThumb}>
-                  {c.thumbnail ? <Image source={{ uri: c.thumbnail }} style={styles.courseThumbImg} /> : null}
-                  <LinearGradient colors={['rgba(0,0,0,0)','rgba(0,0,0,0.65)']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.courseGrad} />
-                  <View style={styles.courseBadge}><Text style={styles.courseBadgeText}>{c.lessons?.length || 0} lessons</Text></View>
-                  <View style={styles.courseOverlay}><Text style={styles.courseTitleH} numberOfLines={2}>{c.title}</Text></View>
-                  {c.type === 'video' && <View style={styles.videoPlayIcon}><PlayIcon /></View>}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-
-      {/* Nightingale Programme card */}
       <GradientCard
           title="Nightingale Programme"
           subtitle="Become a Champion Mentor and light the way"
-          colors={[NEON_COLORS.neonPink, NEON_COLORS.neonOrange || '#F59E0B']}
+          colors={['#9333EA', '#EC4899', '#F97316']}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
           ctaLabel="Begin Journey"
+          ctaColor="#7C3AED"
           onPress={() => navigation.navigate('NCC')}
-          height={140}
-          stacked
+          icon="✨"
         />
 
       {/* Mentor card */}
@@ -414,72 +381,73 @@ const HomeScreen = ({ navigation }) => {
         <GradientCard
           title="Want to Become a Mentor?"
           subtitle="Share your expertise with fellow nurses"
-          colors={[NEON_COLORS.neonCyan, NEON_COLORS.neonGreen]}
+          colors={['#06B6D4', '#14B8A6', '#10B981']}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
           ctaLabel="Apply Now"
+          ctaColor="#0891B2"
           onPress={() => navigation.navigate('MentorRegister')}
-          height={140}
-          stacked
+          icon="👥"
         />
       </View>
 
       </View>
       {/* End contentContainer */}
 
-      {/* New Activities list */}
+      {/* Wellness & Events */}
       <View style={styles.section}>
         <View style={styles.rowBetween}>
-          <Text style={styles.sectionTitle}>New Activities</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Activities')}>
+          <Text style={styles.sectionTitle}>Wellness & Events</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Engage')}>
             <Text style={styles.linkText}>See All</Text>
           </TouchableOpacity>
         </View>
-        {activities.map((item, idx) => {
+        
+        {/* Show real activities if available, otherwise show placeholders */}
+        {(activities.length > 0 ? activities.slice(0, 2) : [
+          { id: 'placeholder1', title: 'Wound Care Management', kind: 'Workshop', date: new Date('2024-10-15'), time: '2:00 PM', color: '#9333EA' },
+          { id: 'placeholder2', title: 'Healthcare Summit 2024', kind: 'Event', date: new Date('2024-10-18'), time: '3-Day Conference', color: '#06B6D4' }
+        ]).map((item, idx) => {
           const d = new Date(item.date || Date.now());
-          const month = d.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+          const month = d.toLocaleString('en-US', { month: 'short' });
           const day = String(d.getDate()).padStart(2, '0');
           const type = item.kind || 'Event';
+          const isPlaceholder = item.id?.startsWith('placeholder');
+          const cardColor = item.color || (type === 'Workshop' ? '#9333EA' : '#06B6D4');
+          
           return (
             <TouchableOpacity
               key={item.id || idx}
               activeOpacity={0.8}
               style={styles.activityCard}
               onPress={() => {
-                try { activitiesAPI.create({ type:'activity-tap', title: item.title, ref: item.id, meta: { kind: item.kind } }); } catch {}
-                navigation.navigate('Activities');
+                if (!isPlaceholder) {
+                  try { activitiesAPI.create({ type:'activity-tap', title: item.title, ref: item.id, meta: { kind: item.kind } }); } catch {}
+                }
+                navigation.navigate('Engage');
               }}
             >
-              <View style={styles.datePill}>
+              <LinearGradient 
+                colors={[cardColor, cardColor + 'DD']} 
+                start={{x:0,y:0}} 
+                end={{x:1,y:1}} 
+                style={styles.datePillGradient}
+              >
                 <Text style={styles.dateMonth}>{month}</Text>
                 <Text style={styles.dateDay}>{day}</Text>
-              </View>
+              </LinearGradient>
               <View style={{ flex: 1 }}>
-                <View style={styles.badge}><Text style={styles.badgeText}>{type}</Text></View>
+                <View style={[styles.badge, { backgroundColor: cardColor + '20' }]}>
+                  <Text style={[styles.badgeText, { color: cardColor }]}>{type}</Text>
+                </View>
                 <Text style={styles.activityTitle} numberOfLines={2}>{item.title}</Text>
-                <Text style={styles.activitySub}>Open Activities to explore</Text>
+                <Text style={styles.activitySub}>{item.time || 'Live Workshop • 2:00 PM'}</Text>
               </View>
               <Text style={styles.chev}>›</Text>
             </TouchableOpacity>
           );
         })}
       </View>
-
-      {/* Quick Actions at the end */}
-      <View style={styles.menuContainer}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        {quickActions.map((item, index) => (
-          <QuickActionCard
-            key={index}
-            title={item.title}
-            subtitle={item.subtitle}
-            color={item.color}
-            onPress={item.onPress}
-          />
-        ))}
-      </View>
-
-      {/* Catalog section intentionally removed from dashboard */}
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
@@ -889,9 +857,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    ...shadow.soft,
-    borderWidth: 1,
-    borderColor: palette.border,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+    borderWidth: 0,
   },
   datePill: {
     width: 56,
@@ -902,20 +873,57 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEF2FF',
     marginRight: 12,
   },
-  dateMonth: { fontSize: 12, color: '#6B7280' },
-  dateDay: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  datePillGradient: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  dateMonth: { 
+    fontSize: 11, 
+    color: '#FFFFFF',
+    fontWeight: '500',
+  },
+  dateDay: { 
+    fontSize: 20, 
+    fontWeight: '700', 
+    color: '#FFFFFF',
+  },
   badge: {
     alignSelf: 'flex-start',
     backgroundColor: '#F3F4F6',
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 8,
     marginBottom: 6,
   },
-  badgeText: { fontSize: 11, color: '#111827' },
-  activityTitle: { fontSize: 15, fontWeight: '600', color: '#111827' },
-  activitySub: { color: '#6B7280', marginTop: 2, fontSize: 12 },
-  chev: { color: '#9CA3AF', fontSize: 18, paddingHorizontal: 8 },
+  badgeText: { 
+    fontSize: 11, 
+    color: '#111827',
+    fontWeight: '600',
+  },
+  activityTitle: { 
+    fontSize: 14, 
+    fontWeight: '600', 
+    color: '#111827',
+    marginBottom: 2,
+  },
+  activitySub: { 
+    color: '#6B7280', 
+    fontSize: 12,
+  },
+  chev: { 
+    color: '#9CA3AF', 
+    fontSize: 20, 
+    paddingHorizontal: 8,
+  },
   // Unified Activities card (same layout as Activities screen)
   actCard: { backgroundColor:'#fff', borderRadius:16, padding:12, marginBottom:12, ...shadow.soft, borderWidth:1, borderColor: palette.border },
   actHero: { height:160, backgroundColor:'#E5E7EB', borderRadius:12, overflow:'hidden', marginBottom:10 },

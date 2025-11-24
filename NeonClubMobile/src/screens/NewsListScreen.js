@@ -122,14 +122,16 @@ const NewsListScreen = ({ navigation }) => {
 
       {/* Filters - Figma Style with Filter Icon and Dropdown */}
       <View style={styles.filtersRow}>
-        <TouchableOpacity 
-          style={styles.filterDropdown} 
-          onPress={() => setShowDropdown(!showDropdown)}
-        >
-          <Text style={styles.filterIcon}>⚙️</Text>
-          <Text style={styles.filterDropdownText}>{range}</Text>
-          <Text style={styles.dropdownArrow}>▼</Text>
-        </TouchableOpacity>
+        <View style={styles.filterLeft}>
+          <Text style={styles.filterIconGray}>⚙</Text>
+          <TouchableOpacity 
+            style={styles.filterDropdown} 
+            onPress={() => setShowDropdown(!showDropdown)}
+          >
+            <Text style={styles.filterDropdownText}>{range}</Text>
+            <Text style={styles.dropdownArrow}>▼</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.countText}>{filtered.length} articles</Text>
       </View>
 
@@ -140,31 +142,30 @@ const NewsListScreen = ({ navigation }) => {
             style={styles.dropdownOverlay} 
             activeOpacity={1}
             onPress={() => setShowDropdown(false)}
-          >
-            <View style={styles.dropdownMenu}>
-              <TouchableOpacity 
-                style={[styles.dropdownItem, range === 'All Time' && styles.dropdownItemSelected]}
-                onPress={() => { setRange('All Time'); setShowDropdown(false); }}
-              >
-                <Text style={[styles.dropdownItemText, range === 'All Time' && styles.dropdownItemActiveText]}>All Time</Text>
-                {range === 'All Time' && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.dropdownItem, range === 'This Week' && styles.dropdownItemSelected]}
-                onPress={() => { setRange('This Week'); setShowDropdown(false); }}
-              >
-                <Text style={[styles.dropdownItemText, range === 'This Week' && styles.dropdownItemActiveText]}>This Week</Text>
-                {range === 'This Week' && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.dropdownItem, range === 'This Month' && styles.dropdownItemSelected]}
-                onPress={() => { setRange('This Month'); setShowDropdown(false); }}
-              >
-                <Text style={[styles.dropdownItemText, range === 'This Month' && styles.dropdownItemActiveText]}>This Month</Text>
-                {range === 'This Month' && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
+          />
+          <View style={styles.dropdownMenu}>
+            <TouchableOpacity 
+              style={[styles.dropdownItem, range === 'All Time' && styles.dropdownItemSelected]}
+              onPress={() => { setRange('All Time'); setShowDropdown(false); }}
+            >
+              <Text style={[styles.dropdownItemText, range === 'All Time' && styles.dropdownItemActiveText]}>All Time</Text>
+              {range === 'All Time' && <Text style={styles.checkmark}>✓</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.dropdownItem, range === 'This Week' && styles.dropdownItemSelected]}
+              onPress={() => { setRange('This Week'); setShowDropdown(false); }}
+            >
+              <Text style={[styles.dropdownItemText, range === 'This Week' && styles.dropdownItemActiveText]}>This Week</Text>
+              {range === 'This Week' && <Text style={styles.checkmark}>✓</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.dropdownItem, range === 'This Month' && styles.dropdownItemSelected]}
+              onPress={() => { setRange('This Month'); setShowDropdown(false); }}
+            >
+              <Text style={[styles.dropdownItemText, range === 'This Month' && styles.dropdownItemActiveText]}>This Month</Text>
+              {range === 'This Month' && <Text style={styles.checkmark}>✓</Text>}
+            </TouchableOpacity>
+          </View>
         </>
       )}
 
@@ -193,23 +194,33 @@ const styles = StyleSheet.create({
   backBtn: { padding: 6 },
   headerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   headerSub: { color: '#F1F5F9', marginTop: 8 },
-  filtersRow: { flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', paddingHorizontal: 16, paddingVertical: 12 },
+  filtersRow: { flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  filterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  filterIconGray: {
+    fontSize: 20,
+    color: '#6B7280',
+  },
   filterDropdown: { 
     flexDirection: 'row', 
     alignItems: 'center', 
     gap: 8,
-    backgroundColor: '#F9FAFB',
-    paddingHorizontal: 12,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
+    borderRadius: 12,
+    borderWidth: 2,
     borderColor: '#E5E7EB',
+    minWidth: 140,
   },
-  filterIcon: { fontSize: 18 },
   filterDropdownText: { 
     fontSize: 14, 
     fontWeight: '600',
     color: '#111827',
+    flex: 1,
   },
   dropdownArrow: { 
     fontSize: 10, 
@@ -230,19 +241,20 @@ const styles = StyleSheet.create({
   },
   dropdownMenu: {
     position: 'absolute',
-    top: 115,
-    left: 16,
+    top: 70,
+    left: 66,
     width: 180,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E5E7EB',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-    paddingVertical: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    paddingVertical: 8,
+    zIndex: 1000,
   },
   dropdownItem: {
     flexDirection: 'row',
