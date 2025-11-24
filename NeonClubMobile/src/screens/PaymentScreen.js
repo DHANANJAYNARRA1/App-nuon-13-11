@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 // Using text-based icons instead of vector icons to avoid dependency issues
 import { paymentAPI, bookingAPI } from '../services/api';
+import GiftIcon from '../components/GiftIcon';
+import IconBox from '../components/IconBox';
 
 
 const PaymentScreen = ({ route, navigation }) => {
@@ -98,9 +100,9 @@ const PaymentScreen = ({ route, navigation }) => {
       {successVisible && (
         <View style={styles.successModalBackdrop}>
           <View style={styles.successModalCard}>
-            <View style={styles.successIconBox}>
-              <Text style={{ fontSize: 36, color: '#fff' }}>🎁</Text>
-            </View>
+            <IconBox size={64} style={styles.successIconBox}>
+              <GiftIcon width={36} height={36} color="#FFFFFF" />
+            </IconBox>
             <Text style={styles.successTitle}>Payment Successful!</Text>
             <Text style={styles.successMsg}>You're enrolled in {mentorName ? mentorName : 'the session'}.</Text>
             <TouchableOpacity style={styles.successBtn} onPress={() => { setSuccessVisible(false); navigation.navigate('MySessions'); }}>
@@ -276,7 +278,7 @@ const styles = StyleSheet.create({
   couponHint: { color: '#64748b', fontSize: 12, marginTop: 2 },
   successModalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', alignItems: 'center', justifyContent: 'center', position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, zIndex: 10 },
   successModalCard: { width: '82%', backgroundColor: '#fff', borderRadius: 16, padding: 18, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 12, elevation: 6 },
-  successIconBox: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', backgroundColor: '#7C3AED', marginBottom: 10 },
+  successIconBox: { marginBottom: 10 },
   successTitle: { fontSize: 18, fontWeight: '800', color: '#7C3AED', marginTop: 6 },
   successMsg: { color: '#475569', textAlign: 'center', marginTop: 4 },
   successBtn: { marginTop: 14, width: '86%', borderRadius: 999, paddingVertical: 12, alignItems: 'center', backgroundColor: '#7C3AED' },

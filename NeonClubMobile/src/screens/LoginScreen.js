@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import api from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
 import NEON_COLORS from '../utils/colors';
+import { Image } from 'react-native';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -87,7 +88,9 @@ const LoginScreen = () => {
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <View style={styles.logoContainer}><Text style={styles.logoIcon}>⚡</Text></View>
+            <View style={styles.logoContainer}>
+              <Image source={require('../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
+            </View>
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>Sign in to your account</Text>
           </View>
@@ -122,6 +125,10 @@ const LoginScreen = () => {
               <TouchableOpacity style={styles.linkButton} onPress={goToProfileSetup}>
                 <Text style={styles.linkText}>Complete Your Profile</Text>
               </TouchableOpacity>
+            </View>
+            {/* Footer below the card */}
+            <View style={styles.footerOuter}>
+              <Text style={styles.footerText}>By continuing, you agree to our Terms of Service and Privacy Policy</Text>
             </View>
           </View>
         </ScrollView>
@@ -168,13 +175,18 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoIcon: {
     fontSize: 32,
     color: NEON_COLORS.neonCyan,
+  },
+  logoImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
   },
   title: {
     fontSize: 24,
@@ -243,6 +255,16 @@ const styles = StyleSheet.create({
   linkText: {
     color: NEON_COLORS.neonCyan,
     fontSize: 14,
+  },
+  footerOuter: {
+    marginTop: 8,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  footerText: {
+    fontSize: 12,
+    color: NEON_COLORS.textSecondary,
+    textAlign: 'center',
   },
 });
 

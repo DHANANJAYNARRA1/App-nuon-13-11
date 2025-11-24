@@ -21,19 +21,19 @@ import { palette, typography, shadow } from '../theme/tokens';
 import { NEON_COLORS } from '../utils/colors';
 import GradientCard from '../components/GradientCard';
 import LinearGradient from 'react-native-linear-gradient';
-import Svg, { Path } from 'react-native-svg';
+import CalendarIcon from '../components/CalendarIcon';
+import PlayIcon from '../components/PlayIcon';
+import { SvgXml } from 'react-native-svg';
 
-const CalendarIcon = () => (
-  <Svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <Path d="M3 4h18M3 10h18M8 4v2M16 4v2M3 8v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8z" />
-  </Svg>
-);
+const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
+const bookOpenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
+const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
+const usersSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+const chevronRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+const arrowRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+const playSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
 
-const PlayIcon = () => (
-  <Svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <Path d="M5 3l14 9-14 9V3z" />
-  </Svg>
-);
+// CalendarIcon and PlayIcon are provided by wrapper components in src/components
 
 const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -232,11 +232,11 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </TouchableOpacity>
           
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.notificationButtonWhite}
             onPress={() => navigation.navigate('Notifications')}
           >
-            <Text style={styles.bellIconWhite}>🔔</Text>
+            <SvgXml xml={bellSvg} width={20} height={20} color="#fff" />
             <View style={styles.notificationDot} />
           </TouchableOpacity>
         </View>
@@ -244,17 +244,17 @@ const HomeScreen = ({ navigation }) => {
         {/* Quick Stats with Glass Morphism - Matching Figma */}
         <View style={styles.statsContainerGlass}>
           <View style={styles.statCardGlass}>
-            <Text style={styles.statIconWhite}>📚</Text>
+            <SvgXml xml={bookOpenSvg} width={20} height={20} color="#fff" />
             <Text style={styles.statLabelWhite}>Courses</Text>
             <Text style={styles.statNumberWhite}>{courses.length || 8}</Text>
           </View>
           <View style={styles.statCardGlass}>
-            <Text style={styles.statIconWhite}>📅</Text>
+            <SvgXml xml={calendarSvg} width={20} height={20} color="#fff" />
             <Text style={styles.statLabelWhite}>Events</Text>
             <Text style={styles.statNumberWhite}>{eventsCount || 3}</Text>
           </View>
           <View style={styles.statCardGlass}>
-            <Text style={styles.statIconWhite}>👥</Text>
+            <SvgXml xml={usersSvg} width={20} height={20} color="#fff" />
             <Text style={styles.statLabelWhite}>Workshops</Text>
             <Text style={styles.statNumberWhite}>{workshopsCount || 5}</Text>
           </View>
@@ -295,7 +295,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.myLearningGradient}
           >
             <View style={styles.myLearningIconContainer}>
-              <Text style={styles.myLearningIcon}>📖</Text>
+              <SvgXml xml={bookOpenSvg} width={24} height={24} color="#fff" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.myLearningTitle}>My Learning</Text>
@@ -303,7 +303,7 @@ const HomeScreen = ({ navigation }) => {
                 Continue your courses, events & workshops
               </Text>
             </View>
-            <Text style={styles.chevronWhite}>›</Text>
+            <SvgXml xml={arrowRightSvg} width={24} height={24} color="#fff" />
           </LinearGradient>
         </TouchableOpacity>
 
@@ -340,7 +340,7 @@ const HomeScreen = ({ navigation }) => {
                 {/* Video indicator - top right */}
                 {((item.type||'').toLowerCase()==='video' || item.externalUrl || (item.videos && item.videos.length > 0)) && (
                   <View style={styles.videoIndicator}>
-                    <Text style={styles.videoPlayIconText}>▶</Text>
+                    <SvgXml xml={playSvg} width={10} height={10} color="#9333EA" />
                   </View>
                 )}
                 
@@ -459,7 +459,7 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.activityTitle} numberOfLines={2}>{item.title}</Text>
                 <Text style={styles.activitySub}>Open Activities to explore</Text>
               </View>
-              <Text style={styles.chev}>›</Text>
+              <SvgXml xml={chevronRightSvg} width={18} height={18} color="#9CA3AF" />
             </TouchableOpacity>
           );
         })}
@@ -671,24 +671,24 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   myLearningIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    backdropFilter: 'blur(10px)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     elevation: 4,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
   myLearningIcon: {
     fontSize: 24,
+    color: '#FFFFFF',
   },
   myLearningTitle: {
     fontSize: 16,

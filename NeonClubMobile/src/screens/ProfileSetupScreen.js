@@ -14,7 +14,7 @@ import {
 import { InteractionManager } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import api, { probeAndFixBase, getCurrentBaseURL } from '../services/api';
 import FullScreenLoader from '../components/FullScreenLoader';
 import { AuthContext } from '../contexts/AuthContext';
@@ -234,8 +234,8 @@ const ProfileSetupScreen = () => {
 
         // Navigate to dashboard
         setTimeout(() => {
-          navigation.reset({ index: 0, routes: [{ name: 'Splash' }] });
-        }, 500);
+          navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Main' }] }));
+        }, 600);
       } else {
         throw new Error(response.data?.message || 'Registration failed');
       }

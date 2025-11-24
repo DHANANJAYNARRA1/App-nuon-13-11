@@ -14,6 +14,23 @@ import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import api, { courseAPI, nccAPI } from '../services/api';
 import { useSafePress } from '../hooks/useSafePress';
+import { SvgXml } from 'react-native-svg';
+
+const chevronLeftSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+const mailSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`;
+const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+const mapPinSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+const trophySvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+const receiptSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h4"/><path d="M16 12h4"/><path d="M16 16h4"/></svg>`;
+const awardSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.174 0l-3.58 2.687a.5.5 0 0 1-.81-.47l1.515-8.526"/><circle cx="12" cy="8" r="6"/></svg>`;
+const briefcaseSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
+const share2Svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>`;
+const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
+const lockSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><circle cx="12" cy="16" r="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+const helpCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`;
+const fileTextSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
+const logOutSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`;
+const editSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
 const ProfileScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -132,34 +149,63 @@ const ProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       {/* Profile Header with contact card, styled per design */}
       <LinearGradient colors={['#6366F1', '#8B5CF6']} style={styles.profileHeader}>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <View style={styles.headerTopRow}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>
-              {user?.name?.charAt(0)?.toUpperCase() || 'N'}
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <SvgXml xml={chevronLeftSvg} width={20} height={20} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <TouchableOpacity onPress={safeGoToProfileSetup} style={styles.editButton}>
+            <SvgXml xml={editSvg} width={16} height={16} color="#FFFFFF" />
+            <Text style={styles.editButtonText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+        {user?.profileIncomplete && (
+          <View style={styles.incompleteBanner}>
+            <Text style={styles.incompleteBannerText}>
+              ⚠️ Complete your professional information to unlock all features
             </Text>
           </View>
-          <View style={{ flex: 1, marginLeft: 12 }}>
-            <Text style={styles.userName}>{user?.name || 'Nurse'}</Text>
-            <Text style={styles.userRole}>{[user?.specialization, (user?.location || [user?.city, user?.state].filter(Boolean).join(', '))].filter(Boolean).join(' • ')}</Text>
-          </View>
-        </View>
+        )}
         <View style={styles.contactCard}>
-          <View style={styles.contactRow}><Text style={styles.contactIcon}>📧</Text><Text style={styles.contactText}>{user?.email || '—'}</Text></View>
-          <View style={styles.contactRow}><Text style={styles.contactIcon}>📞</Text><Text style={styles.contactText}>{user?.phoneNumber || '—'}</Text></View>
-          <View style={styles.contactRow}><Text style={styles.contactIcon}>📍</Text><Text style={styles.contactText}>{user?.location || [user?.city, user?.state].filter(Boolean).join(', ') || '—'}</Text></View>
+          <View style={styles.profileCardContent}>
+            <View style={styles.avatarContainer}>
+              <Text style={styles.avatarText}>
+                {user?.name?.charAt(0)?.toUpperCase() || 'N'}
+              </Text>
+              <TouchableOpacity style={styles.avatarEditButton}>
+                <SvgXml xml={editSvg} width={12} height={12} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.profileDetails}>
+              <Text style={styles.userName}>{user?.name || 'Nurse'}</Text>
+              <Text style={styles.userRole}>{[user?.specialization, (user?.location || [user?.city, user?.state].filter(Boolean).join(', '))].filter(Boolean).join(' • ')}</Text>
+              <TouchableOpacity style={styles.orderHistoryButton} onPress={goTo('Bookings')}>
+                <SvgXml xml={receiptSvg} width={14} height={14} color="#6366F1" />
+                <Text style={styles.orderHistoryButtonText}>Order History</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.contactDetails}>
+            <View style={styles.contactRow}><SvgXml xml={mailSvg} width={16} height={16} color="#6B7280" style={styles.contactIconSvg} /><Text style={styles.contactText}>{user?.email || '—'}</Text></View>
+            <View style={styles.contactRow}><SvgXml xml={phoneSvg} width={16} height={16} color="#6B7280" style={styles.contactIconSvg} /><Text style={styles.contactText}>{user?.phoneNumber || '—'}</Text></View>
+            <View style={styles.contactRow}><SvgXml xml={mapPinSvg} width={16} height={16} color="#6B7280" style={styles.contactIconSvg} /><Text style={styles.contactText}>{user?.location || [user?.city, user?.state].filter(Boolean).join(', ') || '—'}</Text></View>
+          </View>
         </View>
       </LinearGradient>
 
       {/* NCC Status */}
       {nccStatus && (
-        <View style={styles.section}>
+        <View style={styles.card}>
           <Text style={styles.sectionTitle}>NCC Progress</Text>
           <View style={styles.nccCard}>
             {nccStatus.isChampion ? (
               <View style={styles.championStatus}>
-                <Text style={styles.championText}>🏆 Nightingale Champion</Text>
-                <Text style={styles.championSubtext}>Congratulations!</Text>
+                <SvgXml xml={trophySvg} width={24} height={24} color="#059669" style={{marginRight: 8}} />
+                <View>
+                  <Text style={styles.championText}>Nightingale Champion</Text>
+                  <Text style={styles.championSubtext}>Congratulations!</Text>
+                </View>
               </View>
             ) : (
               <View style={styles.progressStatus}>
@@ -185,7 +231,8 @@ const ProfileScreen = ({ navigation }) => {
       )}
 
       {/* Stats row (soft tiles) */}
-      <View style={styles.section}>
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Statistics</Text>
         <View style={styles.statsContainer}>
           <View style={[styles.statTile, { backgroundColor: '#F3E8FF' }]}> 
             <Text style={styles.statNumber}>{myCourses.length}</Text>
@@ -202,55 +249,20 @@ const ProfileScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* My Courses */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>My Courses</Text>
-        {myCourses.length > 0 ? (
-          myCourses.slice(0, 3).map((course, index) => (
-            <View key={index} style={styles.courseItem}>
-              <Text style={styles.courseTitle}>{course.title}</Text>
-              <Text style={styles.courseProgress}>
-                {course.progress || 0}% Complete
-              </Text>
-            </View>
-          ))
-        ) : (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No courses enrolled yet</Text>
-            <TouchableOpacity
-              style={styles.browseButton}
-              onPress={safeGoToMyLearning}
-            >
-              <Text style={styles.browseButtonText}>Go to My Learning</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        
-        {myCourses.length > 3 && (
-          <TouchableOpacity
-            style={styles.viewAllButton}
-            onPress={safeGoToMyLearning}
-          >
-            <Text style={styles.viewAllButtonText}>
-              View All ({myCourses.length})
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
       {/* Divider */}
       <View style={{ height: 8 }} />
 
       {/* Account Actions */}
-      <View style={styles.section}>
-        {/* Action list matching reference with emojis */}
-        <ActionItem icon="📜" label="Order History" onPress={goTo('Bookings')} />
-        <ActionItem icon="🏅" label="Certifications & Awards" onPress={safeGoToMyLearning} />
-        <ActionItem icon="🔗" label="Refer & Earn" onPress={safeGoToHelp} />
-        <ActionItem icon="🔔" label="Notifications" onPress={safeGoToNotifications} />
-        <ActionItem icon="🔒" label="Privacy & Security" onPress={safeGoToPrivacy} />
-        <ActionItem icon="❓" label="Help & Support" onPress={safeGoToHelp} />
-        <ActionItem icon="📄" label="Terms & Conditions" onPress={safeGoToPrivacy} />
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Account Actions</Text>
+        {/* Action list with icons */}
+        <ActionItem iconSvg={receiptSvg} label="My Orders" onPress={goTo('Bookings')} light />
+        <ActionItem iconSvg={awardSvg} label="Certifications & Awards" onPress={safeGoToMyLearning} />
+        <ActionItem iconSvg={share2Svg} label="Refer & Earn" onPress={safeGoToHelp} />
+        <ActionItem iconSvg={bellSvg} label="Notifications" onPress={safeGoToNotifications} />
+        <ActionItem iconSvg={lockSvg} label="Privacy & Security" onPress={safeGoToPrivacy} />
+        <ActionItem iconSvg={helpCircleSvg} label="Help & Support" onPress={safeGoToHelp} />
+        <ActionItem iconSvg={fileTextSvg} label="Terms & Conditions" onPress={safeGoToPrivacy} />
         <LogoutCard onPress={handleLogout} />
       </View>
 
@@ -261,10 +273,12 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-const ActionItem = ({ icon, label, onPress }) => (
+const ActionItem = ({ iconSvg, label, onPress, light }) => (
   <TouchableOpacity style={styles.actionItem} onPress={onPress}>
     <View style={styles.actionLeft}>
-      <Text style={styles.actionIcon}>{icon}</Text>
+      <View style={light ? styles.iconContainerLight : styles.iconContainer}>
+        <SvgXml xml={iconSvg} width={20} height={20} color={light ? "#6366F1" : "#6B7280"} />
+      </View>
       <Text style={styles.actionText}>{label}</Text>
     </View>
     <Text style={styles.actionArrow}>›</Text>
@@ -274,7 +288,7 @@ const ActionItem = ({ icon, label, onPress }) => (
 const LogoutCard = ({ onPress }) => (
   <TouchableOpacity style={styles.logoutCard} onPress={onPress}>
     <View style={styles.actionLeft}>
-      <Text style={styles.actionIcon}>🚪</Text>
+      <SvgXml xml={logOutSvg} width={20} height={20} color="#DC2626" />
       <Text style={[styles.actionText, { color: '#DC2626' }]}>Logout</Text>
     </View>
     <Text style={[styles.actionArrow, { color: '#DC2626' }]}>›</Text>
@@ -298,11 +312,31 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 50,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '800', marginBottom: 10 },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  backButton: {
+    marginRight: 12,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto',
+  },
+  editButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '800' },
   headerTopRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   avatarContainer: {
     width: 60,
@@ -338,7 +372,20 @@ const styles = StyleSheet.create({
   orderHistoryText: { color: '#1F2937', fontWeight: '600' },
   contactRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 4 },
   contactIcon: { width: 22, textAlign: 'center', color: '#6B7280', marginRight: 6 },
+  contactIconSvg: { marginRight: 6 },
   contactText: { color: '#1F2937' },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -349,6 +396,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
     padding: 16,
     borderRadius: 8,
+    marginTop: 8,
   },
   championStatus: {
     alignItems: 'center',
@@ -495,6 +543,75 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 12,
     color: '#94a3b8',
+  },
+  incompleteBanner: {
+    backgroundColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(249, 115, 22, 0.3)',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 16,
+  },
+  incompleteBannerText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  profileCardContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  avatarEditButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#6366F1',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileDetails: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  orderHistoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginTop: 8,
+    alignSelf: 'flex-start',
+  },
+  orderHistoryButtonText: {
+    color: '#6366F1',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 12,
+  },
+  contactDetails: {
+    // No specific styles, uses existing contactRow
+  },
+  iconContainer: {
+    // Default, no background
+  },
+  iconContainerLight: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EEF2FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
 });
 

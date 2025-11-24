@@ -1,5 +1,6 @@
 // Helper to get full URL for uploads (always keep at the top, outside the component)
-const BASE_URL = 'http://192.168.0.3:5000'; // Updated to correct IP
+import { CONFIG } from '../utils/config';
+const BASE_URL = (CONFIG.API_BASE_URL || '').replace(/\/api\/?$/i, '') || `http://${require('../config/ipConfig').IP_ADDRESS}:5000`;
 const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 import React, { useState, useEffect } from 'react';
 import {

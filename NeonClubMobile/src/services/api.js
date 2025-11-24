@@ -68,11 +68,11 @@ export async function probeAndFixBase() {
   }
   __lastProbeAt = now;
 
-  // Try localhost first (for development)
+  // Try a set of likely dev candidates (LAN IP, localhost, emulator bridge)
   const candidates = [
-    `http://${IP_ADDRESS}:3000/api`, // Updated to port 3000
-    'http://192.168.0.116:3000/api', // Updated IP address
-    'http://10.0.2.2:3000/api', // Android emulator
+    `http://${IP_ADDRESS}:5000/api`, // LAN IP from centralized config
+    'http://localhost:5000/api', // local dev server (if running on same device/emulator bridge)
+    'http://10.0.2.2:5000/api', // Android emulator host mapping
   ];
 
   for (const candidate of candidates) {

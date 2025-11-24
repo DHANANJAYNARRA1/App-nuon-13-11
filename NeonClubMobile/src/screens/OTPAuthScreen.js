@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import api, { probeAndFixBase, getCurrentBaseURL, setBaseOverride } from '../services/api';
 import { sendOTP as fbSendOTP, verifyOTP as fbVerifyOTP, getIdToken as fbGetIdToken } from '../services/otp';
 import { ensureFirebaseInitialized } from '../services/firebaseApp';
@@ -20,7 +20,12 @@ import { CONFIG, DEV_BASE_LAN } from '../utils/config';
 import FullScreenLoader from '../components/FullScreenLoader';
 import { registerPushTokenIfAvailable } from '../utils/notifications';
 import { AuthContext } from '../contexts/AuthContext';
+import { Image } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SvgXml } from 'react-native-svg';
 import { NEON_COLORS } from '../utils/colors';
+
+const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
 
 const OTPAuthScreen = () => {
   const navigation = useNavigation();
@@ -170,34 +175,19 @@ const OTPAuthScreen = () => {
         try { await registerPushTokenIfAvailable(); } catch {}
       }
       
-      // Check if user profile is complete
-      const isProfileComplete = user?.isProfileComplete !== false && 
-                               user?.name && 
-                               user?.email;
-      
-      if (isNewUser || !isProfileComplete) {
-        // New user or incomplete profile - go to ProfileSetup
-        Alert.alert('Success', 'OTP verified successfully');
-        const phoneNumber = authMethod === 'phone' ? `+91${identifier.replace(/\D/g, '')}` : null;
-        
-        navigation.reset({
-          index: 0,
-          routes: [{
-            name: 'ProfileSetup',
-            params: {
-              user: { ...user, phoneNumber: user?.phoneNumber || phoneNumber },
-              token: token,
-              isNewUser: isNewUser
-            }
-          }]
-        });
+      // Navigate based on user profile completeness
+      Alert.alert('Success', 'OTP verified successfully');
+      if (user.name && user.email) {
+        // Existing user, go to dashboard
+        setTimeout(() => {
+          navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Main' }]
+          }));
+        }, 100);
       } else {
-        // Existing user with complete profile - go to Main (Dashboard)
-        Alert.alert('Welcome Back!', `Welcome back, ${user?.name || 'User'}!`);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }]
-        });
+        // New user, complete profile
+        navigation.navigate('ProfileSetup');
       }
     } catch (error) {
       console.error('Verify OTP error:', error?.response?.data || error?.message || error);
@@ -233,6 +223,8 @@ const OTPAuthScreen = () => {
     setResendTimer(0);
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <LinearGradient
       colors={['#9333EA', '#4F46E5', '#2563EB']} // purple-600 via indigo-600 to blue-600
@@ -250,8 +242,8 @@ const OTPAuthScreen = () => {
         <View style={styles.header}>
           {/* Logo with NUON branding */}
           <View style={styles.logoContainer}>
-            <Text style={styles.logoIcon}>⚡</Text>
-          </View>
+              <Image source={require('../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
+            </View>
           <Text style={styles.title}>Welcome to NUON</Text>
           <Text style={styles.tagline}>Nurse United, Opportunities Nourished</Text>
         </View>
@@ -292,21 +284,18 @@ const OTPAuthScreen = () => {
                 onPress={handleSendOTP}
                 disabled={loading || identifier.replace(/\D/g, '').length !== 10}
               >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <>
-                    <Text style={styles.primaryButtonText}>Send OTP</Text>
-                    <Text style={styles.arrowIcon}>→</Text>
-                  </>
-                )}
+                <LinearGradient colors={['#F9A8D4', '#67E8F9']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <Text style={styles.primaryButtonText}>Send OTP</Text>
+                      <Text style={styles.arrowIcon}>→</Text>
+                    </>
+                  )}
+                </LinearGradient>
               </TouchableOpacity>
             </View>
-
-            {/* Footer text */}
-            <Text style={styles.footerText}>
-              By continuing, you agree to our Terms of Service and Privacy Policy
-            </Text>
           </>
         ) : (
           <>
@@ -314,7 +303,7 @@ const OTPAuthScreen = () => {
             <View style={styles.authCard}>
               <View style={styles.cardHeader}>
                 <View style={styles.otpIconContainer}>
-                  <Text style={styles.otpIcon}>📞</Text>
+                  <SvgXml xml={phoneSvg} width={32} height={32} color="#2563EB" />
                 </View>
                 <Text style={styles.cardTitle}>Verify OTP</Text>
                 <Text style={styles.cardSubtitle}>
@@ -379,13 +368,16 @@ const OTPAuthScreen = () => {
                 onPress={handleVerifyOTP}
                 disabled={loading || otp.length !== 6}
               >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.primaryButtonText}>Verify & Continue</Text>
-                )}
+                <LinearGradient colors={['#F9A8D4', '#67E8F9']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.primaryButtonText}>Verify & Continue</Text>
+                  )}
+                </LinearGradient>
               </TouchableOpacity>
 
+              {/* Re-add Change Phone Number inside the card as requested */}
               <TouchableOpacity
                 style={styles.changeNumberButton}
                 onPress={() => {
@@ -396,15 +388,16 @@ const OTPAuthScreen = () => {
               >
                 <Text style={styles.changeNumberText}>Change Phone Number</Text>
               </TouchableOpacity>
-            </View>
 
-            {/* Footer text */}
-            <Text style={styles.footerText}>
-              By continuing, you agree to our Terms of Service and Privacy Policy
-            </Text>
+              
+              </View>
           </>
         )}
-      </View>
+        </View>
+        {/* Privacy text displayed below the card (replaces bottom 'Change Phone Number') */}
+        <View style={[styles.footerOuter, { marginBottom: Math.max(insets.bottom, 16) }]}>
+          <Text style={styles.footerText}>By continuing, you agree to our Terms of Service and Privacy Policy</Text>
+        </View>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
@@ -436,37 +429,43 @@ const styles = StyleSheet.create({
   },
   keyboardContainer: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+    justifyContent: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 20,
   },
   logoContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    width: 72,
+    height: 72,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 10,
     shadowColor: '#9333EA',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 15,
-    elevation: 8,
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+    elevation: 6,
   },
   logoIcon: {
     fontSize: 48,
     color: '#FFFFFF',
   },
+  logoImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+  },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   tagline: {
     fontSize: 16,
@@ -477,20 +476,25 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 448, // max-w-md
     alignSelf: 'center',
+    paddingHorizontal: 8,
+    alignItems: 'center',
   },
   authCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 24,
-    padding: 32,
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 30,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
+    elevation: 6,
+    // Keep a modest gap below the card; Change button is rendered below the card
+    marginBottom: 18,
   },
   cardHeader: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 24,
@@ -511,17 +515,22 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#EDE9FE', // purple-100 to blue-100 gradient approximation
+    backgroundColor: '#DBEAFE', // blue-100
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 6,
   },
   otpIcon: {
     fontSize: 32,
-    color: '#9333EA', // purple-600
+    color: '#2563EB', // blue-600
   },
   inputContainer: {
-    marginBottom: 24,
+    marginBottom: 18,
   },
   label: {
     fontSize: 14,
@@ -565,7 +574,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
   },
   otpInput: {
     width: 40,
@@ -581,18 +590,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   otpInputFilled: {
-    borderColor: '#9333EA', // purple-600 when filled
-    backgroundColor: '#F5F3FF', // purple-50
+    borderColor: '#2563EB', // blue-600 when filled
+    backgroundColor: '#EFF6FF', // blue-50
   },
   primaryButton: {
+    borderRadius: 9999, // rounded-full
+    height: 48,
+    marginTop: 8,
+  },
+  buttonGradient: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#9333EA', // purple-600
-    borderRadius: 9999, // rounded-full
-    height: 56,
-    marginTop: 8,
-    shadowColor: '#9333EA',
+    borderRadius: 9999,
+    paddingHorizontal: 20,
+    shadowColor: '#EC4899',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -624,13 +637,19 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   resendLink: {
-    color: '#9333EA', // purple-600
+    color: '#EC4899', // pink-500
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
   changeNumberButton: {
     alignItems: 'center',
     marginTop: 16,
+    marginBottom: 8,
+  },
+  changeNumberOuter: {
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 8,
   },
   changeNumberText: {
     fontSize: 14,
@@ -638,9 +657,14 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-    color: '#E9D5FF', // purple-100
+    color: '#FFFFFF', // white for contrast on gradient background
     textAlign: 'center',
-    marginTop: 24,
+    marginTop: 8,
+  },
+  footerOuter: {
+    marginTop: 18,
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
 });
 

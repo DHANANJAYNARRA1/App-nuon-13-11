@@ -19,11 +19,9 @@ const { IP_ADDRESS } = require('../config/ipConfig');
 
 console.log('Resolved IP_ADDRESS:', IP_ADDRESS);
 
-// Replace hardcoded IP with centralized configuration
-const LAN_IP = `${IP_ADDRESS}:3000`; // Updated to use port 3000
-
-// Use .env for API base URL
-let DEV_BASE = __DEV__ ? (ENV_API_BASE_URL || `http://192.168.0.116:5000/api`) : 'https://your-production-api.com/api';
+// Use centralized IP_ADDRESS (should point to your machine LAN IP) for dev builds
+// Ensure the mobile app talks to the backend on port 5000 and uses the /api prefix
+let DEV_BASE = __DEV__ ? (ENV_API_BASE_URL || `http://${IP_ADDRESS}:5000/api`) : 'https://your-production-api.com/api';
 
 export const CONFIG = {
   // For dev, always use the LAN IP above. For production, use your deployed API URL.
