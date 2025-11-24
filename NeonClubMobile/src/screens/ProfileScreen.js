@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { CommonActions } from '@react-navigation/native';
@@ -31,6 +32,7 @@ const helpCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height
 const fileTextSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
 const logOutSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`;
 const editSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+const cameraSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.828 14.828a4 4 0 0 1-5.656 0"/><path d="M9 9a3 3 0 1 1 6 0"/><circle cx="12" cy="12" r="10"/><path d="m21 3-3 3"/><path d="M3 21l3-3"/></svg>`;
 
 const ProfileScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -169,9 +171,13 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.contactCard}>
           <View style={styles.profileCardContent}>
             <View style={styles.avatarContainer}>
-              <Text style={styles.avatarText}>
-                {user?.name?.charAt(0)?.toUpperCase() || 'N'}
-              </Text>
+              <Image
+                source={{ uri: 'https://images.unsplash.com/photo-1659353888906-adb3e0041693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBudXJzZSUyMGhlYWx0aGNhcmV8ZW58MXx8fHwxNzYwMzQ1MzQ1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral' }}
+                style={styles.avatarImage}
+                onError={() => {
+                  // Fallback to initial
+                }}
+              />
               <TouchableOpacity style={styles.avatarEditButton}>
                 <SvgXml xml={editSvg} width={12} height={12} color="#FFFFFF" />
               </TouchableOpacity>
@@ -231,40 +237,38 @@ const ProfileScreen = ({ navigation }) => {
       )}
 
       {/* Stats row (soft tiles) */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Statistics</Text>
-        <View style={styles.statsContainer}>
-          <View style={[styles.statTile, { backgroundColor: '#F3E8FF' }]}> 
-            <Text style={styles.statNumber}>{myCourses.length}</Text>
-            <Text style={styles.statLabel}>Courses</Text>
-          </View>
-          <View style={[styles.statTile, { backgroundColor: '#EDE9FE' }]}> 
-            <Text style={styles.statNumber}>{user?.mentorshipSessions || 0}</Text>
-            <Text style={styles.statLabel}>Sessions</Text>
-          </View>
-          <View style={[styles.statTile, { backgroundColor: '#FFEFD6' }]}> 
-            <Text style={styles.statNumber}>{user?.workshopsCount || 0}</Text>
-            <Text style={styles.statLabel}>Workshops</Text>
-          </View>
+      <View style={[styles.statsContainer, { marginHorizontal: 20, marginBottom: 16 }]}>
+        <View style={[styles.statTile, { backgroundColor: '#F3E8FF' }]}>
+          <Text style={styles.statNumber}>{myCourses.length}</Text>
+          <Text style={styles.statLabel}>Courses</Text>
+        </View>
+        <View style={[styles.statTile, { backgroundColor: '#EDE9FE' }]}>
+          <Text style={styles.statNumber}>{user?.mentorshipSessions || 0}</Text>
+          <Text style={styles.statLabel}>Sessions</Text>
+        </View>
+        <View style={[styles.statTile, { backgroundColor: '#FFEFD6' }]}>
+          <Text style={styles.statNumber}>{user?.workshopsCount || 0}</Text>
+          <Text style={styles.statLabel}>Workshops</Text>
         </View>
       </View>
 
       {/* Divider */}
       <View style={{ height: 8 }} />
 
-      {/* Account Actions */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Account Actions</Text>
-        {/* Action list with icons */}
         <ActionItem iconSvg={receiptSvg} label="My Orders" onPress={goTo('Bookings')} light />
         <ActionItem iconSvg={awardSvg} label="Certifications & Awards" onPress={safeGoToMyLearning} />
-        <ActionItem iconSvg={share2Svg} label="Refer & Earn" onPress={safeGoToHelp} />
-        <ActionItem iconSvg={bellSvg} label="Notifications" onPress={safeGoToNotifications} />
-        <ActionItem iconSvg={lockSvg} label="Privacy & Security" onPress={safeGoToPrivacy} />
-        <ActionItem iconSvg={helpCircleSvg} label="Help & Support" onPress={safeGoToHelp} />
-        <ActionItem iconSvg={fileTextSvg} label="Terms & Conditions" onPress={safeGoToPrivacy} />
-        <LogoutCard onPress={handleLogout} />
+        <ActionItem iconSvg={share2Svg} label="Refer & Earn" onPress={safeGoToHelp} light />
+        <ActionItem iconSvg={bellSvg} label="Notifications" onPress={safeGoToNotifications} light />
+        <ActionItem iconSvg={lockSvg} label="Privacy & Security" onPress={safeGoToPrivacy} light />
       </View>
+
+      <View style={styles.card}>
+        <ActionItem iconSvg={helpCircleSvg} label="Help & Support" onPress={safeGoToHelp} light />
+        <ActionItem iconSvg={fileTextSvg} label="Terms & Conditions" onPress={safeGoToPrivacy} light />
+      </View>
+
+      <LogoutCard onPress={handleLogout} />
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Neon Club v1.0.0</Text>
@@ -298,7 +302,7 @@ const LogoutCard = ({ onPress }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f9fafb',
   },
   loadingContainer: {
     flex: 1,
@@ -339,17 +343,17 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '800' },
   headerTopRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   avatarContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   userName: {
     color: '#fff',
@@ -612,6 +616,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+  },
+  orderHistoryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  orderHistoryIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EEF2FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  orderHistoryCardText: {
+    fontSize: 16,
+    color: '#1e293b',
+    fontWeight: '500',
   },
 });
 
