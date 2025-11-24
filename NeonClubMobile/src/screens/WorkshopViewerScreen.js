@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Linking, ActivityIndicator, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { workshopAPI } from '../services/api';
+import { CONFIG } from '../utils/config';
 
 const WorkshopViewerScreen = ({ route, navigation }) => {
   const { workshop } = route.params;
@@ -13,8 +14,8 @@ const WorkshopViewerScreen = ({ route, navigation }) => {
   const isVirtual = workshop.metadata?.type === 'virtual' || workshop.metadata?.location === 'Virtual';
   const daysLeft = isUpcoming ? Math.ceil((new Date(workshop.startDate) - new Date()) / (1000 * 60 * 60 * 24)) : 0;
   const isRegistered = !!workshop.hasRegistered;
-  // Always use full URL for local uploads
-  const BASE_URL = 'http://192.168.0.116:5000'; // Updated to correct IP
+  // Always use full URL for local uploads (derive from CONFIG.API_BASE_URL)
+  const BASE_URL = (CONFIG.API_BASE_URL || '').replace(/\/api\/?$/i, '') || `http://${require('../config/ipConfig').IP_ADDRESS}:5000`;
   const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
   const image = getFullUrl(workshop.coverImage) || getFullUrl(workshop.imageUrl) || getFullUrl(workshop.thumbnail) || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1600&auto=format&fit=crop';
 

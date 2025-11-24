@@ -6,6 +6,7 @@ import { AuthContext, AuthProvider } from '../contexts/AuthContext';
 
 // Import screens
 import SplashScreen from '../screens/SplashScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 import ValuePropositionScreen from '../screens/ValuePropositionScreen';
 import OTPAuthScreen from '../screens/OTPAuthScreen';
 import ProfileSetupScreen from '../screens/ProfileSetupScreen';
@@ -76,6 +77,11 @@ const AppNavigator = () => {
           component={SplashScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Onboarding"
+          component={OnboardingScreen}
+          options={{ headerShown: false }}
+        />
         {!user ? (
           <React.Fragment>
             <Stack.Screen
@@ -117,6 +123,11 @@ const AppNavigator = () => {
             <Stack.Screen
               name="Profile"
               component={ProfileScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProfileSetup"
+              component={ProfileSetupScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

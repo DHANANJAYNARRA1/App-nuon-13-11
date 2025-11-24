@@ -5,12 +5,16 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NEON_COLORS } from '../utils/colors';
 import { AuthContext } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
+
+// Use the app's bundled logo image
+const nuonLogo = require('../assets/logo.png');
 
 const SplashScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -42,22 +46,10 @@ const SplashScreen = ({ navigation }) => {
       }),
     ]).start();
 
-    // Auto navigate after short delay, route depends on auth state
-
+    // Show splash for 10 seconds, then go to onboarding/skip flow
     const timer = setTimeout(() => {
-      if (user) {
-        // Check if profile is truly incomplete (missing essential fields)
-        const needsProfileSetup = !user.isProfileComplete && (!user.name || !user.email);
-        
-        if (needsProfileSetup) {
-          navigation.replace('ProfileSetup');
-        } else {
-          navigation.replace('Main');
-        }
-      } else {
-        navigation.replace('ValueProposition');
-      }
-    }, 1200);
+      navigation.replace('Onboarding');
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [user]);
@@ -65,7 +57,7 @@ const SplashScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={NEON_COLORS.gradientPurpleToBlue}
+        colors={["#7C3AED", "#2563EB", "#06B6D4"]}
         style={styles.gradientBackground}
       >
       {/* Animated floating circles */}
@@ -117,79 +109,16 @@ const SplashScreen = ({ navigation }) => {
           },
         ]}
       >
-        <View style={styles.logo}>
-          <Text style={styles.logoText}>⚡</Text>
-        </View>
-        <Animated.Text
-          style={[
-            styles.appName,
-            {
-              opacity: logoAnim,
-              transform: [{ translateY: logoAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }) }],
-            },
-          ]}
-        >
-          Neon Club
-        </Animated.Text>
-        <Animated.Text
-          style={[
-            styles.tagline,
-            {
-              opacity: logoAnim,
-              transform: [{ translateY: logoAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }) }],
-            },
-          ]}
-        >
-          Empowering Healthcare Professionals
-        </Animated.Text>
+        {/* NUON icon shown above center */}
+        <Image source={nuonLogo} style={styles.iconOnly} resizeMode="contain" />
+
+        <Animated.View style={{ opacity: logoAnim }}>
+          <Text style={styles.splashLine1}>In collaboration with</Text>
+          <Text style={styles.splashLine2}>Ozone Hospital</Text>
+        </Animated.View>
       </Animated.View>
 
-      <Animated.View
-        style={[
-          styles.footer,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
-      >
-        <Text style={styles.footerText}>In collaboration with Ozone Hospital</Text>
-      </Animated.View>
-
-      {/* Bouncing dots */}
-      <Animated.View
-        style={[
-          styles.bouncingDots,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
-      >
-        {[0, 1, 2].map((index) => (
-          <Animated.View
-            key={index}
-            style={[
-              styles.dot,
-              {
-                transform: [
-                  {
-                    translateY: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -10],
-                    }),
-                  },
-                ],
-                animationDelay: `${index * 0.2}s`,
-              },
-            ]}
-          />
-        ))}
-      </Animated.View>
+      {/* (No footer or dots — splash is a clean logo + collaborator view) */}
       </LinearGradient>
     </View>
   );
@@ -228,71 +157,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
+    marginTop: -80,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 24,
-    backgroundColor: NEON_COLORS.glassBg,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    shadowColor: NEON_COLORS.neonPurple,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: NEON_COLORS.glassBorder,
+  iconOnly: {
+    width: 200,
+    height: 110,
+    marginBottom: 20,
   },
-  logoText: {
-    fontSize: 48,
-    color: NEON_COLORS.neonPurple,
+  splashLine1: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+  splashLine2: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 2,
+    opacity: 0.95,
   },
   appName: {
-    fontSize: 40,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '700',
     color: NEON_COLORS.textPrimary,
     textAlign: 'center',
-    marginBottom: 8,
-    textShadowColor: NEON_COLORS.neonPurple,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    marginBottom: 6,
   },
-  tagline: {
-    fontSize: 16,
-    color: NEON_COLORS.neonBlue,
+  collabText: {
+    color: 'rgba(230,247,255,0.95)',
+    fontSize: 13,
     textAlign: 'center',
-    fontWeight: '300',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 100,
-    zIndex: 10,
-  },
-  footerText: {
-    fontSize: 14,
-    color: NEON_COLORS.neonBlue,
-    textAlign: 'center',
-  },
-  bouncingDots: {
-    position: 'absolute',
-    bottom: 60,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: NEON_COLORS.textPrimary,
-    marginHorizontal: 4,
-    shadowColor: NEON_COLORS.neonPurple,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    marginTop: 8,
   },
 });
 

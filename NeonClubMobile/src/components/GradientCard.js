@@ -12,11 +12,11 @@ import { palette, radius, shadow, spacing, typography } from '../theme/tokens';
     - start?: {x:number,y:number}
     - end?: {x:number,y:number}
     - ctaLabel?: string
-    - ctaColor?: string // custom color for button text
     - chevron?: boolean // renders a trailing arrow circle (for small tiles)
     - onPress?: () => void
     - height?: number
     - icon?: string // optional emoji/icon glyph rendered in a soft square
+    - stacked?: boolean // when true, stacks text and centers CTA below
 */
 export default function GradientCard({
   title,
@@ -25,7 +25,6 @@ export default function GradientCard({
   start = { x: 0, y: 0 },
   end = { x: 1, y: 1 },
   ctaLabel,
-  ctaColor,
   chevron = false,
   onPress,
   height = 120,
@@ -37,29 +36,45 @@ export default function GradientCard({
 }) {
   const content = (
     <LinearGradient colors={colors} start={start} end={end} style={[styles.gradient, { minHeight: height }]}> 
-      <View style={styles.row}>
-        {!hideTexts && (
-          <>
-            {icon ? (
-              <View style={styles.iconBox}><Text style={styles.iconText}>{icon}</Text></View>
-            ) : null}
+      {!stacked ? (
+        <View style={[styles.row, centerCTA && styles.rowCenter]}>
+          {!hideTexts && (
             <View style={styles.texts}>
-              <Text style={styles.title} numberOfLines={1}>{title}</Text>
-              {subtitle ? <Text style={styles.subtitle} numberOfLines={2}>{subtitle}</Text> : null}
-              {ctaLabel ? (
-                <View style={styles.ctaWrap}>
-                  <Text style={[styles.ctaText, ctaColor && { color: ctaColor }]} numberOfLines={1}>{ctaLabel}</Text>
-                </View>
+              {icon ? (
+                <View style={styles.iconBox}><Text style={styles.iconText}>{icon}</Text></View>
               ) : null}
+              <Text style={styles.title}>{title}</Text>
+              {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
             </View>
-          </>
-        )}
-        {!ctaLabel && chevron ? (
-          <View style={styles.trailingCircle}>
-            <Text style={styles.trailingArrow}>›</Text>
-          </View>
-        ) : null}
-      </View>
+          )}
+          {ctaLabel ? (
+            <View style={[styles.ctaWrap, centerCTA && styles.ctaCentered]}>
+              <Text style={styles.ctaText}>{ctaLabel}</Text>
+            </View>
+          ) : (!centerCTA && chevron) ? (
+            <View style={styles.trailingCircle}>
+              <Text style={styles.trailingArrow}>›</Text>
+            </View>
+          ) : null}
+        </View>
+      ) : (
+        <View style={styles.stackedWrap}>
+          {!hideTexts && (
+            <View style={[styles.texts, { alignItems: 'center' }]}>
+              {icon ? (
+                <View style={[styles.iconBox, { marginBottom: 10 }]}><Text style={styles.iconText}>{icon}</Text></View>
+              ) : null}
+              <Text style={[styles.title, { textAlign: 'center' }]}>{title}</Text>
+              {subtitle ? <Text style={[styles.subtitle, { textAlign: 'center' }]}>{subtitle}</Text> : null}
+            </View>
+          )}
+          {ctaLabel ? (
+            <View style={[styles.ctaWrap, styles.ctaCentered, { marginTop: 14 }]}>
+              <Text style={styles.ctaText}>{ctaLabel}</Text>
+            </View>
+          ) : null}
+        </View>
+      )}
     </LinearGradient>
   );
 
@@ -78,72 +93,54 @@ export default function GradientCard({
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderRadius: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    borderRadius: radius.lg,
+    ...shadow.soft,
   },
   gradient: {
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
     justifyContent: 'center',
-    overflow: 'hidden',
   },
-  row: { 
-    flexDirection: 'row', 
-    alignItems: 'center',
-    gap: 16,
-  },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  rowCenter: { justifyContent: 'center' },
+  stackedWrap: { alignItems: 'center' },
   texts: {
-    flex: 1,
-    gap: 4,
-    paddingRight: 4,
+    gap: 6,
   },
   iconBox: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.20)',
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderColor: 'rgba(255,255,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
   },
-  iconText: { 
-    fontSize: 32,
-  },
+  iconText: { fontSize: 18, color: '#fff' },
   title: {
-    fontSize: 17,
-    fontWeight: '700',
+    ...typography.title,
     color: '#FFFFFF',
-    marginBottom: 4,
+    fontSize: 18,
   },
   subtitle: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.90)',
-    lineHeight: 18,
-    marginBottom: 12,
-    flexWrap: 'wrap',
+    ...typography.subtitle,
+    color: '#F3F4F6',
   },
   ctaWrap: {
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(255,255,255,0.95)',
-    paddingVertical: 7,
-    paddingHorizontal: 18,
-    borderRadius: 999,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    marginTop: spacing.md,
+  },
+  ctaCentered: {
+    alignSelf: 'center',
   },
   ctaText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0A0A0A',
+    ...typography.button,
+    color: palette.textPrimary || '#0A0A0A',
   },
   trailingCircle: {
     width: 36,

@@ -1,5 +1,5 @@
-// Centralized configuration for IP address
-
-const IP_ADDRESS = '192.168.29.81'; // Corrected IP address
+// Centralized configuration for IP address used by the mentor dashboard
+// For local web development set this to localhost so the dashboard talks to the backend on localhost
+const IP_ADDRESS = 'localhost';
 
 export { IP_ADDRESS };

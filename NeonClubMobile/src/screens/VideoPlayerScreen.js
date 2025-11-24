@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { progressAPI } from '../services/api';
+import { CONFIG } from '../utils/config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -58,7 +59,7 @@ const VideoPlayerScreen = ({ route, navigation }) => {
 
   const getVideoPlayerHTML = () => {
   // Helper to get full URL for uploads
-  const BASE_URL = 'http://192.168.0.3:5000'; // Updated to correct IP
+  const BASE_URL = (CONFIG.API_BASE_URL || '').replace(/\/api\/?$/i, '') || `http://${require('../config/ipConfig').IP_ADDRESS}:5000`;
   const getFullUrl = (path) => path && path.startsWith('/uploads') ? `${BASE_URL}${path}` : path;
 
   // Extract video ID from YouTube URL
