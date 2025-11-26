@@ -27,8 +27,10 @@ import { SvgXml } from 'react-native-svg';
 
 const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
 const bookOpenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
-const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
+const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+const sparklesSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>`;
 const usersSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
 const chevronRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
 const arrowRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 const playSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
@@ -266,7 +268,7 @@ const HomeScreen = ({ navigation }) => {
         {user?.profileIncomplete && (
           <View style={styles.profileIncompleteBannerNew}>
             <View style={styles.bannerIconContainer}>
-              <Text style={styles.bannerIconNew}>👤</Text>
+              <SvgXml xml={userSvg} width={20} height={20} color="#F97316" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.bannerTitleNew}>Complete Your Profile</Text>
@@ -364,31 +366,57 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       {/* Nightingale Programme card */}
-      <GradientCard
-          title="Nightingale Programme"
-          subtitle="Become a Champion Mentor and light the way"
+      <View style={styles.nightingaleCard}>
+        <LinearGradient
           colors={['#9333EA', '#EC4899', '#F97316']}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
-          ctaLabel="Begin Journey"
-          ctaColor="#7C3AED"
-          onPress={() => navigation.navigate('NCC')}
-          icon="✨"
-        />
+          style={styles.gradientCardContent}
+        >
+          <View style={styles.cardIconContainer}>
+            <SvgXml xml={sparklesSvg} width={32} height={32} color="#FDE047" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.gradientCardTitle}>Nightingale Programme</Text>
+            <Text style={styles.gradientCardSubtitle}>
+              Become a Champion Mentor and light the way
+            </Text>
+            <TouchableOpacity 
+              style={styles.gradientCardButton}
+              onPress={() => navigation.navigate('NCC')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.gradientCardButtonText}>Begin Journey</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
 
       {/* Mentor card */}
-      <View style={{ marginTop: 24 }}>
-        <GradientCard
-          title="Want to Become a Mentor?"
-          subtitle="Share your expertise with fellow nurses"
+      <View style={styles.mentorCard}>
+        <LinearGradient
           colors={['#06B6D4', '#14B8A6', '#10B981']}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
-          ctaLabel="Apply Now"
-          ctaColor="#0891B2"
-          onPress={() => navigation.navigate('MentorRegister')}
-          icon="👥"
-        />
+          style={styles.gradientCardContent}
+        >
+          <View style={styles.cardIconContainer}>
+            <SvgXml xml={usersSvg} width={32} height={32} color="#FFFFFF" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.gradientCardTitle}>Want to Become a Mentor?</Text>
+            <Text style={styles.gradientCardSubtitle}>
+              Share your expertise with fellow nurses
+            </Text>
+            <TouchableOpacity 
+              style={styles.gradientCardButton}
+              onPress={() => navigation.navigate('MentorRegister')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.gradientCardButtonText}>Apply Now</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
       </View>
 
       </View>
@@ -582,20 +610,20 @@ const styles = StyleSheet.create({
   profileIncompleteBannerNew: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFEDD5',
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#FDE047',
+    borderColor: '#FED7AA',
     ...shadow.soft,
   },
   bannerIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FEF08A',
+    backgroundColor: '#FFEDD5',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -607,15 +635,15 @@ const styles = StyleSheet.create({
   bannerTitleNew: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#92400E',
+    color: '#1F2937',
     marginBottom: 2,
   },
   bannerSubtitleNew: {
     fontSize: 12,
-    color: '#78350F',
+    color: '#4B5563',
   },
   bannerButtonNew: {
-    backgroundColor: '#F59E0B',
+    backgroundColor: '#EA580C',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
@@ -642,17 +670,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 14,
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
   },
   myLearningIcon: {
     fontSize: 24,
@@ -672,6 +693,58 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FFFFFF',
     fontWeight: '300',
+  },
+  // NEW: Nightingale & Mentor Cards (Figma Style)
+  nightingaleCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginBottom: 24,
+    ...shadow.soft,
+  },
+  mentorCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginBottom: 24,
+    ...shadow.soft,
+  },
+  gradientCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    gap: 16,
+  },
+  cardIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  gradientCardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  gradientCardSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.9)',
+    marginBottom: 12,
+  },
+  gradientCardButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
+  },
+  gradientCardButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1F2937',
   },
   // EXISTING: All original styles preserved below
   header: {

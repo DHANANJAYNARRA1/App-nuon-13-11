@@ -307,7 +307,16 @@ export const courseAPI = {
   getMyCourses: () => cachedGet('/courses/my'),
 };
 
-// Event APIs
+// Conference APIs (Learning tab - Academic conferences/webinars)
+export const conferenceAPI = {
+  getConferences: () => cachedGet('/conferences'),
+  getConference: (id) => cachedGet(`/conferences/${id}`),
+  registerForConference: (conferenceId, paymentData) => api.post(`/conferences/${conferenceId}/register`, paymentData),
+  getMyConferences: () => cachedGet('/conferences/my/conferences'),
+  getAllConferences: () => cachedGet('/conferences'),
+};
+
+// Event APIs (Engage tab - Community events) - Keep for backward compatibility
 export const eventAPI = {
   getEvents: () => cachedGet('/events'),
   getEvent: (id) => cachedGet(`/events/${id}`),

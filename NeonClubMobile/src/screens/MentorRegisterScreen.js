@@ -7,6 +7,12 @@ import { mentorAPI } from '../services/api';
 import SuccessModal from '../components/SuccessModal';
 import { NEON_COLORS } from '../utils/colors';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { SvgXml } from 'react-native-svg';
+
+const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+const building2Svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>`;
+const fileTextSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
+const sendSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>`;
 
 const Field = ({ label, value, onChangeText, placeholder, keyboardType }) => (
   <View style={{ marginBottom: 12 }}>
@@ -110,7 +116,7 @@ const MentorRegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <SuccessModal
         visible={successVisible}
         title="Application submitted"
@@ -118,35 +124,21 @@ const MentorRegisterScreen = ({ navigation }) => {
         buttonText="Explore Mentors"
         onClose={() => { setSuccessVisible(false); navigation.replace('Mentors'); }}
       />
-      {/* Header */}
-      <LinearGradient colors={['#06B6D4', '#14B8A6', '#10B981']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.header}>
-        <TouchableOpacity onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Main'))} style={{ padding: 6 }}>
-          <Text style={{ color:'#fff', fontSize: 24 }}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Apply as a Mentor</Text>
-        <Text style={styles.headerSub}>Share your expertise with fellow nurses</Text>
+      
+      {/* Header - Fixed at top */}
+      <LinearGradient colors={['#9333EA', '#EC4899', '#F97316']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.header}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+          <TouchableOpacity onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Main'))} style={{ padding: 8 }}>
+            <Text style={{ color:'#fff', fontSize: 24 }}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Direct Registration</Text>
+        </View>
+        <Text style={styles.headerSub}>For experienced nurses (5+ years)</Text>
       </LinearGradient>
 
-      {/* Visual hero (top) with face photo picker */}
-      <ImageBackground source={{ uri: MENTOR_HERO }} style={styles.heroCard} imageStyle={{ borderRadius: 16 }}>
-        <View style={styles.heroOverlay} />
-        <View style={{ flexDirection:'row', alignItems:'center' }}>
-          <TouchableOpacity onPress={pickPhoto} activeOpacity={0.8} style={styles.photoCircle}>
-            {photo ? (
-              <Image source={{ uri: photo.uri }} style={{ width: '100%', height: '100%', borderRadius: 999 }} />
-            ) : (
-              <Text style={{ fontSize: 28 }}>👩‍⚕️</Text>
-            )}
-          </TouchableOpacity>
-          <View style={{ flex:1 }}>
-            <Text style={[styles.heroTitle, { color:'#fff' }]}>Become a Champion Mentor</Text>
-            <Text style={[styles.heroSub, { color:'#F8FAFC' }]}>Guide learners, host sessions, and shape careers.</Text>
-          </View>
-        </View>
-      </ImageBackground>
-
-      {/* Form */}
+      {/* Scrollable Form Content */}
       <ScrollView contentContainerStyle={styles.container}>
+
         {/* Section: Express Your Interest */}
         <View style={styles.noticeCard}>
           <Text style={styles.noticeTitle}>Express Your Interest</Text>
@@ -155,7 +147,10 @@ const MentorRegisterScreen = ({ navigation }) => {
 
         {/* Section: Personal Information */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Personal Information</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <SvgXml xml={userSvg} width={20} height={20} color="#9333EA" />
+            <Text style={styles.cardTitle}>Personal Information</Text>
+          </View>
           <Field label="Full Name *" value={name} onChangeText={setName} placeholder="Enter your full name" />
           <View style={{ flexDirection:'row', gap: 12 }}>
             <View style={{ flex:1 }}>
@@ -169,7 +164,10 @@ const MentorRegisterScreen = ({ navigation }) => {
 
         {/* Section: Professional Details */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Professional Details</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <SvgXml xml={building2Svg} width={20} height={20} color="#9333EA" />
+            <Text style={styles.cardTitle}>Professional Details</Text>
+          </View>
           <Field label="Current Hospital/Clinic *" value={currentHospital} onChangeText={setCurrentHospital} placeholder="Your workplace" />
           <View style={{ flexDirection:'row', gap: 12 }}>
             <View style={{ flex:1 }}>
@@ -190,7 +188,10 @@ const MentorRegisterScreen = ({ navigation }) => {
 
         {/* Section: Additional Information */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Additional Information</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <SvgXml xml={fileTextSvg} width={20} height={20} color="#9333EA" />
+            <Text style={styles.cardTitle}>Additional Information</Text>
+          </View>
           <View style={{ marginBottom: 12 }}>
             <Text style={styles.label}>What interests you most about Neon Club? *</Text>
             <TextInput
@@ -207,11 +208,16 @@ const MentorRegisterScreen = ({ navigation }) => {
 
         {/* Availability removed per request */}
 
-        <LinearGradient colors={[NEON_COLORS.neonPurple, NEON_COLORS.neonBlue]} start={{x:0,y:0}} end={{x:1,y:1}} style={[styles.submitBtn, submitting && { opacity: 0.6 }]}>
-          <TouchableOpacity onPress={onSubmit} disabled={submitting}>
+        <LinearGradient colors={['#9333EA', '#EC4899', '#F97316']} start={{x:0,y:0}} end={{x:1,y:1}} style={[styles.submitBtn, submitting && { opacity: 0.6 }]}>
+          <TouchableOpacity onPress={onSubmit} disabled={submitting} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <SvgXml xml={sendSvg} width={20} height={20} color="#FFFFFF" style={{ marginRight: 8 }} />
             <Text style={styles.submitText}>{submitting ? 'Submitting…' : 'Submit Application'}</Text>
           </TouchableOpacity>
         </LinearGradient>
+
+        <Text style={styles.disclaimer}>
+          By submitting, you agree to our verification process and communication via phone/email
+        </Text>
       </ScrollView>
 
       {/* Experience Picker Modal */}
@@ -252,30 +258,26 @@ const MentorRegisterScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  header: { paddingTop: 36, paddingBottom: 16, paddingHorizontal: 16, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
-  headerTitle: { color:'#fff', fontSize: 18, fontWeight: '800', marginTop: 4 },
-  headerSub: { color:'#E5E7EB', marginTop: 6 },
-  heroCard: { marginHorizontal: 16, marginTop: 12, borderRadius: 16, padding: 14, overflow:'hidden', ...Platform.select({ android: { elevation: 2 }, ios: { shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } } }) },
-  photoCircle: { width: 64, height: 64, borderRadius: 32, backgroundColor:'#fff', alignItems:'center', justifyContent:'center', marginRight: 12, overflow:'hidden' },
-  heroTitle: { fontWeight:'800', color:'#111827' },
-  heroSub: { color:'#374151', marginTop: 2 },
-  heroOverlay: { position:'absolute', left:0, right:0, top:0, bottom:0, backgroundColor:'rgba(0,0,0,0.35)' },
-  container: { padding: 16, paddingBottom: 24 },
-  card: { backgroundColor:'#fff', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 12 },
-  noticeCard: { backgroundColor:'#F1F5F9', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#E2E8F0', marginHorizontal: 16, marginBottom: 12 },
-  noticeTitle: { color:'#0F172A', fontWeight:'800', marginBottom: 6 },
-  noticeSub: { color:'#475569' },
-  cardTitle: { color:'#111827', fontWeight:'800', marginBottom: 8 },
-  label: { color: '#111827', fontWeight: '700', marginBottom: 6 },
-  input: { backgroundColor: '#F3F4F6', borderRadius: 12, paddingHorizontal: 14, paddingVertical: Platform.OS==='ios'?14:10, color:'#111827' },
-  select: { backgroundColor: '#F3F4F6', borderRadius: 12, paddingHorizontal: 14, paddingVertical: Platform.OS==='ios'?14:12, justifyContent:'center' },
-  submitBtn: { borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
-  submitText: { color: '#fff', fontWeight: '800', textAlign:'center' },
+  header: { paddingTop: 48, paddingBottom: 32, paddingHorizontal: 24, borderBottomLeftRadius: 32, borderBottomRightRadius: 32, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
+  headerTitle: { color:'#fff', fontSize: 20, fontWeight: '700' },
+  headerSub: { color:'rgba(255,255,255,0.90)', fontSize: 14, lineHeight: 20 },
+  container: { padding: 24, paddingBottom: 40 },
+  card: { backgroundColor:'#fff', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
+  noticeCard: { backgroundColor:'#F9FAFB', borderRadius: 16, padding: 20, borderWidth: 2, borderColor: '#E9D5FF', marginBottom: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
+  noticeTitle: { color:'#6D28D9', fontWeight:'700', marginBottom: 8, fontSize: 16 },
+  noticeSub: { color:'#374151', fontSize: 14, lineHeight: 21 },
+  cardTitle: { color:'#111827', fontWeight:'700', fontSize: 16 },
+  label: { color: '#111827', fontWeight: '600', marginBottom: 6, fontSize: 14 },
+  input: { backgroundColor: '#F9FAFB', borderRadius: 12, paddingHorizontal: 14, paddingVertical: Platform.OS==='ios'?14:12, color:'#111827', borderWidth: 1, borderColor: '#E5E7EB' },
+  select: { backgroundColor: '#F9FAFB', borderRadius: 12, paddingHorizontal: 14, paddingVertical: Platform.OS==='ios'?14:12, justifyContent:'center', borderWidth: 1, borderColor: '#E5E7EB' },
+  submitBtn: { borderRadius: 999, paddingVertical: 16, alignItems: 'center', marginTop: 8, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
+  submitText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  disclaimer: { fontSize: 12, color: '#6B7280', textAlign: 'center', marginTop: 16, lineHeight: 18 },
   modalBackdrop: { flex:1, backgroundColor:'rgba(0,0,0,0.4)', justifyContent:'center', alignItems:'center', padding: 24 },
-  modalCard: { width: '100%', backgroundColor:'#fff', borderRadius: 16, padding: 16 },
-  modalTitle: { fontWeight:'800', color:'#0F172A', marginBottom: 8 },
-  modalOption: { paddingVertical: 12, borderBottomColor: '#E5E7EB', borderBottomWidth: 1 },
-  modalOptionText: { color:'#111827' },
+  modalCard: { width: '100%', backgroundColor:'#fff', borderRadius: 16, padding: 20 },
+  modalTitle: { fontWeight:'700', color:'#0F172A', marginBottom: 12, fontSize: 16 },
+  modalOption: { paddingVertical: 14, borderBottomColor: '#E5E7EB', borderBottomWidth: 1 },
+  modalOptionText: { color:'#111827', fontSize: 15 },
 });
 
 export default MentorRegisterScreen;

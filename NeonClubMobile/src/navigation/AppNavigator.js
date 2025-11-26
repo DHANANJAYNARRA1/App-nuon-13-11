@@ -13,7 +13,10 @@ import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import LoginScreen from '../screens/LoginScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import CourseDetailScreen from '../screens/CourseDetailScreen';
+import WorkshopDetailScreen from '../screens/WorkshopDetailScreen';
 import CourseViewerScreen from '../screens/CourseViewerScreen';
+import ConferenceDetailScreen from '../screens/ConferenceDetailScreen';
+import ConferenceViewerScreen from '../screens/ConferenceViewerScreen';
 import EventViewerScreen from '../screens/EventViewerScreen';
 import WorkshopViewerScreen from '../screens/WorkshopViewerScreen';
 import MyLearningScreen from '../screens/MyLearningScreen';
@@ -136,8 +139,23 @@ const AppNavigator = () => {
               options={{ title: 'Course Details' }}
             />
             <Stack.Screen
+              name="WorkshopDetail"
+              component={WorkshopDetailScreen}
+              options={{ title: 'Workshop Details' }}
+            />
+            <Stack.Screen
               name="CourseViewer"
               component={CourseViewerScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ConferenceDetail"
+              component={ConferenceDetailScreen}
+              options={{ title: 'Conference Details' }}
+            />
+            <Stack.Screen
+              name="ConferenceViewer"
+              component={ConferenceViewerScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

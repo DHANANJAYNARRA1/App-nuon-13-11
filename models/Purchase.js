@@ -22,6 +22,11 @@ const purchaseSchema = new mongoose.Schema({
     ref: 'Event',
     required: false
   },
+  conferenceId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conference',
+    required: false
+  },
   amount: {
     type: Number,
     required: true,
@@ -49,17 +54,18 @@ const purchaseSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// At least one of courseId, workshopId, or eventId must be present
+// At least one of courseId, workshopId, eventId, or conferenceId must be present
 purchaseSchema.pre('validate', function(next) {
-  if (!this.courseId && !this.workshopId && !this.eventId) {
-    return next(new Error('Either courseId, workshopId, or eventId is required'));
+  if (!this.courseId && !this.workshopId && !this.eventId && !this.conferenceId) {
+    return next(new Error('Either courseId, workshopId, eventId, or conferenceId is required'));
   }
   next();
 });
 
-// Compound indexes to prevent duplicate purchases for course or workshop
+// Compound indexes to prevent duplicate purchases for course, workshop, event, or conference
 purchaseSchema.index({ userId: 1, courseId: 1 }, { unique: true, partialFilterExpression: { courseId: { $exists: true, $ne: null } } });
 purchaseSchema.index({ userId: 1, workshopId: 1 }, { unique: true, partialFilterExpression: { workshopId: { $exists: true, $ne: null } } });
 purchaseSchema.index({ userId: 1, eventId: 1 }, { unique: true, partialFilterExpression: { eventId: { $exists: true, $ne: null } } });
+purchaseSchema.index({ userId: 1, conferenceId: 1 }, { unique: true, partialFilterExpression: { conferenceId: { $exists: true, $ne: null } } });
 
 module.exports = mongoose.model('Purchase', purchaseSchema);

@@ -13,12 +13,13 @@ import {
   Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import api, { courseAPI, eventAPI, workshopAPI, activitiesAPI, mentorAPI } from '../services/api';
+import api, { courseAPI, conferenceAPI, eventAPI, workshopAPI, activitiesAPI, mentorAPI } from '../services/api';
 import { LEARNING_HERO } from '../assets/heroImages';
 
 const MyLearningScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('courses');
   const [courses, setCourses] = useState([]);
+  const [conferences, setConferences] = useState([]);
   const [events, setEvents] = useState([]);
   const [workshops, setWorkshops] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -31,17 +32,20 @@ const MyLearningScreen = ({ navigation }) => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [coursesRes, eventsRes, workshopsRes, sessionsRes] = await Promise.all([
+      const [coursesRes, conferencesRes, eventsRes, workshopsRes, sessionsRes] = await Promise.all([
         courseAPI.getMyCourses().catch(() => ({ data: {} })),
+        conferenceAPI.getMyConferences().catch(() => ({ data: {} })),
         eventAPI.getMyEvents().catch(() => ({ data: {} })),
         workshopAPI.getMyWorkshops().catch(() => ({ data: {} })),
         mentorAPI.getMyBookings().catch(() => ({ data: {} })),
       ]);
       const cRaw = coursesRes?.data?.courses ?? coursesRes?.data ?? [];
+      const confRaw = conferencesRes?.data?.conferences ?? conferencesRes?.data ?? [];
       const eRaw = eventsRes?.data?.events ?? eventsRes?.data ?? [];
       const wRaw = workshopsRes?.data?.workshops ?? workshopsRes?.data ?? [];
       const sRaw = sessionsRes?.data?.bookings ?? sessionsRes?.data ?? [];
       setCourses(Array.isArray(cRaw) ? cRaw : []);
+      setConferences(Array.isArray(confRaw) ? confRaw : []);
       setEvents(Array.isArray(eRaw) ? eRaw : []);
       setWorkshops(Array.isArray(wRaw) ? wRaw : []);
       setSessions(Array.isArray(sRaw) ? sRaw : []);
@@ -119,6 +123,18 @@ const MyLearningScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  const renderConferenceItem = ({ item }) => (
+    <View style={styles.card}>
+      <TouchableOpacity
+        style={{ flex: 1 }}
+        onPress={() => navigation.navigate('ConferenceViewer', { conference: { ...item, hasRegistered: true } })}
+      >
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardSubtitle}>{item.date ? new Date(item.date).toLocaleDateString() : 'TBA'} • {item.time || 'TBA'}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   const renderEventItem = ({ item }) => (
     <TouchableOpacity
       style={styles.heroCard}
@@ -167,6 +183,7 @@ const MyLearningScreen = ({ navigation }) => {
 
   const tabs = [
     { key: 'courses', label: 'Courses' },
+    { key: 'conferences', label: 'Conferences' },
     { key: 'workshops', label: 'Workshops' },
     { key: 'events', label: 'Events' },
     { key: 'sessions', label: 'Sessions' },
@@ -197,6 +214,16 @@ const MyLearningScreen = ({ navigation }) => {
           ) : (
             courses.filter(Boolean).map((item, idx) => (
               <View key={item._id || idx}>{renderCourseItem({ item })}</View>
+            ))
+          )
+        )}
+
+        {activeTab === 'conferences' && (
+          conferences.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No conferences registered yet.</Text>
+          ) : (
+            conferences.filter(Boolean).map((item, idx) => (
+              <View key={item._id || idx}>{renderConferenceItem({ item })}</View>
             ))
           )
         )}
