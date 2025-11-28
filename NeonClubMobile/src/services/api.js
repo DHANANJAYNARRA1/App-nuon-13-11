@@ -33,7 +33,6 @@ export async function setBaseOverride() {
 const __getCache = new Map(); // key -> { ts, data }
 const __CACHE_TTL = 60 * 1000; // 60s
 async function cachedGet(url, config = {}) {
-  console.log(url)
   const key = JSON.stringify([api.defaults.baseURL, url, config.params || null]);
   const now = Date.now();
   const cached = __getCache.get(key);
@@ -77,19 +76,14 @@ export async function probeAndFixBase() {
 
   for (const candidate of candidates) {
     try {
-      console.log(`[api][probe] Testing ${candidate}...`);
       const testApi = axios.create({ baseURL: candidate, timeout: 3000 });
       await testApi.get('/test'); // Use /test instead of /health to avoid news route conflict
-      console.log(`[api][probe] Success with ${candidate}`);
       api.defaults.baseURL = candidate;
       return candidate;
     } catch (e) {
-      console.log(`[api][probe] Failed ${candidate}:`, e.message);
-      console.log(`[api][probe] Error details:`, e.response?.data || e.code || e);
+      // Silently continue to next candidate
     }
   }
-
-  console.log('[api][probe] All candidates failed, keeping current base');
   return api.defaults.baseURL;
 }
 
@@ -157,18 +151,7 @@ api.interceptors.request.use(async (config) => {
     config.headers['x-request-id'] = genReqId();
   }
   config.headers['Content-Type'] = 'application/json';
-  if (__DEV__) {
-    try {
-      const method = (config.method || 'GET').toUpperCase();
-      // Avoid logging bodies for large posts
-      // eslint-disable-next-line no-console
-      console.log(`[api][request] ${method} ${config.baseURL}${config.url}`, {
-        hasAuth: Boolean(config.headers.Authorization),
-        hasBypass: Boolean(config.headers['x-dev-bypass']),
-        reqId: config.headers['x-request-id'],
-      });
-    } catch {}
-  }
+  // Request logging removed for cleaner console output
   return config;
 });
 
@@ -176,43 +159,17 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Log error context for debugging
-    try {
-      const originalConfig = error?.config || {};
-      const reqId = originalConfig.headers?.['x-request-id'];
-      const resp = error.response;
-      // eslint-disable-next-line no-console
-      console.log('[api][error]', {
-        reqId,
-        url: (error?.config?.baseURL || '') + (error?.config?.url || ''),
-        code: error?.code,
-        status: resp?.status,
-        statusText: resp?.statusText,
-        message: error?.message,
-        responseData: resp?.data,
-        networkDetails: {
-          baseURL: error?.config?.baseURL,
-          timeout: error?.config?.timeout,
-          headers: error?.config?.headers,
-          platform: Platform.OS,
-          isConnected: true, // Assume connected unless proven otherwise
-        },
-      });
-    } catch {}
-
     // If network error and we haven't tried probing yet, try to fix base URL
     if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED') {
-      console.log('[api][error] Network error detected, attempting to probe and fix base URL...');
       try {
         const newBase = await probeAndFixBase();
         if (newBase !== error.config.baseURL) {
-          console.log(`[api][error] Base URL updated from ${error.config.baseURL} to ${newBase}, retrying request...`);
           // Retry the request with new base URL
           const retryConfig = { ...error.config, baseURL: newBase };
           return api.request(retryConfig);
         }
       } catch (probeError) {
-        console.log('[api][error] Base URL probe failed:', probeError.message);
+        // Silently handle probe failure
       }
     }
 
@@ -234,10 +191,7 @@ export const authAPI = {
   sendOTP: async (endpoint, data) => {
     try {
       const response = await api.post(endpoint, data);
-      // For development, show the OTP in response if available
-      if (__DEV__ && response.data?.debugOtp) {
-        console.log(`[DEV OTP] Use this OTP to verify: ${response.data.debugOtp}`);
-      }
+      // OTP debug info removed for cleaner console
       return response;
     } catch (error) {
       console.error('Send OTP error:', error);
@@ -436,7 +390,6 @@ export const mentorAPI = {
   // Prefer public mentors endpoint; fall back to admin (will usually be blocked) but keep for compatibility
   getMentors: async () => {
     try {
-      console.log('Fetching public mentors');
       const res = await cachedGet('/mentor/public/mentors');
       let list = Array.isArray(res?.data?.mentors) ? res.data.mentors : (Array.isArray(res?.data) ? res.data : []);
       // No mock fallback; show empty state on UI if none
@@ -493,10 +446,8 @@ export const activitiesAPI = {
 export async function fetchPublicMentors() {
   try {
     const response = await api.get('/mentor/public/mentors');
-    console.log('Fetched mentors:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching mentors:', error);
     return [];
   }
 }

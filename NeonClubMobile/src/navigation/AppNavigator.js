@@ -38,6 +38,10 @@ import HelpScreen from '../screens/HelpScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import Mentorship from '../screens/Mentorship';
 import ProfileScreen from '../screens/ProfileScreen';
+import ProfileEditScreen from '../screens/ProfileEditScreen';
+import CertificationsScreen from '../screens/CertificationsScreen';
+import OrderHistory from '../screens/OrderHistory';
+import ReferralScreen from '../screens/ReferralScreen';
 
 const Stack = createStackNavigator();
 
@@ -85,181 +89,181 @@ const AppNavigator = () => {
           component={OnboardingScreen}
           options={{ headerShown: false }}
         />
-        {!user ? (
-          <React.Fragment>
-            <Stack.Screen
-              name="ValueProposition"
-              component={ValuePropositionScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="OTPAuth"
-              component={OTPAuthScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProfileSetup"
-              component={ProfileSetupScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ headerShown: false }}
-            />
-          </React.Fragment>
-        ) : (!user.isProfileComplete && (!user.name || !user.email)) ? (
-          <React.Fragment>
-            <Stack.Screen
-              name="ProfileSetup"
-              component={ProfileSetupScreen}
-              options={{ headerShown: false }}
-            />
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Stack.Screen
-              name="Main"
-              component={BottomTabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={ProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProfileSetup"
-              component={ProfileSetupScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CourseDetail"
-              component={CourseDetailScreen}
-              options={{ title: 'Course Details' }}
-            />
-            <Stack.Screen
-              name="WorkshopDetail"
-              component={WorkshopDetailScreen}
-              options={{ title: 'Workshop Details' }}
-            />
-            <Stack.Screen
-              name="CourseViewer"
-              component={CourseViewerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ConferenceDetail"
-              component={ConferenceDetailScreen}
-              options={{ title: 'Conference Details' }}
-            />
-            <Stack.Screen
-              name="ConferenceViewer"
-              component={ConferenceViewerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="EventViewer"
-              component={EventViewerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="WorkshopViewer"
-              component={WorkshopViewerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MyLearning"
-              component={MyLearningScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Bookings"
-              component={BookingScreen}
-              options={{ title: 'My Bookings' }}
-            />
-            <Stack.Screen
-              name="Assessment"
-              component={AssessmentScreen}
-              options={{ title: 'Assessments' }}
-            />
-            <Stack.Screen
-              name="NCC"
-              component={NCCScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Payment"
-              component={PaymentScreen}
-              options={{ title: 'Payment' }}
-            />
-            <Stack.Screen
-              name="MentorAvailability"
-              component={MentorAvailabilityScreen}
-              options={{ title: 'Pick a Slot' }}
-            />
-            <Stack.Screen
-              name="MentorJoin"
-              component={MentorJoinScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MentorFeedback"
-              component={MentorFeedbackScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MentorRegister"
-              component={MentorRegisterScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MentorProfile"
-              component={MentorProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="NewsList"
-              component={NewsListScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="NewsViewer"
-              component={NewsViewerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="VideoPlayer"
-              component={VideoPlayerScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Notifications"
-              component={NotificationsScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="NotificationSettings"
-              component={NotificationSettingsScreen}
-              options={{ title: 'Notification Settings' }}
-            />
-            <Stack.Screen
-              name="Help"
-              component={HelpScreen}
-              options={{ title: 'Help & Support' }}
-            />
-            <Stack.Screen
-              name="PrivacyPolicy"
-              component={PrivacyPolicyScreen}
-              options={{ title: 'Privacy Policy' }}
-            />
-            <Stack.Screen
-              name="Mentorship"
-              component={Mentorship}
-              options={{ title: 'Mentorship' }}
-            />
-          </React.Fragment>
-        )}
+        <Stack.Screen
+          name="ValueProposition"
+          component={ValuePropositionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OTPAuth"
+          component={OTPAuthScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfileSetup"
+          component={ProfileSetupScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={BottomTabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfileEdit"
+          component={ProfileEditScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CourseDetail"
+          component={CourseDetailScreen}
+          options={{ title: 'Course Details' }}
+        />
+        <Stack.Screen
+          name="WorkshopDetail"
+          component={WorkshopDetailScreen}
+          options={{ title: 'Workshop Details' }}
+        />
+        <Stack.Screen
+          name="CourseViewer"
+          component={CourseViewerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ConferenceDetail"
+          component={ConferenceDetailScreen}
+          options={{ title: 'Conference Details' }}
+        />
+        <Stack.Screen
+          name="ConferenceViewer"
+          component={ConferenceViewerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EventViewer"
+          component={EventViewerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="WorkshopViewer"
+          component={WorkshopViewerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyLearning"
+          component={MyLearningScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Bookings"
+          component={BookingScreen}
+          options={{ title: 'My Bookings' }}
+        />
+        <Stack.Screen
+          name="Assessment"
+          component={AssessmentScreen}
+          options={{ title: 'Assessments' }}
+        />
+        <Stack.Screen
+          name="NCC"
+          component={NCCScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Payment"
+          component={PaymentScreen}
+          options={{ title: 'Payment' }}
+        />
+        <Stack.Screen
+          name="MentorAvailability"
+          component={MentorAvailabilityScreen}
+          options={{ title: 'Pick a Slot' }}
+        />
+        <Stack.Screen
+          name="MentorJoin"
+          component={MentorJoinScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MentorFeedback"
+          component={MentorFeedbackScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MentorRegister"
+          component={MentorRegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MentorProfile"
+          component={MentorProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NewsList"
+          component={NewsListScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NewsViewer"
+          component={NewsViewerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="VideoPlayer"
+          component={VideoPlayerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Notifications"
+          component={NotificationsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NotificationSettings"
+          component={NotificationSettingsScreen}
+          options={{ title: 'Notification Settings' }}
+        />
+        <Stack.Screen
+          name="Help"
+          component={HelpScreen}
+          options={{ title: 'Help & Support' }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicyScreen}
+          options={{ title: 'Privacy Policy' }}
+        />
+        <Stack.Screen
+          name="Mentorship"
+          component={Mentorship}
+          options={{ title: 'Mentorship' }}
+        />
+        <Stack.Screen
+          name="Certifications"
+          component={CertificationsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrderHistory"
+          component={OrderHistory}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Referral"
+          component={ReferralScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

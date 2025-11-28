@@ -167,6 +167,55 @@ const getProfile = async (req, res) => {
   }
 };
 
+// Get current user profile
+const getCurrentProfile = async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        specialization: user.specialization,
+        experience: user.experience,
+        organization: user.organization,
+        city: user.city,
+        state: user.state,
+        location: user.location,
+        isProfileComplete: user.isProfileComplete,
+        profilePicture: user.profilePicture
+      }
+    });
+  } catch (error) {
+      console.error('Get current profile error:', {
+        error: error,
+        stack: error.stack,
+        user: req.user,
+        headers: req.headers,
+        path: req.path,
+        method: req.method,
+        time: new Date().toISOString()
+      });
+      res.status(500).json({
+        success: false,
+        message: 'Error getting current profile',
+        error: error.message
+      });
+  }
+};
+
 // Login with email and password
 const login = async (req, res) => {
   try {
@@ -422,6 +471,7 @@ module.exports = {
   register,
   updateProfile,
   getProfile,
+  getCurrentProfile,
   generateToken,
   createOrUpdateProfile,
   mentorLogin

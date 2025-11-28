@@ -10,6 +10,6 @@ router.get('/status', auth, nccController.getNccStatus);
 router.put('/step', auth, nccController.updateNccStep);
 
 // Public NCC info endpoint
-router.get('/', nccController.getNccInfo);
+router.get('/ncc', nccController.getNccInfo);
 
 module.exports = router;
