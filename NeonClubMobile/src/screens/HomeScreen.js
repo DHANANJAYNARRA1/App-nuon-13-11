@@ -276,7 +276,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={styles.bannerButtonNew}
-              onPress={() => navigation.navigate('ProfileEdit')}
+              onPress={() => navigation.navigate('ProfileSetup')}
             >
               <Text style={styles.bannerButtonTextNew}>Complete</Text>
             </TouchableOpacity>

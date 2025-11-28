@@ -125,10 +125,12 @@ const NotificationsScreen = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <SvgXml xml={chevronLeftSvg} width={24} height={24} color="#6B7280" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notifications</Text>
+          <View style={styles.leftSection}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <SvgXml xml={chevronLeftSvg} width={24} height={24} color="#6B7280" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Notifications</Text>
+          </View>
           <TouchableOpacity onPress={() => setShowSettings(!showSettings)} style={styles.settingsButton}>
             <SvgXml xml={settingsSvg} width={24} height={24} color="#6B7280" />
           </TouchableOpacity>
@@ -285,8 +287,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
   },
   headerContent: {
     flexDirection: 'row',
@@ -294,9 +296,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
   },
+  leftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   backButton: {
     padding: 8,
-    marginRight: 12,
+    marginRight: 2,
   },
   headerTitle: {
     color: '#1F2937',

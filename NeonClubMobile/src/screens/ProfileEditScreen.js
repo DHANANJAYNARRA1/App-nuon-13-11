@@ -147,11 +147,10 @@ export function ProfileEditScreen({ navigation, route }) {
             <SvgXml xml={chevronLeftSvg} width={20} height={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 40 }} />
         </View>
         {authUser?.profileIncomplete && (
-          <View style={styles.incompleteBanner}>
-            <Text style={styles.incompleteBannerText}>
+          <View style={styles.incompleteBannerSmall}>
+            <Text style={styles.incompleteBannerTextSmall}>
               Complete your professional information
             </Text>
           </View>
@@ -159,6 +158,7 @@ export function ProfileEditScreen({ navigation, route }) {
       </LinearGradient>
 
       <View style={styles.content}>
+
         {/* Personal Information */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
@@ -234,9 +234,18 @@ export function ProfileEditScreen({ navigation, route }) {
         {/* Professional Information */}
         <View style={[styles.card, !isProfessionalInfoComplete && styles.incompleteCard]}>
           <View style={styles.cardHeader}>
-            <SvgXml xml={briefcaseSvg} width={20} height={20} color="#2563EB" />
             <View style={styles.cardTitleRow}>
-              <Text style={styles.cardTitle}>Professional Information</Text>
+              <View style={styles.titleContainer}>
+                <View style={styles.titleWithIcon}>
+                  <SvgXml xml={briefcaseSvg} width={20} height={20} color="#2563EB" />
+                  <Text style={styles.cardTitle}>Professional Information</Text>
+                </View>
+                {!isProfessionalInfoComplete && (
+                  <Text style={styles.helperText}>
+                    Complete this section to unlock all features and book sessions
+                  </Text>
+                )}
+              </View>
               {!isProfessionalInfoComplete && (
                 <View style={styles.incompleteBadge}>
                   <Text style={styles.incompleteBadgeText}>Incomplete</Text>
@@ -244,11 +253,6 @@ export function ProfileEditScreen({ navigation, route }) {
               )}
             </View>
           </View>
-          {!isProfessionalInfoComplete && (
-            <Text style={styles.helperText}>
-              Complete this section to unlock all features and book sessions
-            </Text>
-          )}
           <View style={styles.cardContent}>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Current Workplace</Text>
@@ -358,7 +362,6 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: 10,
   },
   backButton: {
@@ -369,17 +372,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
   },
-  incompleteBanner: {
-    backgroundColor: 'rgba(249, 115, 22, 0.2)',
-    borderColor: 'rgba(249, 115, 22, 0.3)',
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 16,
+  incompleteBannerSmall: {
+    backgroundColor: '#F97316',
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginTop: 12,
+    alignSelf: 'flex-start',
   },
-  incompleteBannerText: {
+  incompleteBannerTextSmall: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   content: {
@@ -399,7 +403,7 @@ const styles = StyleSheet.create({
   incompleteCard: {
     borderWidth: 2,
     borderColor: '#fed7aa',
-    backgroundColor: '#fff7ed',
+    backgroundColor: '#FFFFFF',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -409,9 +413,17 @@ const styles = StyleSheet.create({
   cardTitleRow: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginLeft: 8,
+  },
+  titleContainer: {
+    flexDirection: 'column',
+    flex: 1,
+  },
+  titleWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   cardTitle: {
     fontSize: 18,
@@ -433,8 +445,8 @@ const styles = StyleSheet.create({
   helperText: {
     fontSize: 14,
     color: '#ea580c',
-    marginBottom: 16,
     fontStyle: 'italic',
+    marginTop: 4,
   },
   cardContent: {
     // No specific styles
@@ -472,7 +484,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#2563EB',
-    borderRadius: 12,
+    borderRadius: 20,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',

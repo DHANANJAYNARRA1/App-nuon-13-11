@@ -238,11 +238,8 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.profileDetails}>
               <Text style={styles.userName}>{user?.name || 'Nurse'}</Text>
-              <Text style={styles.userRole}>{[user?.specialization, (user?.location || [user?.city, user?.state].filter(Boolean).join(', '))].filter(Boolean).join(' • ')}</Text>
-              <TouchableOpacity style={styles.orderHistoryButton} onPress={goTo('Bookings')}>
-                <SvgXml xml={receiptSvg} width={14} height={14} color="#6366F1" />
-                <Text style={styles.orderHistoryButtonText}>Order History</Text>
-              </TouchableOpacity>
+              <Text style={styles.userCity}>{[user?.city, user?.state].filter(Boolean).join(', ') || 'City, State'}</Text>
+
             </View>
           </View>
           <View style={styles.separator} />
@@ -254,54 +251,20 @@ const ProfileScreen = ({ navigation }) => {
         </View>
       </LinearGradient>
 
-      {/* NCC Status */}
-      {nccStatus && (
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>NCC Progress</Text>
-          <View style={styles.nccCard}>
-            {nccStatus.isChampion ? (
-              <View style={styles.championStatus}>
-                <SvgXml xml={trophySvg} width={24} height={24} color="#059669" style={{marginRight: 8}} />
-                <View>
-                  <Text style={styles.championText}>Nightingale Champion</Text>
-                  <Text style={styles.championSubtext}>Congratulations!</Text>
-                </View>
-              </View>
-            ) : (
-              <View style={styles.progressStatus}>
-                <Text style={styles.progressText}>
-                  Step {nccStatus.currentStep} of 3
-                </Text>
-                <View style={styles.progressBar}>
-                  <View style={[
-                    styles.progressFill,
-                    { width: `${((nccStatus.currentStep - 1) / 3) * 100}%` }
-                  ]} />
-                </View>
-                <TouchableOpacity
-                  style={styles.continueButton}
-                  onPress={() => navigation.navigate('NCC')}
-                >
-                  <Text style={styles.continueButtonText}>Continue NCC</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </View>
-      )}
+      
 
-      {/* Stats row (soft tiles) */}
-      <View style={[styles.statsContainer, { marginHorizontal: 20, marginBottom: 24 }]}>
-        <View style={[styles.statTile, { backgroundColor: '#F3E8FF' }]}>
-          <Text style={styles.statNumber}>{myCourses.length}</Text>
+      {/* Stats - Modern Cards */}
+      <View style={styles.statsContainer}>
+        <View style={[styles.statTile, styles.purpleGradient, styles.coursesCard]}>
+          <Text style={[styles.statNumber, styles.purpleText]}>{myCourses.length}</Text>
           <Text style={styles.statLabel}>Courses</Text>
         </View>
-        <View style={[styles.statTile, { backgroundColor: '#EDE9FE' }]}>
-          <Text style={styles.statNumber}>{user?.mentorshipSessions || 0}</Text>
+        <View style={[styles.statTile, styles.pinkGradient, styles.sessionsCard]}>
+          <Text style={[styles.statNumber, styles.pinkText]}>{user?.mentorshipSessions || 0}</Text>
           <Text style={styles.statLabel}>Sessions</Text>
         </View>
-        <View style={[styles.statTile, { backgroundColor: '#FFEFD6' }]}>
-          <Text style={styles.statNumber}>{user?.workshopsCount || 0}</Text>
+        <View style={[styles.statTile, styles.orangeGradient, styles.workshopsCard]}>
+          <Text style={[styles.statNumber, styles.orangeText]}>{user?.workshopsCount || 0}</Text>
           <Text style={styles.statLabel}>Workshops</Text>
         </View>
       </View>
@@ -415,11 +378,11 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   userName: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '600',
   },
-  userRole: { color: '#E5E7EB', marginTop: 2 },
+  userCity: { color: '#000000', marginTop: 7 },
   contactCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -558,14 +521,41 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
+    paddingHorizontal: 14,
+    marginBottom: 27,
   },
   statTile: {
     flex: 1,
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
+    marginHorizontal: 6,
+    marginTop: 8,
+    height: 85,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 0,
+  },
+  purpleGradient: {
+    backgroundColor: '#F3E8FF',
+  },
+  pinkGradient: {
+    backgroundColor: '#FCE7F3',
+  },
+  orangeGradient: {
+    backgroundColor: '#FFF7ED',
+  },
+  coursesCard: {
+    flex: 0.4,
+  },
+  sessionsCard: {
+    flex: 0.4,
+  },
+  workshopsCard: {
+    flex: 0.5,
   },
   statItem: {
     alignItems: 'center',
@@ -574,6 +564,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#6366f1',
+    marginBottom: 4,
+  },
+  purpleText: {
+    color: '#7C3AED',
+  },
+  pinkText: {
+    color: '#DB2777',
+  },
+  orangeText: {
+    color: '#EA580C',
   },
   statLabel: {
     fontSize: 12,
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical:14,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },
