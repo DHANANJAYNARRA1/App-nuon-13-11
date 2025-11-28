@@ -12,8 +12,7 @@ const userSchema = new mongoose.Schema({
     required: false,
     unique: true,
     lowercase: true,
-    sparse: true,
-    default: null
+    sparse: true
   },
   phoneNumber: {
     type: String,
@@ -101,7 +100,14 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Removed pre-save hook to avoid double hashing
+// Pre-save hook to handle email field
+userSchema.pre('save', function(next) {
+  // If email is null or undefined, remove it from the document
+  if (this.email == null) {
+    delete this.email;
+  }
+  next();
+});
 
 // Removed comparePassword method - using direct bcrypt.compare
 

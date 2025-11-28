@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ const SplashScreen = ({ navigation }) => {
   const fadeAnim = new Animated.Value(0);
   const scaleAnim = new Animated.Value(0.3);
   const logoAnim = new Animated.Value(0);
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   console.log('Rendering SplashScreen');
   console.log('User Context in SplashScreen:', user);
@@ -46,13 +47,18 @@ const SplashScreen = ({ navigation }) => {
       }),
     ]).start();
 
-    // Show splash for 10 seconds, then go to onboarding/skip flow
-    const timer = setTimeout(() => {
-      navigation.replace('Onboarding');
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [user]);
+    // Always navigate to Onboarding after splash
+    if (!hasNavigated) {
+      const timer = setTimeout(() => {
+        if (!hasNavigated) {
+          setHasNavigated(true);
+          console.log('Navigating to Onboarding');
+          navigation.navigate('Onboarding');
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, navigation, hasNavigated]);
 
   return (
     <View style={styles.container}>

@@ -26,6 +26,7 @@ const receiptSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="2
 const awardSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.174 0l-3.58 2.687a.5.5 0 0 1-.81-.47l1.515-8.526"/><circle cx="12" cy="8" r="6"/></svg>`;
 const briefcaseSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
 const share2Svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>`;
+const downloadSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`;
 const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
 const lockSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><circle cx="12" cy="16" r="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 const helpCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`;
@@ -34,68 +35,118 @@ const logOutSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24
 const editSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 const cameraSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.828 14.828a4 4 0 0 1-5.656 0"/><path d="M9 9a3 3 0 1 1 6 0"/><circle cx="12" cy="12" r="10"/><path d="m21 3-3 3"/><path d="M3 21l3-3"/></svg>`;
 
+const certifications = [
+  {
+    id: 1,
+    type: 'degree',
+    title: 'B.Sc Nursing',
+    institution: 'AIIMS Delhi',
+    year: '2020',
+    icon: briefcaseSvg,
+    gradient: ['#A855F7', '#EC4899'],
+    iconColor: '#FFFFFF',
+  },
+  {
+    id: 2,
+    type: 'certification',
+    title: 'Critical Care Certification',
+    institution: 'Indian Nursing Council',
+    year: '2022',
+    icon: awardSvg,
+    gradient: ['#3B82F6', '#1D4ED8'],
+    iconColor: '#FFFFFF',
+  },
+  {
+    id: 3,
+    type: 'certification',
+    title: 'ACLS Certification',
+    institution: 'American Heart Association',
+    year: '2023',
+    icon: awardSvg,
+    gradient: ['#10B981', '#059669'],
+    iconColor: '#FFFFFF',
+  },
+];
+
+const awards = [
+  {
+    id: 1,
+    type: 'award',
+    title: 'Excellence in Patient Care',
+    awardingBody: 'Max Healthcare',
+    year: '2021',
+    icon: trophySvg,
+    gradient: ['#F59E0B', '#D97706'],
+    iconColor: '#FFFFFF',
+  },
+  {
+    id: 2,
+    type: 'award',
+    title: 'Outstanding Nurse Award',
+    awardingBody: 'Nursing Excellence Society',
+    year: '2022',
+    icon: trophySvg,
+    gradient: ['#EF4444', '#DC2626'],
+    iconColor: '#FFFFFF',
+  },
+];
+
 const ProfileScreen = ({ navigation }) => {
-  const [user, setUser] = useState(null);
-  const [myCourses, setMyCourses] = useState([]);
-  const [nccStatus, setNCCStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [myCourses, setMyCourses] = useState([]);
+    const [nccStatus, setNCCStatus] = useState(null);
+    const [loading, setLoading] = useState(false); // Start with false to show profile immediately
 
-  const { user: authUser, signOut, updateUser } = useContext(AuthContext);
+   const { user: authUser, signOut, updateUser } = useContext(AuthContext);
 
-  useEffect(() => {
-    const run = async () => {
-      try {
-        if (authUser) setUser(authUser);
-        setLoading(true);
+   useEffect(() => {
+     // Set user immediately from context to reduce loading time
+     if (authUser) {
+       setUser(authUser);
+     }
 
-        const [coursesSettled, nccSettled, profileSettled] = await Promise.allSettled([
-          api.get('/courses/my/courses', { timeout: 6000 }).catch(() => ({ data: [] })),
-          api.get('/ncc', { timeout: 6000 }).catch(() => ({ data: null })),
-          api.get('/profile', { timeout: 6000 })
-        ]);
+     // Fetch additional data in background
+     const fetchAdditionalData = async () => {
+       try {
+         const [coursesSettled, nccSettled, profileSettled] = await Promise.allSettled([
+           api.get('/courses/my/courses', { timeout: 6000 }).catch(() => ({ data: [] })),
+           api.get('/ncc', { timeout: 6000 }).catch(() => ({ data: null })),
+           api.get('/profile', { timeout: 6000 })
+         ]);
 
-        if (coursesSettled.status === 'fulfilled') {
-          const list = (coursesSettled.value?.data?.courses || coursesSettled.value?.data || []);
-          setMyCourses(Array.isArray(list) ? list : []);
-        } else {
-          setMyCourses([]);
-        }
+         if (coursesSettled.status === 'fulfilled') {
+           const list = (coursesSettled.value?.data?.courses || coursesSettled.value?.data || []);
+           setMyCourses(Array.isArray(list) ? list : []);
+         } else {
+           setMyCourses([]);
+         }
 
-        if (nccSettled.status === 'fulfilled') {
-          setNCCStatus(nccSettled.value?.data || null);
-        } else {
-          setNCCStatus(null);
-        }
+         if (nccSettled.status === 'fulfilled') {
+           setNCCStatus(nccSettled.value?.data || null);
+         } else {
+           setNCCStatus(null);
+         }
 
-        if (profileSettled.status === 'fulfilled') {
-          const profileData = profileSettled.value?.data?.profile || authUser;
-          setUser(profileData);
-          // Update auth context if profile data changed
-          if (profileData && JSON.stringify(profileData) !== JSON.stringify(authUser)) {
-            updateUser(profileData);
-          }
-        } else if (profileSettled.reason?.response?.status === 401) {
-          setUser(null);
-        } else {
-          setUser(authUser || null);
-        }
-      } catch (error) {
-        console.error('Profile error:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+         if (profileSettled.status === 'fulfilled') {
+           const profileData = profileSettled.value?.data?.profile || authUser;
+           setUser(profileData);
+           // Update auth context if profile data changed
+           if (profileData && JSON.stringify(profileData) !== JSON.stringify(authUser)) {
+             updateUser(profileData);
+           }
+         } else if (profileSettled.reason?.response?.status === 401) {
+           setUser(null);
+         } else {
+           setUser(authUser || null);
+         }
+       } catch (error) {
+         console.error('Profile error:', error);
+         setUser(authUser || null);
+       }
+     };
 
-    run();
-  }, [authUser, updateUser]);
-
-  // Force refresh when component mounts to ensure latest data
-  useEffect(() => {
-    if (authUser) {
-      setUser(authUser);
-    }
-  }, []);
+     fetchAdditionalData();
+   }, [authUser, updateUser]);
 
   const handleLogout = async () => {
     Alert.alert(
@@ -118,13 +169,16 @@ const ProfileScreen = ({ navigation }) => {
 
   // Safe navigation wrappers to avoid duplicate taps
   const goTo = (route, params) => () => navigation.navigate(route, params);
-  const safeGoToProfileSetup = useSafePress(goTo('ProfileSetup'));
+  const safeGoToProfileEdit = useSafePress(goTo('ProfileEdit'));
   const safeGoToNotifications = useSafePress(goTo('Notifications'));
   const safeGoToNotificationSettings = useSafePress(goTo('NotificationSettings'));
   const safeGoToHelp = useSafePress(goTo('Help'));
   const safeGoToPrivacy = useSafePress(goTo('PrivacyPolicy'));
   // Catalog removed; direct users to MyLearning instead
   const safeGoToMyLearning = useSafePress(goTo('MyLearning'));
+  const safeGoToCertifications = useSafePress(goTo('Certifications'));
+  const safeGoToOrderHistory = useSafePress(goTo('OrderHistory'));
+  const safeGoToReferral = useSafePress(goTo('Referral'));
 
 
   if (loading) {
@@ -150,13 +204,13 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       {/* Profile Header with contact card, styled per design */}
-      <LinearGradient colors={['#6366F1', '#8B5CF6']} style={styles.profileHeader}>
+      <LinearGradient colors={['#2563EB', '#1D4ED8', '#1E40AF']} style={styles.profileHeader}>
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <SvgXml xml={chevronLeftSvg} width={20} height={20} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile</Text>
-          <TouchableOpacity onPress={safeGoToProfileSetup} style={styles.editButton}>
+          <TouchableOpacity onPress={safeGoToProfileEdit} style={styles.editButton}>
             <SvgXml xml={editSvg} width={16} height={16} color="#FFFFFF" />
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
@@ -237,7 +291,7 @@ const ProfileScreen = ({ navigation }) => {
       )}
 
       {/* Stats row (soft tiles) */}
-      <View style={[styles.statsContainer, { marginHorizontal: 20, marginBottom: 16 }]}>
+      <View style={[styles.statsContainer, { marginHorizontal: 20, marginBottom: 24 }]}>
         <View style={[styles.statTile, { backgroundColor: '#F3E8FF' }]}>
           <Text style={styles.statNumber}>{myCourses.length}</Text>
           <Text style={styles.statLabel}>Courses</Text>
@@ -256,19 +310,21 @@ const ProfileScreen = ({ navigation }) => {
       <View style={{ height: 8 }} />
 
       <View style={styles.card}>
-        <ActionItem iconSvg={receiptSvg} label="My Orders" onPress={goTo('Bookings')} light />
-        <ActionItem iconSvg={awardSvg} label="Certifications & Awards" onPress={safeGoToMyLearning} />
-        <ActionItem iconSvg={share2Svg} label="Refer & Earn" onPress={safeGoToHelp} light />
-        <ActionItem iconSvg={bellSvg} label="Notifications" onPress={safeGoToNotifications} light />
-        <ActionItem iconSvg={lockSvg} label="Privacy & Security" onPress={safeGoToPrivacy} light />
+        <ActionItem iconSvg={receiptSvg} label="Order History" onPress={safeGoToOrderHistory} iconColor="#2563EB" />
+        <ActionItem iconSvg={awardSvg} label="Certifications & Awards" onPress={safeGoToCertifications} iconColor="#A855F7" />
+        <ActionItem iconSvg={share2Svg} label="Refer & Earn" onPress={safeGoToReferral} iconColor="#10B981" />
+        <ActionItem iconSvg={bellSvg} label="Notifications" onPress={safeGoToNotifications} iconColor="#F9A8D4" />
+        <ActionItem iconSvg={lockSvg} label="Privacy & Security" onPress={safeGoToPrivacy} iconColor="#F97316" />
       </View>
 
       <View style={styles.card}>
-        <ActionItem iconSvg={helpCircleSvg} label="Help & Support" onPress={safeGoToHelp} light />
-        <ActionItem iconSvg={fileTextSvg} label="Terms & Conditions" onPress={safeGoToPrivacy} light />
+        <ActionItem iconSvg={helpCircleSvg} label="Help & Support" onPress={safeGoToHelp} iconColor="#F97316" />
+        <ActionItem iconSvg={fileTextSvg} label="Terms & Conditions" onPress={safeGoToPrivacy} iconColor="#6B7280" />
       </View>
 
-      <LogoutCard onPress={handleLogout} />
+      <View style={styles.card}>
+        <LogoutCard onPress={handleLogout} />
+      </View>
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Neon Club v1.0.0</Text>
@@ -277,11 +333,11 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-const ActionItem = ({ iconSvg, label, onPress, light }) => (
+const ActionItem = ({ iconSvg, label, onPress, iconColor }) => (
   <TouchableOpacity style={styles.actionItem} onPress={onPress}>
     <View style={styles.actionLeft}>
-      <View style={light ? styles.iconContainerLight : styles.iconContainer}>
-        <SvgXml xml={iconSvg} width={20} height={20} color={light ? "#6366F1" : "#6B7280"} />
+      <View style={styles.iconContainer}>
+        <SvgXml xml={iconSvg} width={20} height={20} color={iconColor || "#6366F1"} />
       </View>
       <Text style={styles.actionText}>{label}</Text>
     </View>
@@ -298,6 +354,7 @@ const LogoutCard = ({ onPress }) => (
     <Text style={[styles.actionArrow, { color: '#DC2626' }]}>›</Text>
   </TouchableOpacity>
 );
+
 
 const styles = StyleSheet.create({
   container: {
@@ -316,9 +373,11 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     padding: 20,
-    paddingTop: 50,
+    paddingTop: 60,
+    paddingBottom: 20,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+    minHeight: 300,
   },
   headerRow: {
     flexDirection: 'row',
@@ -346,7 +405,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -539,7 +598,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#64748b',
   },
-  logoutCard: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop: 12, paddingVertical: 14, paddingHorizontal: 2, borderWidth: 1, borderColor:'#FEE2E2', backgroundColor:'#FEF2F2', borderRadius: 12 },
+  logoutCard: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
   footer: {
     alignItems: 'center',
     padding: 20,

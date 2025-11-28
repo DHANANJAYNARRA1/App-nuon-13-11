@@ -340,10 +340,11 @@ const verifyOTP = async (req, res) => {
           phoneNumber: identifier,
           role: 'nurse'
         };
-        // Don't set email field at all - let Mongoose handle it with default null
+        // Don't set email field at all
       }
-      user = new User(userData);
-      await user.save();
+      // Use direct database insert to avoid Mongoose setting email to null
+      const result = await User.collection.insertOne(userData);
+      user = await User.findById(result.insertedId);
       isNewUser = true;
     }
 

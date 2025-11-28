@@ -15,6 +15,7 @@ router.post('/login', authController.login);
 router.post('/mentor/login', authController.mentorLogin);
 
 // Profile routes (protected)
+router.get('/profile', auth, authController.getCurrentProfile);
 router.get('/profile/:id', auth, authController.getProfile);
 router.put('/profile', auth, authController.updateProfile);
 router.post('/profile', auth, authController.createOrUpdateProfile);

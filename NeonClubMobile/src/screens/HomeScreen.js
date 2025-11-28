@@ -24,6 +24,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import CalendarIcon from '../components/CalendarIcon';
 import PlayIcon from '../components/PlayIcon';
 import { SvgXml } from 'react-native-svg';
+import BookOpenSvg from '../assets/icons/book-open.svg';
+import SparklesIcon from '../components/SparklesIcon';
+import UsersIcon from '../components/UsersIcon';
+import UserIcon from '../components/UserIcon'
 
 const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
 const bookOpenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
@@ -32,49 +36,45 @@ const usersSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
 const chevronRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
 const arrowRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 const playSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 
 // CalendarIcon and PlayIcon are provided by wrapper components in src/components
 
 const HomeScreen = ({ navigation }) => {
-  const [user, setUser] = useState(null);
-  const [courses, setCourses] = useState([]); // State for courses
-  // Preseed with demo so UI is never blank; replaced when API returns
-  const [news, setNews] = useState([
-    { 
-      _id: 'demo1',
-      title: 'New Healthcare Guidelines 2024', 
-      category: 'Guidelines', 
-      type: 'video',
-      thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-15',
-      videos: [{ url: '', thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop' }]
-    },
-    { 
-      _id: 'demo2',
-      title: 'Breakthrough in Nursing Education', 
-      category: 'Education',
-      thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-12'
-    },
-    { 
-      _id: 'demo3',
-      title: 'Champion Mentors Success Stories', 
-      category: 'Stories',
-      thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-08'
-    }
-  ]);
-  const [activities, setActivities] = useState([]); // merged events/workshops
-  const [featuredCourses, setFeaturedCourses] = useState([]);
-  const [eventsCount, setEventsCount] = useState(0);
-  const [workshopsCount, setWorkshopsCount] = useState(0);
-  const [featuredNews, setFeaturedNews] = useState([]);
-  // Catalog removed from dashboard
-  const { user: authUser, signOut } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (authUser) setUser(authUser);
-  }, [authUser]);
+   const [courses, setCourses] = useState([]); // State for courses
+   // Preseed with demo so UI is never blank; replaced when API returns
+   const [news, setNews] = useState([
+     {
+       _id: 'demo1',
+       title: 'New Healthcare Guidelines 2024',
+       category: 'Guidelines',
+       type: 'video',
+       thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-15',
+       videos: [{ url: '', thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop' }]
+     },
+     {
+       _id: 'demo2',
+       title: 'Breakthrough in Nursing Education',
+       category: 'Education',
+       thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-12'
+     },
+     {
+       _id: 'demo3',
+       title: 'Champion Mentors Success Stories',
+       category: 'Stories',
+       thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-08'
+     }
+   ]);
+   const [activities, setActivities] = useState([]); // merged events/workshops
+   const [featuredCourses, setFeaturedCourses] = useState([]);
+   const [eventsCount, setEventsCount] = useState(0);
+   const [workshopsCount, setWorkshopsCount] = useState(0);
+   const [featuredNews, setFeaturedNews] = useState([]);
+   // Catalog removed from dashboard
+   const { user: user, signOut } = useContext(AuthContext);
 
   // helper to (re)load activities/courses/news
   const fetchAdditionalData = async () => {
@@ -138,8 +138,8 @@ const HomeScreen = ({ navigation }) => {
           }));
           const merged = [...events, ...workshops, ...coursesNew]
             .filter(Boolean)
-            .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0))
-            .slice(0, 5);
+            .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+            .slice(0, 3);
           setActivities(merged);
         } catch (e) {
           console.log('Activities fetch failed', e?.message || e);
@@ -265,10 +265,10 @@ const HomeScreen = ({ navigation }) => {
         {/* Profile Incomplete Banner - Matching Figma */}
         {user?.profileIncomplete && (
           <View style={styles.profileIncompleteBannerNew}>
-            <View style={styles.bannerIconContainer}>
-              <Text style={styles.bannerIconNew}>👤</Text>
+            <View style={styles.profileIconCircle}>
+              <UserIcon width={20} height={20} color="#F97316" />
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.bannerTitleNew}>Complete Your Profile</Text>
               <Text style={styles.bannerSubtitleNew}>
                 Add professional details to unlock personalized features
@@ -276,7 +276,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={styles.bannerButtonNew}
-              onPress={() => navigation.navigate('ProfileSetup')}
+              onPress={() => navigation.navigate('ProfileEdit')}
             >
               <Text style={styles.bannerButtonTextNew}>Complete</Text>
             </TouchableOpacity>
@@ -284,7 +284,7 @@ const HomeScreen = ({ navigation }) => {
         )}
 
         {/* My Learning Card - Matching Figma */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.myLearningCard}
           onPress={() => navigation.navigate('MyLearning')}
         >
@@ -295,7 +295,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.myLearningGradient}
           >
             <View style={styles.myLearningIconContainer}>
-              <SvgXml xml={bookOpenSvg} width={24} height={24} color="#fff" />
+              <BookOpenSvg width={24} height={24} fill="none" stroke="#fff" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.myLearningTitle}>My Learning</Text>
@@ -303,7 +303,7 @@ const HomeScreen = ({ navigation }) => {
                 Continue your courses, events & workshops
               </Text>
             </View>
-            <SvgXml xml={arrowRightSvg} width={24} height={24} color="#fff" />
+            <SvgXml xml={chevronRightSvg} width={24} height={24} color="#fff" />
           </LinearGradient>
         </TouchableOpacity>
 
@@ -399,14 +399,16 @@ const HomeScreen = ({ navigation }) => {
       {/* Nightingale Programme card */}
       <GradientCard
           title="Nightingale Programme"
-          subtitle="Become a Champion Mentor and light the way"
+          subtitle="Become a Champion Mentor"
+          description="and light the way"
           colors={[NEON_COLORS.neonPink, NEON_COLORS.neonOrange || '#F59E0B']}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
           ctaLabel="Begin Journey"
+          ctaColor="#7C3AED"
           onPress={() => navigation.navigate('NCC')}
-          height={140}
-          stacked
+          height={160}
+          iconComponent={<SparklesIcon width={32} height={32} color="#FDE047" />}
         />
 
       {/* Mentor card */}
@@ -418,20 +420,21 @@ const HomeScreen = ({ navigation }) => {
           start={{x:0,y:0}}
           end={{x:1,y:1}}
           ctaLabel="Apply Now"
+          ctaColor="#06B6D4"
           onPress={() => navigation.navigate('MentorRegister')}
-          height={140}
-          stacked
+          height={160}
+          iconComponent={<UserIcon width={32} height={32} color="#fff" />}
         />
       </View>
 
       </View>
       {/* End contentContainer */}
 
-      {/* New Activities list */}
+      {/* Wellness & Events list */}
       <View style={styles.section}>
         <View style={styles.rowBetween}>
-          <Text style={styles.sectionTitle}>New Activities</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Activities')}>
+          <Text style={styles.sectionTitle}>Wellness & Events</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Engage')}>
             <Text style={styles.linkText}>See All</Text>
           </TouchableOpacity>
         </View>
@@ -465,19 +468,6 @@ const HomeScreen = ({ navigation }) => {
         })}
       </View>
 
-      {/* Quick Actions at the end */}
-      <View style={styles.menuContainer}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        {quickActions.map((item, index) => (
-          <QuickActionCard
-            key={index}
-            title={item.title}
-            subtitle={item.subtitle}
-            color={item.color}
-            onPress={item.onPress}
-          />
-        ))}
-      </View>
 
       {/* Catalog section intentionally removed from dashboard */}
 
@@ -614,40 +604,27 @@ const styles = StyleSheet.create({
   profileIncompleteBannerNew: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#FDE047',
+    borderColor: '#FED7AA',
     ...shadow.soft,
-  },
-  bannerIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FEF08A',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  bannerIconNew: {
-    fontSize: 20,
-    color: '#F59E0B',
   },
   bannerTitleNew: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#92400E',
+    color: '#1E293B',
     marginBottom: 2,
   },
   bannerSubtitleNew: {
     fontSize: 12,
-    color: '#78350F',
+    color: '#64748B',
   },
   bannerButtonNew: {
-    backgroundColor: '#F59E0B',
+    backgroundColor: '#F97316',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
@@ -657,6 +634,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '700',
+  },
+  profileIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FED7AA',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // NEW: My Learning Card (Figma Style)
   myLearningCard: {
@@ -671,20 +656,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   myLearningIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: 'transparent',
+    width: 48,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
     borderWidth: 1.5,
-    borderColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 12,
   },
   myLearningIcon: {
     fontSize: 24,
@@ -776,7 +755,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: NEON_COLORS.neonPurple,
+    color: '#111827',
     marginBottom: 15,
   },
   section: {

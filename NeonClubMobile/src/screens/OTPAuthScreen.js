@@ -17,7 +17,6 @@ import api, { probeAndFixBase, getCurrentBaseURL, setBaseOverride } from '../ser
 import { sendOTP as fbSendOTP, verifyOTP as fbVerifyOTP, getIdToken as fbGetIdToken } from '../services/otp';
 import { ensureFirebaseInitialized } from '../services/firebaseApp';
 import { CONFIG, DEV_BASE_LAN } from '../utils/config';
-import FullScreenLoader from '../components/FullScreenLoader';
 import { registerPushTokenIfAvailable } from '../utils/notifications';
 import { AuthContext } from '../contexts/AuthContext';
 import { Image } from 'react-native';
@@ -38,6 +37,8 @@ const OTPAuthScreen = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const [fbConfirmation, setFbConfirmation] = useState(null);
   const [otpSession, setOtpSession] = useState(null); // idempotent session header for backend
+  const [inputFocused, setInputFocused] = useState(false);
+  const [focusedOtpIndex, setFocusedOtpIndex] = useState(-1);
   
   // OTP input refs for auto-focus
   const otpInputRefs = useRef([]);
@@ -98,11 +99,6 @@ const OTPAuthScreen = () => {
       const backendOTP = resp?.data?.debugOtp;
       if (backendOTP) {
         setOtp(backendOTP);
-        Alert.alert('OTP Sent', `Use this OTP to verify: ${backendOTP}`, [
-          { text: 'OK' }
-        ]);
-      } else {
-        Alert.alert('OTP Sent', 'OTP sent successfully. Please check your SMS or email.');
       }
       console.log('OTP sent successfully, debugOtp:', backendOTP);
       if (__DEV__) console.log('Using backend OTP, response mode:', resp?.data?.mode, 'debugOtp:', backendOTP);
@@ -175,9 +171,11 @@ const OTPAuthScreen = () => {
         try { await registerPushTokenIfAvailable(); } catch {}
       }
       
-      // Navigate based on user profile completeness
-      Alert.alert('Success', 'OTP verified successfully');
-      if (user.name && user.email) {
+      // Navigate based on whether user is new or existing
+      if (isNewUser) {
+        // New user, complete profile
+        navigation.navigate('ProfileSetup', { user, token, isNewUser });
+      } else {
         // Existing user, go to dashboard
         setTimeout(() => {
           navigation.dispatch(CommonActions.reset({
@@ -185,14 +183,17 @@ const OTPAuthScreen = () => {
             routes: [{ name: 'Main' }]
           }));
         }, 100);
-      } else {
-        // New user, complete profile
-        navigation.navigate('ProfileSetup');
       }
     } catch (error) {
-      console.error('Verify OTP error:', error?.response?.data || error?.message || error);
+      console.error('Verify OTP error details:', JSON.stringify({
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+        stack: error?.stack
+      }, null, 2));
       const baseNow = getCurrentBaseURL && getCurrentBaseURL();
-      Alert.alert('Error', (error?.response?.data?.message || 'Failed to verify OTP') + `\nBase: ${baseNow || 'n/a'}`);
+      const errorMessage = error?.response?.data?.message || error?.response?.data?.error || error?.message || 'Failed to verify OTP';
+      Alert.alert('Error', `${errorMessage}\nBase: ${baseNow || 'n/a'}`);
     } finally {
       setLoading(false);
     }
@@ -230,7 +231,6 @@ const OTPAuthScreen = () => {
       colors={['#9333EA', '#4F46E5', '#2563EB']} // purple-600 via indigo-600 to blue-600
       style={styles.container}
     >
-      <FullScreenLoader visible={loading} label={step==='input' ? 'Sending OTP…' : 'Verifying…'} />
       {/* Animated floating circles */}
       <View style={styles.floatingCircle1} />
       <View style={styles.floatingCircle2} />
@@ -260,8 +260,8 @@ const OTPAuthScreen = () => {
 
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Phone Number</Text>
-                <View style={styles.phoneInputWrapper}>
-                  <Text style={styles.phoneIcon}>📞</Text>
+                <View style={[styles.phoneInputWrapper, inputFocused && { borderColor: NEON_COLORS.neonBlue }]}>
+                  <SvgXml xml={phoneSvg} width={20} height={20} color="#9CA3AF" style={{marginRight: 8}} />
                   <TextInput
                     style={styles.phoneInput}
                     placeholder="+91 XXXXX XXXXX"
@@ -272,19 +272,19 @@ const OTPAuthScreen = () => {
                     }}
                     keyboardType="number-pad"
                     placeholderTextColor="#9CA3AF"
+                    onFocus={() => setInputFocused(true)}
+                    onBlur={() => setInputFocused(false)}
                   />
                 </View>
-                <Text style={styles.helperText}>
-                  We'll send you a 6-digit OTP to verify your number
-                </Text>
+                <Text style={styles.helperText}>We'll send you a 6-digit OTP to verify your number</Text>
               </View>
 
               <TouchableOpacity
-                style={[styles.primaryButton, identifier.replace(/\D/g, '').length !== 10 && styles.buttonDisabled]}
+                style={styles.primaryButton}
                 onPress={handleSendOTP}
                 disabled={loading || identifier.replace(/\D/g, '').length !== 10}
               >
-                <LinearGradient colors={['#F9A8D4', '#67E8F9']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
+                <LinearGradient colors={identifier.replace(/\D/g, '').length === 10 ? NEON_COLORS.gradientPurpleToBlue : [NEON_COLORS.neonPurpleGlow, NEON_COLORS.neonBlueGlow]} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
                   {loading ? (
                     <ActivityIndicator color="#FFFFFF" />
                   ) : (
@@ -303,9 +303,9 @@ const OTPAuthScreen = () => {
             <View style={styles.authCard}>
               <View style={styles.cardHeader}>
                 <View style={styles.otpIconContainer}>
-                  <SvgXml xml={phoneSvg} width={32} height={32} color="#2563EB" />
+                  <SvgXml xml={phoneSvg} width={32} height={32} color={NEON_COLORS.neonPurple} />
                 </View>
-                <Text style={styles.cardTitle}>Verify OTP</Text>
+                <Text style={[styles.cardTitle, {fontSize: 15}]}>Verify OTP</Text>
                 <Text style={styles.cardSubtitle}>
                   We've sent a 6-digit code to{'\n'}
                   <Text style={styles.phoneNumberDisplay}>{identifier}</Text>
@@ -321,17 +321,23 @@ const OTPAuthScreen = () => {
                       ref={(ref) => (otpInputRefs.current[index] = ref)}
                       style={[
                         styles.otpInput,
-                        otp[index] && styles.otpInputFilled
+                        otp[index] && styles.otpInputFilled,
+                        focusedOtpIndex === index && {backgroundColor: '#DBEAFE'}
                       ]}
                       maxLength={1}
                       keyboardType="number-pad"
                       value={otp[index] || ''}
+                      onFocus={() => setFocusedOtpIndex(index)}
+                      onBlur={() => setFocusedOtpIndex(-1)}
                       onChangeText={(text) => {
+                        // Prevent entering if previous field is not filled
+                        if (index > 0 && !otp[index - 1] && text) return;
+
                         const newOtp = otp.split('');
                         newOtp[index] = text;
                         const updatedOtp = newOtp.join('');
                         setOtp(updatedOtp);
-                        
+
                         // Auto-focus next input if text entered
                         if (text && index < 5) {
                           otpInputRefs.current[index + 1]?.focus();
@@ -364,11 +370,11 @@ const OTPAuthScreen = () => {
               </View>
 
               <TouchableOpacity
-                style={[styles.primaryButton, otp.length !== 6 && styles.buttonDisabled]}
+                style={styles.primaryButton}
                 onPress={handleVerifyOTP}
                 disabled={loading || otp.length !== 6}
               >
-                <LinearGradient colors={['#F9A8D4', '#67E8F9']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
+                <LinearGradient colors={otp.length === 6 ? NEON_COLORS.gradientPurpleToBlue : [NEON_COLORS.neonPurpleGlow, NEON_COLORS.neonBlueGlow]} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.buttonGradient}>
                   {loading ? (
                     <ActivityIndicator color="#FFFFFF" />
                   ) : (
@@ -388,9 +394,7 @@ const OTPAuthScreen = () => {
               >
                 <Text style={styles.changeNumberText}>Change Phone Number</Text>
               </TouchableOpacity>
-
-              
-              </View>
+            </View>
           </>
         )}
         </View>
@@ -482,7 +486,7 @@ const styles = StyleSheet.create({
   authCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 16,
-    paddingVertical: 10,
+    paddingVertical: 18,
     paddingHorizontal: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -497,10 +501,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#111827', // gray-900
-    marginBottom: 8,
+    marginBottom: 10,
   },
   cardSubtitle: {
     fontSize: 14,
@@ -634,10 +638,10 @@ const styles = StyleSheet.create({
   },
   resendText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: NEON_COLORS.neonPurple,
   },
   resendLink: {
-    color: '#EC4899', // pink-500
+    color: NEON_COLORS.neonPurple,
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
@@ -662,7 +666,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   footerOuter: {
-    marginTop: 18,
+    marginTop: 1,
     alignItems: 'center',
     paddingHorizontal: 20,
   },

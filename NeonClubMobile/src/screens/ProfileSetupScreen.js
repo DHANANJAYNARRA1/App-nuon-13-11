@@ -152,7 +152,7 @@ const ProfileSetupScreen = () => {
         'You can complete these details later from your profile.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Skip', onPress: () => setStep(3) }
+          { text: 'Skip', onPress: () => handleSubmit() }
         ]
       );
     }
@@ -259,7 +259,7 @@ const ProfileSetupScreen = () => {
 
   return (
     <ErrorBoundary>
-      <LinearGradient colors={NEON_COLORS.gradientPurpleToBlue} style={styles.container}>
+      <LinearGradient colors={NEON_COLORS.gradientPurpleToBlue} start={{x: 0, y: 0}} end={{x: 1, y: 1}} style={styles.container}>
         <View style={styles.floatingCircle1} />
         <View style={styles.floatingCircle2} />
         <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -347,7 +347,7 @@ const ProfileSetupScreen = () => {
                     </TouchableOpacity>
                   )}
                 </View>
-                
+
                 {/* Skip button for Step 2 */}
                 {step === 2 && (
                   <TouchableOpacity style={[styles.button, styles.skipButton]} onPress={handleSkip} disabled={loading}>
