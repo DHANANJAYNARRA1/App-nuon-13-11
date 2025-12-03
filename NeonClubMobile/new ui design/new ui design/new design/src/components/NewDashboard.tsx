@@ -309,46 +309,58 @@ export function NewDashboard({ onNavigate, userName = 'Priya', userExperience = 
         {/* Engage: Wellness & Events */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h3>Wellness & Events</h3>
+            <h3>New Activities</h3>
             <Button
-              onClick={() => onNavigate('engage')}
+              onClick={() => onNavigate('my-learning')}
               variant="link"
-              className="p-0 h-auto"
+              className="p-0 h-auto text-purple-600 hover:text-purple-700"
             >
-              See All
+              View All
             </Button>
           </div>
 
           <div className="space-y-3">
-            {/* Event Card - Modern Design */}
+            {/* Active Course */}
             <Card 
-              className="shadow-lg border-none hover:shadow-xl transition-all cursor-pointer"
-              onClick={() => onNavigate('engage')}
+              className="shadow-lg border-none hover:shadow-xl transition-all cursor-pointer overflow-hidden"
+              onClick={() => onNavigate('my-learning')}
             >
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex flex-col items-center justify-center text-white shadow-lg">
-                      <span className="text-xs font-medium">Oct</span>
-                      <span className="text-xl">15</span>
+              <CardContent className="p-0">
+                <div className="flex gap-0">
+                  <div className="flex-shrink-0 w-24 h-24 relative overflow-hidden">
+                    <ImageWithFallback
+                      src="https://images.unsplash.com/photo-1758101512269-660feabf64fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwdHJhaW5pbmclMjBjbGFzc3Jvb218ZW58MXx8fHwxNzYwMzQ1MzQ2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                      alt="Advanced Patient Care"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10"></div>
+                  </div>
+                  <div className="flex-1 p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <Badge className="mb-2 bg-purple-100 text-purple-700 border-none text-xs">Course</Badge>
+                        <h4 className="text-sm mb-1">Advanced Patient Care</h4>
+                        <p className="text-xs text-gray-600 mb-2">Continue learning</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1">
-                    <Badge className="mb-2 bg-purple-100 text-purple-700 border-none">Workshop</Badge>
-                    <h4 className="text-sm mb-1">Wound Care Management</h4>
-                    <p className="text-xs text-gray-600">Live Workshop • 2:00 PM</p>
-                  </div>
-                  <div className="flex items-center">
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600">Progress</span>
+                        <span className="text-purple-600">65%</span>
+                      </div>
+                      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" style={{ width: '65%' }}></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Event Card 2 - Modern Design */}
+            {/* Upcoming Event */}
             <Card 
               className="shadow-lg border-none hover:shadow-xl transition-all cursor-pointer"
-              onClick={() => onNavigate('engage')}
+              onClick={() => onNavigate('my-learning')}
             >
               <CardContent className="p-4">
                 <div className="flex gap-3">
@@ -359,9 +371,34 @@ export function NewDashboard({ onNavigate, userName = 'Priya', userExperience = 
                     </div>
                   </div>
                   <div className="flex-1">
-                    <Badge className="mb-2 bg-cyan-100 text-cyan-700 border-none">Event</Badge>
+                    <Badge className="mb-2 bg-cyan-100 text-cyan-700 border-none text-xs">Event</Badge>
                     <h4 className="text-sm mb-1">Healthcare Summit 2024</h4>
-                    <p className="text-xs text-gray-600">3-Day Conference</p>
+                    <p className="text-xs text-gray-600">3-Day Conference • 2 days left</p>
+                  </div>
+                  <div className="flex items-center">
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Workshop */}
+            <Card 
+              className="shadow-lg border-none hover:shadow-xl transition-all cursor-pointer"
+              onClick={() => onNavigate('my-learning')}
+            >
+              <CardContent className="p-4">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex flex-col items-center justify-center text-white shadow-lg">
+                      <span className="text-xs font-medium">Oct</span>
+                      <span className="text-xl">20</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <Badge className="mb-2 bg-purple-100 text-purple-700 border-none text-xs">Workshop</Badge>
+                    <h4 className="text-sm mb-1">Wound Care Management</h4>
+                    <p className="text-xs text-gray-600">Live Workshop • 4 days left</p>
                   </div>
                   <div className="flex items-center">
                     <ChevronRight className="h-5 w-5 text-gray-400" />

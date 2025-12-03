@@ -58,6 +58,43 @@ export function MentorshipSessions({ onNavigate }: MentorshipSessionsProps) {
       sessions: 340,
       image: 'https://images.unsplash.com/photo-1659353888906-adb3e0041693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBudXJzZSUyMGhlYWx0aGNhcmV8ZW58MXx8fHwxNzYwMzQ1MzQ1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       available: true,
+      price: 1999,
+      responseTime: '2 hours',
+      languages: ['English', 'Hindi', 'Marathi'],
+      qualifications: [
+        'MSc Nursing - Critical Care',
+        'BSc Nursing - Delhi University',
+        'ICU Certification - AIIMS',
+      ],
+      expertise: [
+        'Critical Care Management',
+        'Emergency Response',
+        'Ventilator Management',
+        'Patient Safety Protocols',
+        'Clinical Leadership',
+      ],
+      bio: 'With over 15 years of experience in critical care nursing, I have worked in top hospitals across India including AIIMS and Apollo. I specialize in helping nurses advance their careers in emergency and critical care settings.',
+      reviews: [
+        {
+          id: 1,
+          name: 'Neha Sharma',
+          rating: 5,
+          date: 'Oct 2024',
+          comment: 'Dr. Verma provided excellent guidance on my ICU rotation. Her practical tips helped me gain confidence.',
+          image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+        },
+      ],
+      achievements: [
+        { icon: 'award', label: 'Top Rated Mentor' },
+        { icon: 'users', label: '340+ Sessions' },
+        { icon: 'star', label: '4.9 Rating' },
+        { icon: 'clock', label: 'Quick Response' },
+      ],
+      availability: [
+        'Monday - Friday: 3:00 PM - 8:00 PM',
+        'Saturday: 10:00 AM - 6:00 PM',
+        'Sunday: By appointment',
+      ],
     },
     {
       id: 2,
@@ -68,6 +105,41 @@ export function MentorshipSessions({ onNavigate }: MentorshipSessionsProps) {
       sessions: 280,
       image: 'https://images.unsplash.com/photo-1747833305853-d43937d88971?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZW50b3JzaGlwJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc2MDM0NTM0Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       available: true,
+      price: 1799,
+      responseTime: '3 hours',
+      languages: ['English', 'Hindi', 'Tamil'],
+      qualifications: [
+        'MSc Emergency Medicine',
+        'Trauma Care Certification',
+        'Advanced Cardiac Life Support',
+      ],
+      expertise: [
+        'Emergency Triage',
+        'Trauma Management',
+        'Critical Decision Making',
+        'Disaster Response',
+      ],
+      bio: 'Emergency medicine specialist with 12+ years of experience in high-pressure healthcare environments. I focus on helping nurses build confidence and expertise in emergency situations.',
+      reviews: [
+        {
+          id: 1,
+          name: 'Amit Patel',
+          rating: 5,
+          date: 'Sep 2024',
+          comment: 'Very knowledgeable and patient. Answered all my questions thoroughly.',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+        },
+      ],
+      achievements: [
+        { icon: 'award', label: 'Expert Mentor' },
+        { icon: 'users', label: '280+ Sessions' },
+        { icon: 'star', label: '4.8 Rating' },
+        { icon: 'clock', label: 'Responsive' },
+      ],
+      availability: [
+        'Tuesday - Saturday: 4:00 PM - 9:00 PM',
+        'Sunday: 11:00 AM - 5:00 PM',
+      ],
     },
     {
       id: 3,
@@ -78,6 +150,41 @@ export function MentorshipSessions({ onNavigate }: MentorshipSessionsProps) {
       sessions: 420,
       image: 'https://images.unsplash.com/photo-1659353888906-adb3e0041693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBudXJzZSUyMGhlYWx0aGNhcmV8ZW58MXx8fHwxNzYwMzQ1MzQ1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       available: false,
+      price: 1899,
+      responseTime: '1 hour',
+      languages: ['English', 'Hindi', 'Punjabi'],
+      qualifications: [
+        'MSc Pediatric Nursing',
+        'NICU Specialization',
+        'Child Psychology Certification',
+      ],
+      expertise: [
+        'Pediatric Assessment',
+        'Neonatal Care',
+        'Family-Centered Care',
+        'Child Development',
+      ],
+      bio: 'Passionate about pediatric nursing with extensive NICU and pediatric ward experience. I mentor nurses who want to specialize in caring for children and families.',
+      reviews: [
+        {
+          id: 1,
+          name: 'Priya Reddy',
+          rating: 5,
+          date: 'Sep 2024',
+          comment: 'Amazing mentor! Her pediatric insights were invaluable.',
+          image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
+        },
+      ],
+      achievements: [
+        { icon: 'award', label: 'Top Mentor' },
+        { icon: 'users', label: '420+ Sessions' },
+        { icon: 'star', label: '4.9 Rating' },
+        { icon: 'clock', label: 'Very Fast' },
+      ],
+      availability: [
+        'Monday - Friday: 2:00 PM - 7:00 PM',
+        'Saturday: 9:00 AM - 1:00 PM',
+      ],
     },
   ];
 
@@ -148,10 +255,7 @@ export function MentorshipSessions({ onNavigate }: MentorshipSessionsProps) {
                       className="flex-1 rounded-full border-2 hover:bg-purple-50"
                       onClick={() => {
                         // Navigate to mentor profile
-                        onNavigate('activity-details', { 
-                          type: 'mentor', 
-                          data: mentor 
-                        });
+                        onNavigate('mentor-profile', mentor);
                       }}
                     >
                       View Profile

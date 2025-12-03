@@ -11,7 +11,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
       </View>
       <Text style={styles.title}>Payment Successful!</Text>
       <Text style={styles.message}>{message}</Text>
-      <TouchableOpacity style={styles.primary} onPress={() => navigation.navigate('MySessions')}>
+      <TouchableOpacity style={styles.primary} onPress={() => navigation.navigate('Mentorship')}>
         <Text style={styles.primaryText}>Go to My Sessions</Text>
       </TouchableOpacity>
     </View>

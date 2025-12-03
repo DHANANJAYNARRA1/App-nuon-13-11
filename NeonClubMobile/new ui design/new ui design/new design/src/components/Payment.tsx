@@ -15,11 +15,23 @@ interface PaymentProps {
 }
 
 export function Payment({ onNavigate, paymentData, onCelebrate }: PaymentProps) {
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{code: string, discount: number} | null>(null);
   const [couponError, setCouponError] = useState('');
+  
+  // Card payment fields
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [cardName, setCardName] = useState('');
+  
+  // UPI payment field
+  const [upiId, setUpiId] = useState('');
+  
+  // Net Banking field
+  const [selectedBank, setSelectedBank] = useState('');
 
   const { type, data } = paymentData || { type: 'course', data: { title: 'Activity', price: 1999, points: 300 } };
   
@@ -317,6 +329,236 @@ export function Payment({ onNavigate, paymentData, onCelebrate }: PaymentProps) 
             </RadioGroup>
           </CardContent>
         </Card>
+
+        {/* Card Payment Form */}
+        {paymentMethod === 'card' && (
+          <Card className="shadow-lg border-2 border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-purple-600" />
+                Card Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="cardNumber">Card Number</Label>
+                <Input
+                  id="cardNumber"
+                  placeholder="1234 5678 9012 3456"
+                  value={cardNumber}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, '');
+                    if (value.length <= 16 && /^\d*$/.test(value)) {
+                      setCardNumber(value.replace(/(\d{4})/g, '$1 ').trim());
+                    }
+                  }}
+                  maxLength={19}
+                  className="rounded-lg"
+                />
+              </div>
+              <div>
+                <Label htmlFor="cardName">Cardholder Name</Label>
+                <Input
+                  id="cardName"
+                  placeholder="Name on card"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                  className="rounded-lg uppercase"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="cardExpiry">Expiry Date</Label>
+                  <Input
+                    id="cardExpiry"
+                    placeholder="MM/YY"
+                    value={cardExpiry}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      if (value.length <= 4) {
+                        if (value.length >= 2) {
+                          setCardExpiry(value.slice(0, 2) + '/' + value.slice(2));
+                        } else {
+                          setCardExpiry(value);
+                        }
+                      }
+                    }}
+                    maxLength={5}
+                    className="rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cardCvv">CVV</Label>
+                  <Input
+                    id="cardCvv"
+                    type="password"
+                    placeholder="123"
+                    value={cardCvv}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      if (value.length <= 3) {
+                        setCardCvv(value);
+                      }
+                    }}
+                    maxLength={3}
+                    className="rounded-lg"
+                  />
+                </div>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                <p className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <span>Your card details are secure and encrypted</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* UPI Payment Form */}
+        {paymentMethod === 'upi' && (
+          <Card className="shadow-lg border-2 border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-purple-600" />
+                Pay with UPI
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Quick Pay with UPI Apps */}
+              <div>
+                <Label className="mb-3 block">Choose UPI App</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex flex-col items-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
+                    onClick={() => {
+                      // In production, this would trigger UPI intent
+                      alert('Opening PhonePe... (Demo: Would redirect to PhonePe app)');
+                    }}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">Pe</span>
+                    </div>
+                    <span className="text-sm">PhonePe</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex flex-col items-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
+                    onClick={() => {
+                      alert('Opening Google Pay... (Demo: Would redirect to Google Pay app)');
+                    }}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">G</span>
+                    </div>
+                    <span className="text-sm">Google Pay</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex flex-col items-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
+                    onClick={() => {
+                      alert('Opening Paytm... (Demo: Would redirect to Paytm app)');
+                    }}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">P</span>
+                    </div>
+                    <span className="text-sm">Paytm</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex flex-col items-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
+                    onClick={() => {
+                      alert('Opening BHIM... (Demo: Would redirect to BHIM app)');
+                    }}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">B</span>
+                    </div>
+                    <span className="text-sm">BHIM UPI</span>
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-3 text-center">
+                  Tap to open your UPI app and complete payment
+                </p>
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-gray-500">Or pay with UPI ID</span>
+                </div>
+              </div>
+
+              {/* UPI ID Input */}
+              <div>
+                <Label htmlFor="upiId">Enter UPI ID</Label>
+                <Input
+                  id="upiId"
+                  placeholder="yourname@paytm"
+                  value={upiId}
+                  onChange={(e) => setUpiId(e.target.value.toLowerCase())}
+                  className="rounded-lg"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  E.g., 9876543210@paytm, name@oksbi, mobile@ybl
+                </p>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
+                <p className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <span>Instant payment confirmation • Secure & encrypted</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Net Banking Form */}
+        {paymentMethod === 'netbanking' && (
+          <Card className="shadow-lg border-2 border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-purple-600" />
+                Select Your Bank
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <RadioGroup value={selectedBank} onValueChange={setSelectedBank}>
+                <div className="space-y-2">
+                  {['SBI', 'HDFC Bank', 'ICICI Bank', 'Axis Bank', 'Kotak Mahindra', 'Punjab National Bank', 'Bank of Baroda', 'Other Banks'].map((bank) => (
+                    <div key={bank} className={`flex items-center space-x-3 p-3 border-2 rounded-lg hover:border-purple-300 cursor-pointer transition-all ${selectedBank === bank ? 'border-purple-500 bg-purple-50' : ''}`}>
+                      <RadioGroupItem value={bank} id={bank} />
+                      <Label htmlFor={bank} className="flex-1 cursor-pointer">
+                        {bank}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </RadioGroup>
+
+              {selectedBank && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800 mt-4">
+                  <p className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                    <span>You'll be redirected to {selectedBank} secure login page</span>
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Fixed Bottom Bar */}

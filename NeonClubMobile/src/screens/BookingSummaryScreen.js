@@ -47,7 +47,7 @@ const BookingSummaryScreen = ({ route, navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.proceedBtn}
-        onPress={() => navigation.navigate('PaymentScreen', {
+            onPress={() => navigation.navigate('Payment', {
           mentorId,
           mentorName,
           mentorAvatar,

@@ -30,7 +30,7 @@ const MentorJoinScreen = ({ route, navigation }) => {
       try { await Linking.openURL(zoomLink); } catch {}
     }
     // After attempting to join, offer to leave feedback
-    navigation.navigate('MentorFeedback', { booking });
+    navigation.navigate('MentorFeedbackScreen', { booking });
   };
 
   return (

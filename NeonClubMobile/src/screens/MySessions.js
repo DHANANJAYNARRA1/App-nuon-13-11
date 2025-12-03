@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/Feather';
 
 const sessions = [
   {
@@ -29,16 +31,18 @@ const MySessions = ({ navigation }) => {
       <Text style={styles.details}>{item.duration}</Text>
       <View style={styles.actions}>
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, styles.rescheduleBtn]}
           onPress={() => navigation.navigate('RescheduleSession', { session: item })}
         >
-          <Text style={styles.buttonText}>Reschedule</Text>
+          <Text style={styles.rescheduleText}>Reschedule</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, styles.joinButton]}
-          onPress={() => navigation.navigate('JoinSession', { session: item })}
+          style={styles.joinBtn}
+          onPress={() => navigation.navigate('MentorJoin', { booking: item })}
         >
-          <Text style={styles.buttonText}>Join Session</Text>
+          <LinearGradient colors={['#9333EA', '#EC4899']} style={styles.joinButtonGradient}>
+            <Text style={styles.joinButtonText}>Join Session</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
@@ -46,6 +50,13 @@ const MySessions = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <LinearGradient
+        colors={['#8B5CF6', '#EC4899', '#F59E0B']}
+        style={styles.header}
+      >
+        <Text style={styles.headerTitle}>My Sessions</Text>
+      </LinearGradient>
+
       <FlatList
         data={sessions}
         renderItem={renderSession}
@@ -59,18 +70,34 @@ const MySessions = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 16,
+    backgroundColor: '#F8FAFC',
+  },
+  header: {
+    paddingTop: 48,
+    paddingBottom: 20,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
   },
   listContainer: {
-    paddingBottom: 16,
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 32,
   },
+  // listContainer intentionally has padding above and below to match layout
   card: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 16,
     padding: 16,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E8E5F9',
   },
   mentor: {
     fontSize: 18,
@@ -90,17 +117,37 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 12,
   },
   button: {
     flex: 1,
-    backgroundColor: '#007bff',
-    borderRadius: 8,
-    paddingVertical: 8,
-    marginHorizontal: 4,
+    borderRadius: 12,
+    paddingVertical: 12,
+    marginHorizontal: 6,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  joinButton: {
-    backgroundColor: '#28a745',
+  rescheduleBtn: {
+    backgroundColor: '#F3F4F6',
+  },
+  joinBtn: {
+    flex: 1,
+    borderRadius: 12,
+    marginHorizontal: 6,
+    overflow: 'hidden',
+  },
+  joinButtonGradient: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  joinButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  rescheduleText: {
+    color: '#1E293B',
+    fontWeight: '700',
   },
   buttonText: {
     color: '#fff',

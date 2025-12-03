@@ -26,9 +26,10 @@ import NCCScreen from '../screens/NCCScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
 import MentorAvailabilityScreen from '../screens/MentorAvailabilityScreen';
-import MentorProfileScreen from '../screens/MentorProfileScreen';
+import MentorProfileScreen from '../screens/MentorProfile';
 import MentorRegisterScreen from '../screens/MentorRegisterScreen';
 import MentorJoinScreen from '../screens/MentorJoinScreen';
+import RescheduleSessionScreen from '../screens/RescheduleSessionScreen';
 import MentorFeedbackScreen from '../screens/MentorFeedbackScreen';
 import NewsListScreen from '../screens/NewsListScreen';
 import NewsViewerScreen from '../screens/NewsViewerScreen';
@@ -197,6 +198,11 @@ const AppNavigator = () => {
               name="MentorAvailability"
               component={MentorAvailabilityScreen}
               options={{ title: 'Pick a Slot' }}
+            />
+            <Stack.Screen
+              name="RescheduleSession"
+              component={RescheduleSessionScreen}
+              options={{ title: 'Reschedule Session' }}
             />
             <Stack.Screen
               name="MentorJoin"

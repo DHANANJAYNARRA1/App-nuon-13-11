@@ -172,13 +172,13 @@ const MentorsScreen = ({ navigation }) => {
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
                       style={styles.button}
-                      onPress={() => navigation.navigate('MentorDetail', { mentor: item })}
+                      onPress={() => navigation.navigate('MentorProfile', { mentor: item })}
                     >
                       <Text style={styles.buttonText}>View Profile</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.button, styles.bookButton]}
-                      onPress={() => navigation.navigate('BookSession', { mentor: item })}
+                      onPress={() => navigation.navigate('MentorAvailability', { mentor: item })}
                     >
                       <Text style={styles.buttonText}>Book Session</Text>
                     </TouchableOpacity>

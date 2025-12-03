@@ -27,6 +27,7 @@ import { WorkshopViewer } from "./components/WorkshopViewer";
 import { Rewards } from "./components/Rewards";
 import { Payment } from "./components/Payment";
 import { MentorshipSessions } from "./components/MentorshipSessions";
+import { MentorProfile } from "./components/MentorProfile";
 import { Profile } from "./components/Profile";
 import { ProfileEdit } from "./components/ProfileEdit";
 import { Notifications } from "./components/Notifications";
@@ -231,6 +232,12 @@ export default function App() {
       )}
       {(appState.currentPage === "mentorship" || appState.currentPage === "sessions") && (
         <MentorshipSessions onNavigate={handleNavigate} />
+      )}
+      {appState.currentPage === "mentor-profile" && (
+        <MentorProfile
+          onNavigate={handleNavigate}
+          mentorData={appState.pageData}
+        />
       )}
       {appState.currentPage === "booking-slots" && (
         <BookingSlots

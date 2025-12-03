@@ -42,9 +42,9 @@ const SuccessModal = ({ visible, title = 'Awesome!', message, buttonText = 'Cont
             </View>
           </View>
 
-          {/* Title with emoji */}
+          {/* Title with emoji on side */}
           <View style={styles.titleContainer}>
-            <Text style={styles.emoji}>🎉 </Text>
+            <Text style={styles.emoji}>🎉</Text>
             <Text style={styles.title}>{title}</Text>
           </View>
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     borderRadius: 24,
     backgroundColor: '#fff',
-    padding: 32,
+    padding: 40,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
@@ -93,60 +93,69 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
+    width: 160,
+    height: 160,
   },
   glowBackground: {
     position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    opacity: 0.8,
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    opacity: 0.9,
   },
   glowCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#A855F7',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
-    shadowRadius: 30,
+    shadowRadius: 20,
     elevation: 15,
   },
   sparkleTopRight: {
     position: 'absolute',
-    top: 10,
-    right: 20,
+    top: 8,
+    right: 12,
     transform: [{ rotate: '15deg' }],
   },
   sparkleBottomLeft: {
     position: 'absolute',
-    bottom: 15,
-    left: 25,
+    bottom: 8,
+    left: 12,
     transform: [{ rotate: '-15deg' }],
   },
   titleContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 12,
+    width: '100%',
   },
   emoji: {
     fontSize: 24,
+    marginRight: 8,
+    marginTop: 2,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '800',
+    fontSize: 24,
+    fontWeight: '900',
     color: '#111827',
     letterSpacing: 0.3,
+    textAlign: 'left',
+    lineHeight: 28,
   },
   message: {
     fontSize: 15,
     color: '#6B7280',
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: 24,
-    paddingHorizontal: 8,
+    marginBottom: 32,
+    paddingHorizontal: 16,
   },
   buttonContainer: {
     width: '100%',
