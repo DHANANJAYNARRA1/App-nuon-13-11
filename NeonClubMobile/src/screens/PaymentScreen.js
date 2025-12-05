@@ -1,5 +1,6 @@
 
 import React, { useMemo, useState } from 'react';
+import LinearGradient from 'react-native-linear-gradient';
 import {
   View,
   Text,
@@ -146,6 +147,8 @@ const PaymentScreen = ({ route, navigation }) => {
     setCouponError('');
   };
 
+  const [bookingData, setBookingData] = useState(null);
+
   const handlePayment = async () => {
     setLoading(true);
     try {
@@ -170,7 +173,22 @@ const PaymentScreen = ({ route, navigation }) => {
         response = { data: { paymentId: 'simulated-' + Date.now() } };
       }
 
-      // 2. Create booking
+      // 2. Create booking record for display in MySessions
+      const newBooking = {
+        _id: 'booking-' + Date.now(),
+        id: 'booking-' + Date.now(),
+        mentor: paymentData.mentorName,
+        mentorId: paymentData.mentorId,
+        topic: paymentData.title || paymentData.subtitle || 'Mentorship Session',
+        date: paymentData.selectedDate,
+        time: paymentData.selectedSlot,
+        duration: '45 mins',
+        paymentId: response?.data?.paymentId || 'simulated',
+        paymentMethod: selectedMethod,
+        status: 'confirmed',
+      };
+
+      // Try API booking, but don't fail if it doesn't work
       try {
         await safeBookingAPI.createBooking({
           mentorId: paymentData.mentorId,
@@ -185,6 +203,8 @@ const PaymentScreen = ({ route, navigation }) => {
         console.log('Booking API not available, proceeding with simulated booking');
       }
 
+      // Store booking data to pass to MySessions
+      setBookingData(newBooking);
       setLoading(false);
       setSuccessVisible(true);
     } catch (error) {
@@ -201,17 +221,40 @@ const PaymentScreen = ({ route, navigation }) => {
       {successVisible && (
         <View style={styles.successModalBackdrop}>
           <View style={styles.successModalCard}>
-            <View style={styles.successIconBox}>
-              <Text style={{ fontSize: 40, color: '#FFFFFF' }}>✓</Text>
+            {/* Decorative stars */}
+            <Text style={[styles.decorativeStar, { top: 20, right: 30 }]}>✨</Text>
+            <Text style={[styles.decorativeStar, { bottom: 60, left: 20 }]}>⭐</Text>
+
+            {/* Gradient circular icon with gift */}
+            <View style={styles.successIconContainer}>
+              <LinearGradient
+                colors={["#F9A8D4", "#D946A0"]}
+                style={styles.successIconGradientInner}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Text style={styles.giftIcon}>🎁</Text>
+              </LinearGradient>
             </View>
-            <Text style={styles.successTitle}>Payment Successful!</Text>
+
+            {/* Celebration emoji */}
+            <View style={styles.celebrationRow}>
+              <Text style={styles.celebrationEmoji}>🎉</Text>
+              <Text style={styles.successTitle}>Payment Successful!</Text>
+            </View>
+
+            {/* Message */}
             <Text style={styles.successMsg}>
-              You're enrolled in {paymentData.title || 'the session'}.
+              You're enrolled in {paymentData.title || "the session"}.
             </Text>
+
+            {/* Reward box */}
             <View style={styles.successRewardBox}>
-              <Text style={{ fontSize: 18, color: '#059669' }}>🎁</Text>
+              <Text style={styles.giftEmoji}>🎁</Text>
               <Text style={styles.successRewardText}>You earned +{rewardPoints} points!</Text>
             </View>
+
+            {/* Discount box (if applied) */}
             {appliedCoupon && (
               <View style={styles.successDiscountBox}>
                 <Text style={styles.successDiscountText}>
@@ -219,28 +262,19 @@ const PaymentScreen = ({ route, navigation }) => {
                 </Text>
               </View>
             )}
-            <View style={styles.successButtons}>
-              <TouchableOpacity
-                style={[styles.successBtn, styles.successBtnSecondary]}
-                onPress={() => {
-                  setSuccessVisible(false);
-                  navigation.navigate('Mentors'); // Navigate to main Mentors screen
-                }}
-              >
-                <Text style={styles.successBtnSecondaryText}>Back to Dashboard</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.successBtn, styles.successBtnPrimary]}
-                onPress={() => {
-                  setSuccessVisible(false);
-                  // Navigate to Mentors screen and switch to My Sessions tab
-                  // We need to pass a param to switch the tab
-                  navigation.navigate('Mentors', { screen: 'MentorshipSessions', params: { initialTab: 'upcoming' } });
-                }}
-              >
-                <Text style={styles.successBtnPrimaryText}>Go to My Sessions</Text>
-              </TouchableOpacity>
-            </View>
+
+            {/* Single "Awesome!" button */}
+            <TouchableOpacity
+              onPress={() => {
+                setSuccessVisible(false);
+                navigation.navigate('Mentorship', { newBooking: bookingData });
+              }}
+              style={styles.awesomeButtonWrapper}
+            >
+              <LinearGradient colors={["#7C3AED", "#EC4899"]} style={styles.awesomeButton}>
+                <Text style={styles.awesomeButtonText}>Awesome!</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -1043,43 +1077,64 @@ const styles = StyleSheet.create({
   },
   successModalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    width: '85%',
+    borderRadius: 18,
+    paddingVertical: 28,
+    paddingHorizontal: 20,
+    width: '86%',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowRadius: 28,
+    elevation: 20,
+    position: 'relative',
   },
-  successIconBox: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#10B981',
+  decorativeStar: {
+    position: 'absolute',
+    fontSize: 20,
+  },
+  successIconContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  successIconGradientInner: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    shadowColor: '#D946A0',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    elevation: 15,
   },
+  giftIcon: { fontSize: 44, fontWeight: '800' },
+  celebrationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  celebrationEmoji: { fontSize: 18 },
   successTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 8,
+    fontWeight: '800',
+    color: '#1F2937',
   },
   successMsg: {
-    fontSize: 16,
-    color: '#64748B',
+    fontSize: 15,
+    color: '#6B7280',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   successRewardBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEF3C7',
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    borderRadius: 14,
+    paddingHorizontal: 18,
     paddingVertical: 12,
     marginBottom: 12,
   },
@@ -1088,6 +1143,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
+  giftEmoji: { fontSize: 20 },
   successDiscountBox: {
     backgroundColor: '#F0FDF4',
     borderRadius: 12,
@@ -1100,33 +1156,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  successButtons: {
-    flexDirection: 'row',
-    gap: 12,
+  awesomeButtonWrapper: {
     width: '100%',
+    borderRadius: 999,
+    overflow: 'hidden',
   },
-  successBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
+  awesomeButton: {
+    paddingVertical: 14,
     alignItems: 'center',
+    borderRadius: 999,
   },
-  successBtnSecondary: {
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  successBtnPrimary: {
-    backgroundColor: '#6366F1',
-  },
-  successBtnSecondaryText: {
-    color: '#64748B',
-    fontWeight: '600',
-  },
-  successBtnPrimaryText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
+  awesomeButtonText: { color: '#FFF', fontWeight: '800' },
 
   // Loader
   loaderBackdrop: {

@@ -4,427 +4,300 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
-  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 
+const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
+
 const SessionPreparation = ({ route, navigation }) => {
-  const { mentor, sessionDetails } = route.params || {};
-  const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
-  const [systemChecks, setSystemChecks] = useState({
-    microphone: { status: 'checking', label: 'Microphone' },
-    camera: { status: 'checking', label: 'Camera' },
-    internet: { status: 'checking', label: 'Internet Connection' },
-    speakers: { status: 'checking', label: 'Speakers' },
-  });
+  const { booking } = route.params || {};
+  const title = booking?.title || 'Mentorship Session';
+  const mentorName = booking?.mentorId?.name || 'Mentor';
+  const dateTime = booking?.dateTime;
+  const [timeRemaining, setTimeRemaining] = useState(120);
+  const [micStatus, setMicStatus] = useState('checking');
+  const [cameraStatus, setCameraStatus] = useState('checking');
+  const [internetStatus, setInternetStatus] = useState('checking');
 
   useEffect(() => {
-    // Simulate system checks
-    const checkSystems = async () => {
-      // Microphone check
-      setTimeout(() => {
-        setSystemChecks(prev => ({
-          ...prev,
-          microphone: { ...prev.microphone, status: 'success' }
-        }));
-      }, 1000);
-
-      // Camera check
-      setTimeout(() => {
-        setSystemChecks(prev => ({
-          ...prev,
-          camera: { ...prev.camera, status: 'success' }
-        }));
-      }, 2000);
-
-      // Internet check
-      setTimeout(() => {
-        setSystemChecks(prev => ({
-          ...prev,
-          internet: { ...prev.internet, status: 'success' }
-        }));
-      }, 3000);
-
-      // Speakers check
-      setTimeout(() => {
-        setSystemChecks(prev => ({
-          ...prev,
-          speakers: { ...prev.speakers, status: 'success' }
-        }));
-      }, 4000);
-    };
-
-    checkSystems();
+    // Simulate permission checks
+    const timer1 = setTimeout(() => setMicStatus('ready'), 500);
+    const timer2 = setTimeout(() => setCameraStatus('ready'), 1000);
+    const timer3 = setTimeout(() => setInternetStatus('ready'), 800);
 
     // Countdown timer
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
+    const countdown = setInterval(() => {
+      setTimeRemaining(prev => Math.max(prev - 1, 0));
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearInterval(countdown);
+    };
   }, []);
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const formatCountdown = () => {
+    const mins = Math.floor(timeRemaining / 60);
+    const secs = timeRemaining % 60;
+    return `${pad(mins)}:${pad(secs)}`;
   };
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'success':
-        return 'check-circle';
-      case 'error':
-        return 'x-circle';
-      default:
-        return 'loader';
-    }
-  };
+  const allReady = micStatus === 'ready' && cameraStatus === 'ready' && internetStatus === 'ready';
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'success':
-        return '#10B981';
-      case 'error':
-        return '#EF4444';
-      default:
-        return '#F59E0B';
-    }
-  };
-
-  const allChecksPassed = Object.values(systemChecks).every(check => check.status === 'success');
-
-  const handleJoinSession = () => {
-    if (!allChecksPassed) {
-      Alert.alert(
-        'System Check Failed',
-        'Please ensure all system checks pass before joining the session.',
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
-    navigation.navigate('VideoSession', { mentor, sessionDetails });
-  };
-
-  const sessionData = sessionDetails || {
-    topic: 'Career Guidance Session',
-    date: 'Nov 18, 2024',
-    time: '2:00 PM - 2:45 PM',
-    duration: '45 minutes',
-  };
-
-  const mentorData = mentor || {
-    name: 'Dr. Sunita Verma',
-    specialization: 'Critical Care',
-  };
+  const renderCheckItem = (label, status) => (
+    <View style={styles.checkRow}>
+      <View style={[styles.statusCircle, status === 'ready' && styles.statusReady]}>
+        {status === 'ready' ? (
+          <Icon name="check" size={14} color="white" />
+        ) : (
+          <View style={styles.dots}>
+            <Text style={styles.dotsText}>⋯</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.checkLabel}>{label}</Text>
+      <Text style={[styles.checkStatus, status === 'ready' && styles.statusText]}>
+        {status === 'ready' ? 'Ready' : 'Checking...'}
+      </Text>
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <LinearGradient
-          colors={['#8B5CF6', '#EC4899', '#F59E0B']}
-          style={styles.header}
-        >
-          <View style={styles.headerTop}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Icon name="chevron-left" size={24} color="white" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Session Preparation</Text>
+    <View style={styles.container}>
+      {/* Header */}
+      <LinearGradient
+        colors={['#9333EA', '#EC4899', '#F97316']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Icon name="chevron-left" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Join Session</Text>
+      </LinearGradient>
+
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Session Info Card */}
+        <View style={styles.sessionCard}>
+          <LinearGradient
+            colors={['#9333EA', '#EC4899']}
+            style={styles.iconCircle}
+          >
+            <Icon name="video" size={32} color="white" />
+          </LinearGradient>
+          <Text style={styles.sessionTitle}>{title}</Text>
+          <Text style={styles.mentorName}>with {mentorName}</Text>
+          <View style={styles.metaRow}>
+            <Icon name="calendar" size={14} color="#6B7280" />
+            <Text style={styles.metaText}>{dateTime ? new Date(dateTime).toLocaleDateString() : 'TBA'}</Text>
+            <Text style={styles.metaDot}>•</Text>
+            <Icon name="clock" size={14} color="#6B7280" />
+            <Text style={styles.metaText}>{dateTime ? new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBA'}</Text>
           </View>
-        </LinearGradient>
+        </View>
 
-        <View style={styles.content}>
-          {/* Session Details Card */}
-          <View style={styles.sessionCard}>
-            <View style={styles.sessionHeader}>
-              <View style={styles.sessionIcon}>
-                <Icon name="video" size={24} color="#8B5CF6" />
-              </View>
-              <View style={styles.sessionInfo}>
-                <Text style={styles.sessionTitle}>{sessionData.topic}</Text>
-                <Text style={styles.sessionMentor}>with {mentorData.name}</Text>
-              </View>
-            </View>
-
-            <View style={styles.sessionDetails}>
-              <View style={styles.detailRow}>
-                <Icon name="calendar" size={16} color="#6B7280" />
-                <Text style={styles.detailText}>{sessionData.date}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Icon name="clock" size={16} color="#6B7280" />
-                <Text style={styles.detailText}>{sessionData.time}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Icon name="user" size={16} color="#6B7280" />
-                <Text style={styles.detailText}>{sessionData.duration}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Countdown Timer */}
-          <View style={styles.countdownCard}>
+        {/* Countdown Card */}
+        {allReady && (
+          <LinearGradient
+            colors={['#DCFCE7', '#F0FDF4']}
+            style={styles.countdownCard}
+          >
             <Text style={styles.countdownLabel}>Session starts in</Text>
-            <Text style={styles.countdownTime}>{formatTime(countdown)}</Text>
-            <Text style={styles.countdownSubtext}>Please be ready to join</Text>
-          </View>
+            <Text style={styles.countdownTime}>{formatCountdown()}</Text>
+            <View style={styles.readyBadge}>
+              <Icon name="check-circle" size={16} color="#059669" />
+              <Text style={styles.readyBadgeText}>Ready to Join</Text>
+            </View>
+          </LinearGradient>
+        )}
 
-          {/* System Checks */}
-          <View style={styles.checksCard}>
-            <View style={styles.checksHeader}>
-              <Icon name="settings" size={20} color="#8B5CF6" />
-              <Text style={styles.checksTitle}>System Checks</Text>
-            </View>
-
-            <View style={styles.checksList}>
-              {Object.entries(systemChecks).map(([key, check]) => (
-                <View key={key} style={styles.checkItem}>
-                  <View style={styles.checkLeft}>
-                    <Icon
-                      name={getStatusIcon(check.status)}
-                      size={20}
-                      color={getStatusColor(check.status)}
-                    />
-                    <Text style={styles.checkLabel}>{check.label}</Text>
-                  </View>
-                  <Text style={[styles.checkStatus, { color: getStatusColor(check.status) }]}>
-                    {check.status === 'checking' ? 'Checking...' :
-                     check.status === 'success' ? 'Ready' : 'Failed'}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-
-          {/* Quick Tips */}
-          <View style={styles.tipsCard}>
-            <View style={styles.tipsHeader}>
-              <Icon name="lightbulb" size={20} color="#8B5CF6" />
-              <Text style={styles.tipsTitle}>Quick Tips</Text>
-            </View>
-            <View style={styles.tipsList}>
-              <Text style={styles.tipText}>• Find a quiet, well-lit space</Text>
-              <Text style={styles.tipText}>• Test your audio and video before joining</Text>
-              <Text style={styles.tipText}>• Have your questions ready</Text>
-              <Text style={styles.tipText}>• Close unnecessary applications</Text>
-            </View>
+        {/* System Check Card */}
+        <View style={styles.systemCard}>
+          <Text style={styles.systemTitle}>System Check</Text>
+          <View style={styles.checksContainer}>
+            {renderCheckItem('Microphone', micStatus)}
+            {renderCheckItem('Camera', cameraStatus)}
+            {renderCheckItem('Internet', internetStatus)}
           </View>
         </View>
       </ScrollView>
 
-      {/* Bottom Action Bar */}
+      {/* Join Button */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
-          style={[styles.joinButton, !allChecksPassed && styles.joinButtonDisabled]}
-          onPress={handleJoinSession}
-          disabled={!allChecksPassed}
+          disabled={!allReady}
+          onPress={() => navigation.navigate('VideoSession', { booking })}
+          style={[styles.joinButton, !allReady && styles.joinButtonDisabled]}
         >
           <LinearGradient
-            colors={allChecksPassed ? ['#8B5CF6', '#EC4899', '#F59E0B'] : ['#9CA3AF', '#9CA3AF']}
+            colors={allReady ? ['#9333EA', '#EC4899'] : ['#D1D5DB', '#D1D5DB']}
             style={styles.joinButtonGradient}
           >
             <Icon name="video" size={20} color="white" />
-            <Text style={styles.joinButtonText}>
-              {allChecksPassed ? 'Join Session Now' : 'Waiting for System Checks...'}
-            </Text>
+            <Text style={styles.joinButtonText}>Join Session Now</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  scrollContainer: {
-    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
-  },
-  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backButton: {
+  backBtn: {
     marginRight: 15,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: 'white',
   },
   content: {
-    padding: 20,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 80,
   },
   sessionCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  sessionHeader: {
-    flexDirection: 'row',
+  iconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
-  sessionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#EEF2FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  sessionInfo: {
-    flex: 1,
-  },
   sessionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 2,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 6,
+    textAlign: 'center',
   },
-  sessionMentor: {
+  mentorName: {
     fontSize: 14,
     color: '#6B7280',
+    marginBottom: 12,
+    textAlign: 'center',
   },
-  sessionDetails: {
-    gap: 8,
-  },
-  detailRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
   },
-  detailText: {
-    fontSize: 14,
-    color: '#374151',
-    marginLeft: 8,
+  metaText: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  metaDot: {
+    color: '#D1D5DB',
+    marginHorizontal: 4,
   },
   countdownCard: {
-    backgroundColor: 'white',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 20,
   },
   countdownLabel: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 8,
+    fontSize: 12,
+    color: '#059669',
+    marginBottom: 6,
   },
   countdownTime: {
     fontSize: 36,
-    fontWeight: 'bold',
-    color: '#8B5CF6',
-    marginBottom: 4,
+    fontWeight: '700',
+    color: '#059669',
+    marginBottom: 8,
   },
-  countdownSubtext: {
+  readyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#ECFDF5',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  readyBadgeText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    fontWeight: '600',
+    color: '#059669',
   },
-  checksCard: {
-    backgroundColor: 'white',
+  systemCard: {
+    backgroundColor: '#F9FAFB',
     borderRadius: 12,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  checksHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
+  systemTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 12,
   },
-  checksTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginLeft: 8,
-  },
-  checksList: {
+  checksContainer: {
     gap: 12,
   },
-  checkItem: {
+  checkRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 10,
   },
-  checkLeft: {
-    flexDirection: 'row',
+  statusCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#E5E7EB',
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  statusReady: {
+    backgroundColor: '#10B981',
+  },
+  dots: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dotsText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    fontWeight: '500',
   },
   checkLabel: {
+    flex: 1,
     fontSize: 14,
+    fontWeight: '500',
     color: '#374151',
-    marginLeft: 8,
   },
   checkStatus: {
     fontSize: 12,
+    color: '#9CA3AF',
     fontWeight: '500',
   },
-  tipsCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 100, // Space for bottom bar
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  tipsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  tipsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginLeft: 8,
-  },
-  tipsList: {
-    gap: 8,
-  },
-  tipText: {
-    fontSize: 14,
-    color: '#374151',
-    lineHeight: 20,
+  statusText: {
+    color: '#10B981',
   },
   bottomBar: {
     position: 'absolute',
@@ -433,7 +306,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 12,
     paddingBottom: 30,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
@@ -443,20 +316,20 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   joinButtonDisabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   joinButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    gap: 8,
   },
   joinButtonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
+    fontWeight: '600',
   },
 });
 

@@ -107,7 +107,7 @@ const MentorAvailabilityScreen = ({ route, navigation }) => {
           console.warn('Reschedule API failed', err);
         } finally {
           // Navigate back to mentorship -> My Sessions tab
-          navigation.navigate('Mentorship');
+          navigation.navigate('Mentorship', { screen: 'My Sessions' });
           Alert.alert('Success', 'Session rescheduled successfully!');
         }
       })();

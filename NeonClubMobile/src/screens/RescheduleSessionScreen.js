@@ -68,43 +68,29 @@ const RescheduleSessionScreen = ({ navigation, route }) => {
     }
   }, []);
 
-  const handleReschedule = () => {
+  const handleReschedule = async () => {
     if (!selectedDate || !selectedSlot) return;
     const selectedDateObj = availableDates.find(d => d.date === selectedDate);
     setLoading(true);
-    (async () => {
-      try {
-        const { mentorAPI } = require('../api/mentorAPI');
-        const sessionId = sessionData?._id || sessionData?.id || null;
-        if (sessionId && mentorAPI && typeof mentorAPI.rescheduleSession === 'function') {
-          await mentorAPI.rescheduleSession(sessionId, selectedSlot);
-        } else {
-          await new Promise((r) => setTimeout(r, 600));
-        }
-
-        if (onCelebrate) {
-          onCelebrate({
-            title: 'Session Rescheduled! ✅',
-            message: `Your session has been moved to ${selectedDateObj?.day}, ${selectedDateObj?.dateNum} ${selectedDateObj?.month} at ${selectedSlot}`,
-            icon: 'star',
-          });
-        }
-
-        onNavigate('mentorship');
-      } catch (err) {
-        console.error('Reschedule failed', err);
-        if (onCelebrate) {
-          onCelebrate({
-            title: 'Reschedule Pending',
-            message: 'We could not confirm the reschedule with the server. Please check your bookings.',
-            icon: 'alert',
-          });
-        }
-        onNavigate('mentorship');
-      } finally {
-        setLoading(false);
+    try {
+      const { mentorAPI } = require('../api/mentorAPI');
+      const sessionId = route?.params?.session?._id || route?.params?.session?.id || route?.params?.sessionId || null;
+      if (sessionId && mentorAPI && typeof mentorAPI.rescheduleSession === 'function') {
+        await mentorAPI.rescheduleSession(sessionId, selectedSlot);
+      } else {
+        // simulate network delay when API not available
+        await new Promise((r) => setTimeout(r, 600));
       }
-    })();
+
+      navigation.navigate('Mentorship', { screen: 'My Sessions' });
+      Alert.alert('Success', 'Session rescheduled successfully!');
+    } catch (err) {
+      console.error('Reschedule failed', err);
+      Alert.alert('Reschedule', 'Could not reschedule now. Please check later.');
+      navigation.navigate('Mentorship', { screen: 'My Sessions' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderDateCard = (dateObj) => {
@@ -171,7 +157,9 @@ const RescheduleSessionScreen = ({ navigation, route }) => {
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <LinearGradient
-          colors={['#8B5CF6', '#EC4899', '#F59E0B']}
+          colors={['#EC4899', '#F97316']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={styles.header}
         >
           <View style={styles.headerTop}>
@@ -249,7 +237,7 @@ const RescheduleSessionScreen = ({ navigation, route }) => {
           disabled={!selectedDate || !selectedSlot}
         >
           <LinearGradient
-            colors={selectedDate && selectedSlot ? ['#8B5CF6', '#EC4899', '#F59E0B'] : ['#9CA3AF', '#9CA3AF']}
+            colors={selectedDate && selectedSlot ? ['#9333EA', '#EC4899'] : ['#9CA3AF', '#9CA3AF']}
             style={styles.confirmButtonGradient}
           >
             <Icon name="refresh-cw" size={20} color="white" />

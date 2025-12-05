@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/Feather';
 
 const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
 
@@ -14,7 +15,7 @@ const useCountdown = (targetIso) => {
   const diff = Math.max(targetMs - now, 0);
   const mm = Math.floor(diff / 60000);
   const ss = Math.floor((diff % 60000) / 1000);
-  return { mm, ss, ready: diff <= 120000 }; // show Ready within 2 minutes
+  return { mm, ss, ready: diff <= 120000 };
 };
 
 const MentorJoinScreen = ({ route, navigation }) => {
@@ -29,73 +30,163 @@ const MentorJoinScreen = ({ route, navigation }) => {
     if (zoomLink) {
       try { await Linking.openURL(zoomLink); } catch {}
     }
-    // After attempting to join, offer to leave feedback
-    navigation.navigate('MentorFeedbackScreen', { booking });
+    navigation.navigate('MentorFeedback', { booking });
   };
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#6D28D9", "#EC4899", "#F97316"]} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.hero}>
+      <LinearGradient
+        colors={['#9333EA', '#EC4899', '#F97316']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.hero}
+      >
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="chevron-left" size={24} color="white" />
+        </TouchableOpacity>
         <View style={styles.heroCard}>
-          <Text style={styles.heroIcon}>🎥</Text>
+          <LinearGradient
+            colors={['#9333EA', '#EC4899']}
+            style={styles.heroIcon}
+          >
+            <Icon name="video" size={32} color="white" />
+          </LinearGradient>
           <Text style={styles.heroTitle}>{title}</Text>
           <Text style={styles.heroSub}>with {mentorName}</Text>
-          <View style={styles.heroMeta}><Text style={styles.heroMetaText}>{new Date(dateTime).toDateString()}</Text><Text style={styles.dot}>•</Text><Text style={styles.heroMetaText}>{new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text></View>
+          <View style={styles.heroMeta}>
+            <Icon name="calendar" size={12} color="white" />
+            <Text style={styles.heroMetaText}>{new Date(dateTime).toLocaleDateString()}</Text>
+            <Text style={styles.dot}>•</Text>
+            <Icon name="clock" size={12} color="white" />
+            <Text style={styles.heroMetaText}>{new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+          </View>
         </View>
       </LinearGradient>
 
-      <View style={[styles.card, { alignItems:'center' }]}>
-        <Text style={styles.small}>Session starts in</Text>
-        <Text style={styles.countdown}>{pad(mm)}:{pad(ss)}</Text>
-        <View style={[styles.readyPill, { backgroundColor: ready ? '#dcfce7' : '#fee2e2' }]}>
-          <Text style={{ color: ready ? '#059669' : '#dc2626', fontWeight: '700' }}>{ready ? 'Ready to Join' : 'Not yet'}</Text>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Countdown Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>Session starts in</Text>
+          <Text style={styles.countdown}>{pad(mm)}:{pad(ss)}</Text>
+          {ready && (
+            <View style={styles.readyBadge}>
+              <Icon name="check-circle" size={16} color="#059669" />
+              <Text style={styles.readyBadgeText}>Ready to Join</Text>
+            </View>
+          )}
         </View>
+
+        {/* System Checks */}
+        <View style={styles.checksCard}>
+          <Text style={styles.checksTitle}>System Check</Text>
+          {[
+            { label: 'Microphone', status: 'Working' },
+            { label: 'Camera', status: 'Working' },
+            { label: 'Internet', status: 'Strong connection' },
+          ].map((item, idx) => (
+            <View key={idx} style={styles.checkRow}>
+              <Icon name="check-circle" size={16} color="#10B981" />
+              <Text style={styles.checkLabel}>{item.label}</Text>
+              <Text style={styles.checkStatus}>{item.status}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Join Button */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          disabled={!ready}
+          onPress={onJoin}
+          style={[styles.joinBtn, !ready && styles.joinBtnDisabled]}
+        >
+          <LinearGradient
+            colors={ready ? ['#9333EA', '#EC4899'] : ['#D1D5DB', '#D1D5DB']}
+            style={styles.joinBtnGradient}
+          >
+            <Icon name="video" size={20} color="white" />
+            <Text style={styles.joinText}>Join Session Now</Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>System Check</Text>
-        {[
-          ['Microphone', 'Working'],
-          ['Camera', 'Working'],
-          ['Internet', 'Strong connection'],
-        ].map(([k, v]) => (
-          <View key={k} style={styles.row}><Text style={styles.bullet}>•</Text><Text style={styles.meta}>{k}</Text><Text style={styles.right}>{v} ✓</Text></View>
-        ))}
-      </View>
-
-      <TouchableOpacity disabled={!ready} onPress={onJoin} style={[styles.joinBtn, !ready && { opacity: 0.6 }]}>
-        <Text style={styles.joinText}>Join Session Now</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Bookings')} style={styles.backLink}>
-        <Text style={{ color:'#64748b' }}>Back to Sessions</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex:1, backgroundColor:'#f8fafc' },
-  hero: { paddingTop: 36, paddingBottom: 16, paddingHorizontal: 16, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
-  heroCard: { backgroundColor:'rgba(255,255,255,0.2)', borderRadius: 16, padding: 16 },
-  heroIcon: { fontSize: 36, textAlign:'center', color:'#fff' },
-  heroTitle: { color:'#fff', fontSize: 18, fontWeight:'800', textAlign:'center', marginTop: 6 },
-  heroSub: { color:'#f1f5f9', textAlign:'center' },
-  heroMeta: { flexDirection:'row', alignItems:'center', justifyContent:'center', gap: 8, marginTop: 6 },
-  heroMetaText: { color:'#fff' },
-  dot: { color:'#f8fafc' },
-  small: { color:'#64748b' },
-  countdown: { fontSize: 42, fontWeight:'900', color:'#10b981', marginTop: 6 },
-  readyPill: { marginTop: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
-  card: { backgroundColor:'#fff', borderRadius: 12, padding: 16, marginHorizontal: 16, marginTop: 16, borderWidth: 1, borderColor:'#e5e7eb' },
-  cardTitle: { color:'#111827', fontWeight:'800', marginBottom: 8 },
-  row: { flexDirection:'row', alignItems:'center', paddingVertical: 8 },
-  bullet: { color:'#a3a3a3', marginRight: 6 },
-  meta: { color:'#1f2937', fontWeight:'600' },
-  right: { marginLeft:'auto', color:'#64748b' },
-  joinBtn: { marginHorizontal: 16, marginTop: 16, backgroundColor:'#059669', borderRadius: 12, paddingVertical: 14, alignItems:'center' },
-  joinText: { color:'#fff', fontWeight:'800' },
-  backLink: { marginTop: 12, alignItems:'center' },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  hero: {
+    paddingTop: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  backBtn: {
+    marginBottom: 12,
+  },
+  heroCard: { alignItems: 'center' },
+  heroIcon: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  heroTitle: { color: '#fff', fontSize: 20, fontWeight: '700', textAlign: 'center', marginBottom: 6 },
+  heroSub: { color: 'rgba(255,255,255,0.8)', fontSize: 14, textAlign: 'center', marginBottom: 12 },
+  heroMeta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  heroMetaText: { color: 'white', fontSize: 12 },
+  dot: { color: 'rgba(255,255,255,0.5)' },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 80,
+  },
+  card: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  cardLabel: { fontSize: 12, color: '#6B7280', marginBottom: 8 },
+  countdown: { fontSize: 36, fontWeight: '700', color: '#10B981', marginBottom: 8 },
+  readyBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#ECFDF5', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 20 },
+  readyBadgeText: { fontSize: 12, fontWeight: '600', color: '#059669' },
+  checksCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 20,
+  },
+  checksTitle: { fontSize: 16, fontWeight: '600', color: '#000', marginBottom: 12 },
+  checkRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 8 },
+  checkLabel: { flex: 1, fontSize: 14, fontWeight: '500', color: '#374151' },
+  checkStatus: { fontSize: 12, color: '#6B7280' },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingBottom: 30,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  joinBtn: { borderRadius: 25, overflow: 'hidden' },
+  joinBtnDisabled: { opacity: 0.5 },
+  joinBtnGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, paddingHorizontal: 20, gap: 8 },
+  joinText: { color: '#fff', fontWeight: '600', fontSize: 16 },
 });
 
 export default MentorJoinScreen;
