@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -7,7 +7,7 @@ const api = axios.create({
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -53,7 +53,7 @@ api.interceptors.response.use(
       hostname: window.location.hostname,
       port: window.location.port,
       protocol: window.location.protocol,
-      apiURL: process.env.REACT_APP_API_URL,
+      apiURL: process.env.REACT_APP_API_BASE_URL,
     });
 
     // Log detailed error information
@@ -70,7 +70,8 @@ api.interceptors.response.use(
     });
 
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       window.location.href = '/login';
     }
     return Promise.reject(error);

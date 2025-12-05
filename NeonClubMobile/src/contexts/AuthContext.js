@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api, { probeAndFixBase } from '../services/api';
 import socketService from '../services/socket';
@@ -18,24 +18,36 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setTokenState] = useState(null);
   const [loading, setLoading] = useState(true);
+  const loaded = useRef(false);
 
   useEffect(() => {
-    // Always start fresh - clear any cached auth data for proper onboarding flow
-    const clearAuth = async () => {
+    // Load existing auth data if available, otherwise start fresh for onboarding
+    const loadAuth = async () => {
+      if (loaded.current) {
+        setLoading(false);
+        return;
+      }
+      loaded.current = true;
       try {
-        await AsyncStorage.clear();
-        setUser(null);
-        setTokenState(null);
-        delete api.defaults.headers.common.Authorization;
-        console.log('[AuthContext] Cleared cached auth data for fresh onboarding flow');
+        const token = await AsyncStorage.getItem('token');
+        const userStr = await AsyncStorage.getItem('user');
+        if (token && userStr) {
+          const user = JSON.parse(userStr);
+          setTokenState(token);
+          setUser(user);
+          api.defaults.headers.common.Authorization = `Bearer ${token}`;
+          console.log('[AuthContext] Loaded existing auth data');
+        } else {
+          console.log('[AuthContext] No existing auth data, starting fresh');
+        }
       } catch (error) {
-        console.error('[AuthContext] Error clearing auth data:', error);
+        console.error('[AuthContext] Error loading auth data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    clearAuth();
+    loadAuth();
   }, []);
 
   const signIn = async (credentials) => {

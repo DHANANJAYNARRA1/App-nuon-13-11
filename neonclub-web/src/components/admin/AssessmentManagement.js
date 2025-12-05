@@ -78,7 +78,7 @@ const AssessmentManagement = () => {
 
   const loadCourses = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       const response = await axios.get(`${API_BASE_URL}/courses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -95,7 +95,7 @@ const AssessmentManagement = () => {
   const loadAssessments = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       const response = await axios.get(`${API_BASE_URL}/assessments`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -130,7 +130,7 @@ const AssessmentManagement = () => {
 
   const loadAttempts = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       const response = await axios.get(`${API_BASE_URL}/assessments/attempts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -156,7 +156,7 @@ const AssessmentManagement = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       
       // Process questions to convert correctAnswer index to the actual answer string
       const processedQuestions = formData.questions
@@ -214,9 +214,9 @@ const AssessmentManagement = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this assessment?')) return;
-    
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       await axios.delete(`${API_BASE_URL}/assessments/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -20,7 +20,7 @@ export const SocketProvider = ({ children, isAuthenticated, token }) => {
   useEffect(() => {
     if (isAuthenticated && token && !socketRef.current) {
       // Connect to socket server
-      const newSocket = io(`http://${IP_ADDRESS}:3000`, {
+      const newSocket = io(`http://${IP_ADDRESS}:5000`, {
         auth: {
           token: token,
         },

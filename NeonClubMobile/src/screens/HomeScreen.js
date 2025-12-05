@@ -24,59 +24,57 @@ import LinearGradient from 'react-native-linear-gradient';
 import CalendarIcon from '../components/CalendarIcon';
 import PlayIcon from '../components/PlayIcon';
 import { SvgXml } from 'react-native-svg';
+import BookOpenSvg from '../assets/icons/book-open.svg';
+import SparklesIcon from '../components/SparklesIcon';
+import UsersIcon from '../components/UsersIcon';
+import UserIcon from '../components/UserIcon'
 
 const bellSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
 const bookOpenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
-const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-const sparklesSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>`;
-const usersSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
 const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
+const usersSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
 const chevronRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
 const arrowRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 const playSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 
 // CalendarIcon and PlayIcon are provided by wrapper components in src/components
 
 const HomeScreen = ({ navigation }) => {
-  const [user, setUser] = useState(null);
-  const [courses, setCourses] = useState([]); // State for courses
-  // Preseed with demo so UI is never blank; replaced when API returns
-  const [news, setNews] = useState([
-    { 
-      _id: 'demo1',
-      title: 'New Healthcare Guidelines 2024', 
-      category: 'Guidelines', 
-      type: 'video',
-      thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-15',
-      videos: [{ url: '', thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop' }]
-    },
-    { 
-      _id: 'demo2',
-      title: 'Breakthrough in Nursing Education', 
-      category: 'Education',
-      thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-12'
-    },
-    { 
-      _id: 'demo3',
-      title: 'Champion Mentors Success Stories', 
-      category: 'Stories',
-      thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1080&auto=format&fit=crop',
-      publishedAt: '2024-10-08'
-    }
-  ]);
-  const [activities, setActivities] = useState([]); // merged events/workshops
-  const [featuredCourses, setFeaturedCourses] = useState([]);
-  const [eventsCount, setEventsCount] = useState(0);
-  const [workshopsCount, setWorkshopsCount] = useState(0);
-  const [featuredNews, setFeaturedNews] = useState([]);
-  // Catalog removed from dashboard
-  const { user: authUser, signOut } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (authUser) setUser(authUser);
-  }, [authUser]);
+   const [courses, setCourses] = useState([]); // State for courses
+   // Preseed with demo so UI is never blank; replaced when API returns
+   const [news, setNews] = useState([
+     {
+       _id: 'demo1',
+       title: 'New Healthcare Guidelines 2024',
+       category: 'Guidelines',
+       type: 'video',
+       thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-15',
+       videos: [{ url: '', thumbnail: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1080&auto=format&fit=crop' }]
+     },
+     {
+       _id: 'demo2',
+       title: 'Breakthrough in Nursing Education',
+       category: 'Education',
+       thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-12'
+     },
+     {
+       _id: 'demo3',
+       title: 'Champion Mentors Success Stories',
+       category: 'Stories',
+       thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1080&auto=format&fit=crop',
+       publishedAt: '2024-10-08'
+     }
+   ]);
+   const [activities, setActivities] = useState([]); // merged events/workshops
+   const [featuredCourses, setFeaturedCourses] = useState([]);
+   const [eventsCount, setEventsCount] = useState(0);
+   const [workshopsCount, setWorkshopsCount] = useState(0);
+   const [featuredNews, setFeaturedNews] = useState([]);
+   // Catalog removed from dashboard
+   const { user: user, signOut } = useContext(AuthContext);
 
   // helper to (re)load activities/courses/news
   const fetchAdditionalData = async () => {
@@ -140,8 +138,8 @@ const HomeScreen = ({ navigation }) => {
           }));
           const merged = [...events, ...workshops, ...coursesNew]
             .filter(Boolean)
-            .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0))
-            .slice(0, 5);
+            .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+            .slice(0, 3);
           setActivities(merged);
         } catch (e) {
           console.log('Activities fetch failed', e?.message || e);
@@ -267,10 +265,10 @@ const HomeScreen = ({ navigation }) => {
         {/* Profile Incomplete Banner - Matching Figma */}
         {user?.profileIncomplete && (
           <View style={styles.profileIncompleteBannerNew}>
-            <View style={styles.bannerIconContainer}>
-              <SvgXml xml={userSvg} width={20} height={20} color="#F97316" />
+            <View style={styles.profileIconCircle}>
+              <UserIcon width={20} height={20} color="#F97316" />
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.bannerTitleNew}>Complete Your Profile</Text>
               <Text style={styles.bannerSubtitleNew}>
                 Add professional details to unlock personalized features
@@ -286,7 +284,7 @@ const HomeScreen = ({ navigation }) => {
         )}
 
         {/* My Learning Card - Matching Figma */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.myLearningCard}
           onPress={() => navigation.navigate('MyLearning')}
         >
@@ -297,7 +295,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.myLearningGradient}
           >
             <View style={styles.myLearningIconContainer}>
-              <SvgXml xml={bookOpenSvg} width={24} height={24} color="#fff" />
+              <BookOpenSvg width={24} height={24} fill="none" stroke="#fff" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.myLearningTitle}>My Learning</Text>
@@ -305,7 +303,7 @@ const HomeScreen = ({ navigation }) => {
                 Continue your courses, events & workshops
               </Text>
             </View>
-            <SvgXml xml={arrowRightSvg} width={24} height={24} color="#fff" />
+            <SvgXml xml={chevronRightSvg} width={24} height={24} color="#fff" />
           </LinearGradient>
         </TouchableOpacity>
 
@@ -366,63 +364,73 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       {/* Nightingale Programme card */}
-      <View style={styles.nightingaleCard}>
-        <LinearGradient
-          colors={['#9333EA', '#EC4899', '#F97316']}
-          start={{x:0,y:0}}
-          end={{x:1,y:1}}
-          style={styles.gradientCardContent}
-        >
-          <View style={styles.cardIconContainer}>
-            <SvgXml xml={sparklesSvg} width={32} height={32} color="#FDE047" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.gradientCardTitle}>Nightingale Programme</Text>
-            <Text style={styles.gradientCardSubtitle}>
-              Become a Champion Mentor and light the way
-            </Text>
-            <TouchableOpacity 
-              style={styles.gradientCardButton}
-              onPress={() => navigation.navigate('NCC')}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.gradientCardButtonText}>Begin Journey</Text>
+      {/* Featured Courses */}
+      {featuredCourses.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.rowBetween}>
+            <Text style={styles.sectionTitle}>Featured Courses</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('MyLearning')}>
+              <Text style={styles.linkText}>Browse All</Text>
             </TouchableOpacity>
           </View>
-        </LinearGradient>
-      </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 12, paddingLeft: 6 }}>
+            {featuredCourses.map((c, idx) => (
+              <TouchableOpacity key={c._id || idx} style={styles.courseCardH} onPress={() => {
+                try {
+                  navigation.navigate('CourseDetail', { course: c });
+                } catch (error) {
+                  console.error('Navigation error:', error);
+                  Alert.alert('Error', 'Unable to open course details');
+                }
+              }}>
+                <View style={styles.courseThumb}>
+                  {c.thumbnail ? <Image source={{ uri: c.thumbnail }} style={styles.courseThumbImg} /> : null}
+                  <LinearGradient colors={['rgba(0,0,0,0)','rgba(0,0,0,0.65)']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.courseGrad} />
+                  <View style={styles.courseBadge}><Text style={styles.courseBadgeText}>{c.lessons?.length || 0} lessons</Text></View>
+                  <View style={styles.courseOverlay}><Text style={styles.courseTitleH} numberOfLines={2}>{c.title}</Text></View>
+                  {c.type === 'video' && <View style={styles.videoPlayIcon}><PlayIcon /></View>}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Nightingale Programme card */}
+      <GradientCard
+          title="Nightingale Programme"
+          subtitle="Become a Champion Mentor"
+          description="and light the way"
+          colors={[NEON_COLORS.neonPink, NEON_COLORS.neonOrange || '#F59E0B']}
+          start={{x:0,y:0}}
+          end={{x:1,y:1}}
+          ctaLabel="Begin Journey"
+          ctaColor="#7C3AED"
+          onPress={() => navigation.navigate('NCC')}
+          height={160}
+          iconComponent={<SparklesIcon width={32} height={32} color="#FDE047" />}
+        />
 
       {/* Mentor card */}
-      <View style={styles.mentorCard}>
-        <LinearGradient
-          colors={['#06B6D4', '#14B8A6', '#10B981']}
+      <View style={{ marginTop: 24 }}>
+        <GradientCard
+          title="Want to Become a Mentor?"
+          subtitle="Share your expertise with fellow nurses"
+          colors={[NEON_COLORS.neonCyan, NEON_COLORS.neonGreen]}
           start={{x:0,y:0}}
           end={{x:1,y:1}}
-          style={styles.gradientCardContent}
-        >
-          <View style={styles.cardIconContainer}>
-            <SvgXml xml={usersSvg} width={32} height={32} color="#FFFFFF" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.gradientCardTitle}>Want to Become a Mentor?</Text>
-            <Text style={styles.gradientCardSubtitle}>
-              Share your expertise with fellow nurses
-            </Text>
-            <TouchableOpacity 
-              style={styles.gradientCardButton}
-              onPress={() => navigation.navigate('MentorRegister')}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.gradientCardButtonText}>Apply Now</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
+          ctaLabel="Apply Now"
+          ctaColor="#06B6D4"
+          onPress={() => navigation.navigate('MentorRegister')}
+          height={160}
+          iconComponent={<UserIcon width={32} height={32} color="#fff" />}
+        />
       </View>
 
       </View>
       {/* End contentContainer */}
 
-      {/* Wellness & Events */}
+      {/* Wellness & Events list */}
       <View style={styles.section}>
         <View style={styles.rowBetween}>
           <Text style={styles.sectionTitle}>Wellness & Events</Text>
@@ -430,52 +438,38 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.linkText}>See All</Text>
           </TouchableOpacity>
         </View>
-        
-        {/* Show real activities if available, otherwise show placeholders */}
-        {(activities.length > 0 ? activities.slice(0, 2) : [
-          { id: 'placeholder1', title: 'Wound Care Management', kind: 'Workshop', date: new Date('2024-10-15'), time: '2:00 PM', color: '#9333EA' },
-          { id: 'placeholder2', title: 'Healthcare Summit 2024', kind: 'Event', date: new Date('2024-10-18'), time: '3-Day Conference', color: '#06B6D4' }
-        ]).map((item, idx) => {
+        {activities.map((item, idx) => {
           const d = new Date(item.date || Date.now());
-          const month = d.toLocaleString('en-US', { month: 'short' });
+          const month = d.toLocaleString('en-US', { month: 'short' }).toUpperCase();
           const day = String(d.getDate()).padStart(2, '0');
           const type = item.kind || 'Event';
-          const isPlaceholder = item.id?.startsWith('placeholder');
-          const cardColor = item.color || (type === 'Workshop' ? '#9333EA' : '#06B6D4');
-          
           return (
             <TouchableOpacity
               key={item.id || idx}
               activeOpacity={0.8}
               style={styles.activityCard}
               onPress={() => {
-                if (!isPlaceholder) {
-                  try { activitiesAPI.create({ type:'activity-tap', title: item.title, ref: item.id, meta: { kind: item.kind } }); } catch {}
-                }
-                navigation.navigate('Engage');
+                try { activitiesAPI.create({ type:'activity-tap', title: item.title, ref: item.id, meta: { kind: item.kind } }); } catch {}
+                navigation.navigate('Activities');
               }}
             >
-              <LinearGradient 
-                colors={[cardColor, cardColor + 'DD']} 
-                start={{x:0,y:0}} 
-                end={{x:1,y:1}} 
-                style={styles.datePillGradient}
-              >
+              <View style={styles.datePill}>
                 <Text style={styles.dateMonth}>{month}</Text>
                 <Text style={styles.dateDay}>{day}</Text>
-              </LinearGradient>
+              </View>
               <View style={{ flex: 1 }}>
-                <View style={[styles.badge, { backgroundColor: cardColor + '20' }]}>
-                  <Text style={[styles.badgeText, { color: cardColor }]}>{type}</Text>
-                </View>
+                <View style={styles.badge}><Text style={styles.badgeText}>{type}</Text></View>
                 <Text style={styles.activityTitle} numberOfLines={2}>{item.title}</Text>
-                <Text style={styles.activitySub}>{item.time || 'Live Workshop • 2:00 PM'}</Text>
+                <Text style={styles.activitySub}>Open Activities to explore</Text>
               </View>
               <SvgXml xml={chevronRightSvg} width={18} height={18} color="#9CA3AF" />
             </TouchableOpacity>
           );
         })}
       </View>
+
+
+      {/* Catalog section intentionally removed from dashboard */}
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
@@ -610,7 +604,7 @@ const styles = StyleSheet.create({
   profileIncompleteBannerNew: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFEDD5',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
@@ -619,31 +613,18 @@ const styles = StyleSheet.create({
     borderColor: '#FED7AA',
     ...shadow.soft,
   },
-  bannerIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFEDD5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  bannerIconNew: {
-    fontSize: 20,
-    color: '#F59E0B',
-  },
   bannerTitleNew: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#1F2937',
+    color: '#1E293B',
     marginBottom: 2,
   },
   bannerSubtitleNew: {
     fontSize: 12,
-    color: '#4B5563',
+    color: '#64748B',
   },
   bannerButtonNew: {
-    backgroundColor: '#EA580C',
+    backgroundColor: '#F97316',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
@@ -653,6 +634,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '700',
+  },
+  profileIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FED7AA',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // NEW: My Learning Card (Figma Style)
   myLearningCard: {
@@ -667,13 +656,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   myLearningIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 48,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 12,
   },
   myLearningIcon: {
     fontSize: 24,
@@ -693,58 +683,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FFFFFF',
     fontWeight: '300',
-  },
-  // NEW: Nightingale & Mentor Cards (Figma Style)
-  nightingaleCard: {
-    borderRadius: 24,
-    overflow: 'hidden',
-    marginBottom: 24,
-    ...shadow.soft,
-  },
-  mentorCard: {
-    borderRadius: 24,
-    overflow: 'hidden',
-    marginBottom: 24,
-    ...shadow.soft,
-  },
-  gradientCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    gap: 16,
-  },
-  cardIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  gradientCardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  gradientCardSubtitle: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.9)',
-    marginBottom: 12,
-  },
-  gradientCardButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 999,
-  },
-  gradientCardButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1F2937',
   },
   // EXISTING: All original styles preserved below
   header: {
@@ -817,7 +755,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: NEON_COLORS.neonPurple,
+    color: '#111827',
     marginBottom: 15,
   },
   section: {
@@ -930,12 +868,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-    borderWidth: 0,
+    ...shadow.soft,
+    borderWidth: 1,
+    borderColor: palette.border,
   },
   datePill: {
     width: 56,
@@ -946,57 +881,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEF2FF',
     marginRight: 12,
   },
-  datePillGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-  },
-  dateMonth: { 
-    fontSize: 11, 
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
-  dateDay: { 
-    fontSize: 20, 
-    fontWeight: '700', 
-    color: '#FFFFFF',
-  },
+  dateMonth: { fontSize: 12, color: '#6B7280' },
+  dateDay: { fontSize: 16, fontWeight: '700', color: '#111827' },
   badge: {
     alignSelf: 'flex-start',
     backgroundColor: '#F3F4F6',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2,
     borderRadius: 8,
     marginBottom: 6,
   },
-  badgeText: { 
-    fontSize: 11, 
-    color: '#111827',
-    fontWeight: '600',
-  },
-  activityTitle: { 
-    fontSize: 14, 
-    fontWeight: '600', 
-    color: '#111827',
-    marginBottom: 2,
-  },
-  activitySub: { 
-    color: '#6B7280', 
-    fontSize: 12,
-  },
-  chev: { 
-    color: '#9CA3AF', 
-    fontSize: 20, 
-    paddingHorizontal: 8,
-  },
+  badgeText: { fontSize: 11, color: '#111827' },
+  activityTitle: { fontSize: 15, fontWeight: '600', color: '#111827' },
+  activitySub: { color: '#6B7280', marginTop: 2, fontSize: 12 },
+  chev: { color: '#9CA3AF', fontSize: 18, paddingHorizontal: 8 },
   // Unified Activities card (same layout as Activities screen)
   actCard: { backgroundColor:'#fff', borderRadius:16, padding:12, marginBottom:12, ...shadow.soft, borderWidth:1, borderColor: palette.border },
   actHero: { height:160, backgroundColor:'#E5E7EB', borderRadius:12, overflow:'hidden', marginBottom:10 },

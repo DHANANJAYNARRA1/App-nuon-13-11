@@ -85,7 +85,7 @@ const MentorFeedbackScreen = ({ route, navigation }) => {
         </TouchableOpacity>
       </LinearGradient>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Mentorship')} style={{ alignItems:'center', marginTop: 12 }}>
+      <TouchableOpacity onPress={() => navigation.navigate('Bookings')} style={{ alignItems:'center', marginTop: 12 }}>
         <Text style={{ color:'#64748b' }}>Skip for Now</Text>
       </TouchableOpacity>
 
@@ -100,7 +100,7 @@ const MentorFeedbackScreen = ({ route, navigation }) => {
             <Text style={styles.modalTitle}>Thank You!</Text>
             <Text style={styles.modalDesc}>Your feedback helps us improve. You earned 50 bonus points!</Text>
             <LinearGradient colors={["#7C3AED","#DB2777"]} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.modalCta}>
-              <TouchableOpacity onPress={() => { setShowThanks(false); navigation.navigate('Mentorship'); }}>
+              <TouchableOpacity onPress={() => { setShowThanks(false); navigation.navigate('Bookings'); }}>
                 <Text style={styles.modalCtaText}>Awesome!</Text>
               </TouchableOpacity>
             </LinearGradient>

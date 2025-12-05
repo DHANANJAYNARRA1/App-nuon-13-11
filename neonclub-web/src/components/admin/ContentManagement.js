@@ -90,7 +90,7 @@ const ContentManagement = () => {
   const loadContent = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
 
       console.log('🔍 Loading content with token:', token ? 'Present' : 'Missing');
 
@@ -98,7 +98,7 @@ const ContentManagement = () => {
       const [coursesRes, eventsRes, workshopsRes, newsRes] = await Promise.allSettled([
         axios.get(`${API_BASE_URL}/courses`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API_BASE_URL}/events`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API_BASE_URL}/admin/workshops`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API_BASE_URL}/admin/content/workshops`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API_BASE_URL}/admin/all`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
@@ -174,16 +174,16 @@ const ContentManagement = () => {
   const handleFileUpload = async (file, type) => {
     const formData = new FormData();
     formData.append(type, file);
-    
+
     try {
       console.log('🔍 Debug - Uploading file...');
       console.log('📁 File:', file.name, 'Type:', type);
-      
-      const token = localStorage.getItem('token');
+
+      const token = localStorage.getItem('accessToken');
       console.log('🔑 Upload token:', token ? 'Present' : 'Missing');
       
       // Use the configured API base URL and include auth token
-      const response = await axios.post(`${API_BASE_URL}/admin/upload?type=${type}`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/upload/${type}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
@@ -221,7 +221,7 @@ const ContentManagement = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
 
       console.log('🔍 Creating/updating content...');
       console.log('📝 Form Data:', formData);
@@ -328,9 +328,9 @@ const ContentManagement = () => {
         };
       }
 
-      const endpoint = contentType === 'news' ? 'admin/create' :
+      const endpoint = contentType === 'news' ? 'news' :
                       contentType === 'course' ? 'courses' :
-                      contentType === 'event' ? 'events' : 'admin/workshops';
+                      contentType === 'event' ? 'events' : 'admin/content/workshops';
 
       const url = editingItem
         ? `${API_BASE_URL}/${contentType === 'news' ? 'admin' : endpoint}/${editingItem._id}`
@@ -367,10 +367,10 @@ const ContentManagement = () => {
     if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const endpoint = type === 'news' ? 'admin' :
-                      type === 'course' ? 'courses' :
-                      type === 'event' ? 'events' : 'admin/workshops';
+      const token = localStorage.getItem('accessToken');
+      const endpoint = type === 'news' ? 'news' :
+                       type === 'course' ? 'courses' :
+                       type === 'event' ? 'events' : 'admin/content/workshops';
 
       console.log('🔍 Debug - Deleting content...');
       console.log('🗑️ Type:', type, 'ID:', id);

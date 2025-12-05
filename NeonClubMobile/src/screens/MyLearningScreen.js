@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import api, { courseAPI, conferenceAPI, eventAPI, workshopAPI, activitiesAPI, mentorAPI } from '../services/api';
-import MySessions from './MySessions';
 import { LEARNING_HERO } from '../assets/heroImages';
 
 const MyLearningScreen = ({ navigation }) => {
@@ -205,59 +204,64 @@ const MyLearningScreen = ({ navigation }) => {
         ))}
       </View>
 
-      {/* Content: render MySessions OUTSIDE the ScrollView to avoid nested VirtualizedLists */}
-      {activeTab === 'sessions' ? (
-        <View style={{ flex: 1 }}>
-          <MySessions navigation={navigation} />
-        </View>
-      ) : (
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
-          {loading && <ActivityIndicator size="large" color="#6366F1" style={{ marginTop: 32 }} />}
+      {/* Content */}
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
+        {loading && <ActivityIndicator size="large" color="#6366F1" style={{ marginTop: 32 }} />}
 
-          {activeTab === 'courses' && (
-            courses.filter(Boolean).length === 0 ? (
-              <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No courses enrolled yet.</Text>
-            ) : (
-              courses.filter(Boolean).map((item, idx) => (
-                <View key={item._id || idx}>{renderCourseItem({ item })}</View>
-              ))
-            )
-          )}
+        {activeTab === 'courses' && (
+          courses.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No courses enrolled yet.</Text>
+          ) : (
+            courses.filter(Boolean).map((item, idx) => (
+              <View key={item._id || idx}>{renderCourseItem({ item })}</View>
+            ))
+          )
+        )}
 
-          {activeTab === 'conferences' && (
-            conferences.filter(Boolean).length === 0 ? (
-              <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No conferences registered yet.</Text>
-            ) : (
-              conferences.filter(Boolean).map((item, idx) => (
-                <View key={item._id || idx}>{renderConferenceItem({ item })}</View>
-              ))
-            )
-          )}
+        {activeTab === 'conferences' && (
+          conferences.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No conferences registered yet.</Text>
+          ) : (
+            conferences.filter(Boolean).map((item, idx) => (
+              <View key={item._id || idx}>{renderConferenceItem({ item })}</View>
+            ))
+          )
+        )}
 
-          {activeTab === 'workshops' && (
-            Array.isArray(workshops) && workshops.filter(Boolean).length === 0 ? (
-              <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No workshops enrolled yet.</Text>
-            ) : (
-              (Array.isArray(workshops) ? workshops : []).filter(Boolean).map((item, idx) => {
-                if (!item.videoUrl && item.metadata && item.metadata.videoUrl) {
-                  item.videoUrl = item.metadata.videoUrl;
-                }
-                return <View key={item._id || idx}>{renderWorkshopItem({ item })}</View>;
-              })
-            )
-          )}
+        {activeTab === 'workshops' && (
+          Array.isArray(workshops) && workshops.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No workshops enrolled yet.</Text>
+          ) : (
+            (Array.isArray(workshops) ? workshops : []).filter(Boolean).map((item, idx) => {
+              // Defensive: ensure videoUrl is available at top-level or in metadata
+              if (!item.videoUrl && item.metadata && item.metadata.videoUrl) {
+                item.videoUrl = item.metadata.videoUrl;
+              }
+              return <View key={item._id || idx}>{renderWorkshopItem({ item })}</View>;
+            })
+          )
+        )}
 
-          {activeTab === 'events' && (
-            events.filter(Boolean).length === 0 ? (
-              <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No events booked yet.</Text>
-            ) : (
-              events.filter(Boolean).map((item, idx) => (
-                <View key={item._id || idx}>{renderEventItem({ item })}</View>
-              ))
-            )
-          )}
-        </ScrollView>
-      )}
+        {activeTab === 'events' && (
+          events.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No events booked yet.</Text>
+          ) : (
+            events.filter(Boolean).map((item, idx) => (
+              <View key={item._id || idx}>{renderEventItem({ item })}</View>
+            ))
+          )
+        )}
+
+        {activeTab === 'sessions' && (
+          sessions.filter(Boolean).length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#6B7280', marginTop: 32 }}>No sessions booked yet.</Text>
+          ) : (
+            sessions.filter(Boolean).map((item, idx) => (
+              <View key={item._id || idx}>{renderSessionItem({ item })}</View>
+            ))
+          )
+        )}
+      </ScrollView>
     </View>
   );
 };

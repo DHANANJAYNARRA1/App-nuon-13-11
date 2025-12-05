@@ -21,7 +21,7 @@ const MentorLogin = () => {
       setError('');
       console.log('Attempting login with:', { username, password });
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/mentor/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/mentor-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,11 +35,15 @@ const MentorLogin = () => {
       const data = await response.json();
       console.log('Login response:', data);
 
-      if (response.ok && data.success) {
+      if (response.ok && data.accessToken) {
         const user = data.user;
-        const token = data.token;
+        const accessToken = data.accessToken;
+        const refreshToken = data.refreshToken;
         console.log('Login successful. User:', user);
-        login(user, token);
+        // Store tokens
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        login({ user, accessToken, refreshToken });
         navigate('/mentor/home');
       } else {
         console.error('Login failed:', data.message);

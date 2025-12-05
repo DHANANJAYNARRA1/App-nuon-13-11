@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check for existing token on app load
-    const storedToken = localStorage.getItem('mentor_token');
+    const storedToken = localStorage.getItem('accessToken');
     const storedUser = localStorage.getItem('mentor_user');
 
     if (storedToken && storedUser) {
@@ -27,14 +27,15 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData, authToken) => {
-    setUser(userData);
-    setToken(authToken);
+  const login = ({ user, accessToken, refreshToken }) => {
+    setUser(user);
+    setToken(accessToken);
     setIsAuthenticated(true);
 
     // Store in localStorage for persistence
-    localStorage.setItem('mentor_token', authToken);
-    localStorage.setItem('mentor_user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('mentor_user', JSON.stringify(user));
   };
 
   const logout = () => {
@@ -43,7 +44,8 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
 
     // Clear localStorage
-    localStorage.removeItem('mentor_token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('mentor_user');
   };
 

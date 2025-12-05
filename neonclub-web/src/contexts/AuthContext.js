@@ -16,26 +16,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       // Verify token is valid by making a simple authenticated request
-      api.get('/admin/stats')
+      api.get('/profile')
         .then(response => {
-          // If the request succeeds, extract user info from token
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            setUser({
-              id: payload.id,
-              email: payload.email,
-              role: payload.role,
-              name: 'Admin User' // Default name
-            });
-          } catch (e) {
-            localStorage.removeItem('token');
-          }
+          setUser(response.data);
         })
         .catch(() => {
-          localStorage.removeItem('token');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         })
         .finally(() => {
           setLoading(false);
@@ -51,9 +41,10 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', credentials);
       console.log('✅ Login response:', response.data);
 
-      const { token, user } = response.data;
+      const { accessToken, refreshToken, user } = response.data;
 
-      localStorage.setItem('token', token);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       setUser(user);
 
       return { success: true, user };
@@ -67,7 +58,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setUser(null);
   };
 

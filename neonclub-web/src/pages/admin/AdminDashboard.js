@@ -75,9 +75,9 @@ const AdminDashboard = () => {
   // Socket connection and messaging logic
   useEffect(() => {
     if (user) {
-      const newSocket = io('http://localhost:3000', {
+      const newSocket = io('http://localhost:5000', {
         auth: {
-          token: localStorage.getItem('token')
+          token: localStorage.getItem('accessToken')
         }
       });
 
@@ -110,7 +110,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:5000/api/admin/users?role=mentor', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       });
       if (!response.ok) {
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
       };
       socket.emit('send_admin_message', messageData);
       setMessages(prev => [...prev, {
-        from: user._id,
+        from: user.id,
         fromName: user.name,
         to: selectedMentor,
         message: message.trim(),

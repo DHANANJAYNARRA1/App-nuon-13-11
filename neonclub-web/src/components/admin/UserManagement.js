@@ -63,7 +63,7 @@ const UserManagement = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       console.log('🔍 Debug - Loading users...');
       console.log('🔑 Token:', token ? 'Present' : 'Missing');
       
@@ -93,7 +93,7 @@ const UserManagement = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       console.log('🔍 Debug - Creating/Updating user...');
       console.log('🔑 Token:', token ? 'Present' : 'Missing');
       console.log('📝 Form Data:', formData);
@@ -152,9 +152,9 @@ const UserManagement = () => {
 
   const handleDelete = async (userId) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
-    
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       await axios.delete(`${API_BASE_URL}/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });

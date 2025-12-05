@@ -121,14 +121,14 @@ const Login = () => {
           </button>
         </form>
 
-        <div style={{ 
-          marginTop: '1rem', 
-          textAlign: 'center', 
+        <div style={{
+          marginTop: '1rem',
+          textAlign: 'center',
           fontSize: '0.9rem',
           color: '#666'
         }}>
           <p>Demo Credentials:</p>
-          <p>Admin: admin@neonclub.com / admin123</p>
+          <p>Admin: admin@nuonhub.com / admin@123</p>
         </div>
       </div>
     </div>
