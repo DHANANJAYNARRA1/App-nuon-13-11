@@ -1,5 +1,9 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import * as dotenv from 'dotenv';
+
+// Ensure environment variables are loaded before PrismaClient initialization
+dotenv.config();
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -7,7 +11,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     private isConnected = false;
 
     constructor() {
-        super();
+        super({
+            log: [
+                { emit: 'stdout', level: 'warn' },
+                { emit: 'stdout', level: 'error' }
+            ]
+        });
     }
 
     async onModuleInit(): Promise<void> {

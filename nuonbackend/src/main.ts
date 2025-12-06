@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
@@ -7,6 +8,9 @@ import { AppService } from './app.service';
 import { initializeSocket } from './lib/socket';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+
+// Load environment variables FIRST, before anything else
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
